@@ -1,0 +1,1007 @@
+{
+  "priors": {
+    "Responsive UI/page": {
+      "Low": 6.0,
+      "Medium": 10.0,
+      "High": 18.0,
+      "Very High": 32.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Authentication": {
+      "Low": 8.0,
+      "Medium": 16.0,
+      "High": 30.0,
+      "Very High": 55.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "CRUD/data module": {
+      "Low": 6.0,
+      "Medium": 12.0,
+      "High": 24.0,
+      "Very High": 45.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Search/filter": {
+      "Low": 4.0,
+      "Medium": 8.0,
+      "High": 16.0,
+      "Very High": 30.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Admin dashboard": {
+      "Low": 10.0,
+      "Medium": 18.0,
+      "High": 35.0,
+      "Very High": 65.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Email/SMS notifications": {
+      "Low": 4.0,
+      "Medium": 8.0,
+      "High": 16.0,
+      "Very High": 28.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Payment integration": {
+      "Low": 12.0,
+      "Medium": 22.0,
+      "High": 40.0,
+      "Very High": 75.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Booking/scheduling": {
+      "Low": 14.0,
+      "Medium": 26.0,
+      "High": 50.0,
+      "Very High": 95.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Analytics/reporting": {
+      "Low": 8.0,
+      "Medium": 18.0,
+      "High": 36.0,
+      "Very High": 70.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Third-party API integration": {
+      "Low": 6.0,
+      "Medium": 14.0,
+      "High": 28.0,
+      "Very High": 60.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "File upload/storage": {
+      "Low": 4.0,
+      "Medium": 10.0,
+      "High": 20.0,
+      "Very High": 40.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Role-based permissions": {
+      "Low": 8.0,
+      "Medium": 16.0,
+      "High": 32.0,
+      "Very High": 60.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Real-time features": {
+      "Low": 16.0,
+      "Medium": 30.0,
+      "High": 60.0,
+      "Very High": 120.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "AI API feature": {
+      "Low": 10.0,
+      "Medium": 22.0,
+      "High": 45.0,
+      "Very High": 100.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Custom ML pipeline": {
+      "Low": 60.0,
+      "Medium": 120.0,
+      "High": 240.0,
+      "Very High": 500.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Multi-tenancy": {
+      "Low": 20.0,
+      "Medium": 40.0,
+      "High": 80.0,
+      "Very High": 160.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Security/compliance": {
+      "Low": 12.0,
+      "Medium": 24.0,
+      "High": 50.0,
+      "Very High": 110.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Data migration": {
+      "Low": 8.0,
+      "Medium": 18.0,
+      "High": 40.0,
+      "Very High": 100.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "SEO/content setup": {
+      "Low": 4.0,
+      "Medium": 8.0,
+      "High": 16.0,
+      "Very High": 30.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Deployment/CI-CD": {
+      "Low": 8.0,
+      "Medium": 16.0,
+      "High": 30.0,
+      "Very High": 60.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Performance/load optimization": {
+      "Low": 8.0,
+      "Medium": 20.0,
+      "High": 45.0,
+      "Very High": 100.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Mobile-specific workflow": {
+      "Low": 12.0,
+      "Medium": 24.0,
+      "High": 45.0,
+      "Very High": 90.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Subscription/billing": {
+      "Low": 12.0,
+      "Medium": 24.0,
+      "High": 45.0,
+      "Very High": 85.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Maps/geolocation": {
+      "Low": 8.0,
+      "Medium": 16.0,
+      "High": 32.0,
+      "Very High": 65.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    },
+    "Audit logs": {
+      "Low": 6.0,
+      "Medium": 12.0,
+      "High": 24.0,
+      "Very High": 50.0,
+      "hours_definition": "Initial planning prior for implementation/integration/testing; refine with time logs.",
+      "warning": "Prior only; not a universal benchmark."
+    }
+  },
+  "historical_stats": {
+    "AI API feature::High": {
+      "count": 340,
+      "median_hours": 48.0,
+      "mean_hours": 48.424705882352946,
+      "std_hours": 8.381203944497317,
+      "min_hours": 28.4,
+      "max_hours": 70.8
+    },
+    "AI API feature::Low": {
+      "count": 451,
+      "median_hours": 10.4,
+      "mean_hours": 10.622172949002218,
+      "std_hours": 1.788629686852155,
+      "min_hours": 6.8,
+      "max_hours": 16.4
+    },
+    "AI API feature::Medium": {
+      "count": 635,
+      "median_hours": 22.9,
+      "mean_hours": 23.18503937007874,
+      "std_hours": 3.779533101290057,
+      "min_hours": 14.6,
+      "max_hours": 38.0
+    },
+    "AI API feature::Very High": {
+      "count": 99,
+      "median_hours": 106.3,
+      "mean_hours": 106.71919191919191,
+      "std_hours": 15.751097640842769,
+      "min_hours": 70.0,
+      "max_hours": 142.8
+    },
+    "Admin dashboard::High": {
+      "count": 375,
+      "median_hours": 35.8,
+      "mean_hours": 36.92373333333334,
+      "std_hours": 6.266074254245222,
+      "min_hours": 22.0,
+      "max_hours": 57.2
+    },
+    "Admin dashboard::Low": {
+      "count": 573,
+      "median_hours": 10.3,
+      "mean_hours": 10.415881326352531,
+      "std_hours": 1.8584834218385116,
+      "min_hours": 5.9,
+      "max_hours": 19.0
+    },
+    "Admin dashboard::Medium": {
+      "count": 770,
+      "median_hours": 18.6,
+      "mean_hours": 18.87909090909091,
+      "std_hours": 3.0760607955195867,
+      "min_hours": 11.3,
+      "max_hours": 30.3
+    },
+    "Admin dashboard::Very High": {
+      "count": 150,
+      "median_hours": 66.25,
+      "mean_hours": 67.74866666666667,
+      "std_hours": 11.78654526216237,
+      "min_hours": 41.9,
+      "max_hours": 105.1
+    },
+    "Analytics/reporting::High": {
+      "count": 376,
+      "median_hours": 37.5,
+      "mean_hours": 38.13856382978723,
+      "std_hours": 6.407302255909391,
+      "min_hours": 25.3,
+      "max_hours": 62.9
+    },
+    "Analytics/reporting::Low": {
+      "count": 610,
+      "median_hours": 8.3,
+      "mean_hours": 8.420983606557378,
+      "std_hours": 1.3968128216923368,
+      "min_hours": 5.0,
+      "max_hours": 15.8
+    },
+    "Analytics/reporting::Medium": {
+      "count": 824,
+      "median_hours": 18.5,
+      "mean_hours": 18.585194174757284,
+      "std_hours": 3.00579823815906,
+      "min_hours": 11.4,
+      "max_hours": 29.4
+    },
+    "Analytics/reporting::Very High": {
+      "count": 132,
+      "median_hours": 74.35,
+      "mean_hours": 75.94242424242422,
+      "std_hours": 12.505108093468506,
+      "min_hours": 52.2,
+      "max_hours": 114.2
+    },
+    "Audit logs::High": {
+      "count": 328,
+      "median_hours": 25.15,
+      "mean_hours": 25.637804878048776,
+      "std_hours": 4.442679860288819,
+      "min_hours": 15.9,
+      "max_hours": 46.8
+    },
+    "Audit logs::Low": {
+      "count": 510,
+      "median_hours": 6.2,
+      "mean_hours": 6.324705882352941,
+      "std_hours": 1.0982292461847603,
+      "min_hours": 4.1,
+      "max_hours": 10.4
+    },
+    "Audit logs::Medium": {
+      "count": 685,
+      "median_hours": 12.6,
+      "mean_hours": 12.716496350364963,
+      "std_hours": 2.1819915494101227,
+      "min_hours": 8.0,
+      "max_hours": 19.8
+    },
+    "Audit logs::Very High": {
+      "count": 121,
+      "median_hours": 53.2,
+      "mean_hours": 52.56776859504132,
+      "std_hours": 8.765103297318987,
+      "min_hours": 35.2,
+      "max_hours": 72.0
+    },
+    "Authentication::High": {
+      "count": 513,
+      "median_hours": 30.6,
+      "mean_hours": 31.181286549707604,
+      "std_hours": 5.0641008948091635,
+      "min_hours": 19.6,
+      "max_hours": 52.1
+    },
+    "Authentication::Low": {
+      "count": 711,
+      "median_hours": 8.1,
+      "mean_hours": 8.29634317862166,
+      "std_hours": 1.404093859601132,
+      "min_hours": 5.4,
+      "max_hours": 14.5
+    },
+    "Authentication::Medium": {
+      "count": 971,
+      "median_hours": 16.4,
+      "mean_hours": 16.68877445932029,
+      "std_hours": 2.8010247833083928,
+      "min_hours": 10.3,
+      "max_hours": 26.5
+    },
+    "Authentication::Very High": {
+      "count": 159,
+      "median_hours": 57.0,
+      "mean_hours": 57.88490566037736,
+      "std_hours": 9.579350078897926,
+      "min_hours": 37.6,
+      "max_hours": 98.0
+    },
+    "Booking/scheduling::High": {
+      "count": 345,
+      "median_hours": 52.0,
+      "mean_hours": 52.63246376811595,
+      "std_hours": 8.601334470186288,
+      "min_hours": 34.7,
+      "max_hours": 80.5
+    },
+    "Booking/scheduling::Low": {
+      "count": 503,
+      "median_hours": 14.6,
+      "mean_hours": 14.781908548707756,
+      "std_hours": 2.3966216959238658,
+      "min_hours": 8.2,
+      "max_hours": 23.0
+    },
+    "Booking/scheduling::Medium": {
+      "count": 670,
+      "median_hours": 27.3,
+      "mean_hours": 27.482835820895524,
+      "std_hours": 4.649170588700796,
+      "min_hours": 17.5,
+      "max_hours": 55.6
+    },
+    "Booking/scheduling::Very High": {
+      "count": 112,
+      "median_hours": 95.0,
+      "mean_hours": 98.17142857142858,
+      "std_hours": 16.760321163640196,
+      "min_hours": 66.2,
+      "max_hours": 176.2
+    },
+    "CRUD/data module::High": {
+      "count": 446,
+      "median_hours": 24.8,
+      "mean_hours": 24.956726457399103,
+      "std_hours": 4.4624462532571245,
+      "min_hours": 15.3,
+      "max_hours": 43.1
+    },
+    "CRUD/data module::Low": {
+      "count": 631,
+      "median_hours": 6.2,
+      "mean_hours": 6.276386687797149,
+      "std_hours": 1.0997533357264953,
+      "min_hours": 3.9,
+      "max_hours": 12.0
+    },
+    "CRUD/data module::Medium": {
+      "count": 912,
+      "median_hours": 12.3,
+      "mean_hours": 12.510087719298246,
+      "std_hours": 2.138360932718256,
+      "min_hours": 7.9,
+      "max_hours": 21.8
+    },
+    "CRUD/data module::Very High": {
+      "count": 160,
+      "median_hours": 47.55,
+      "mean_hours": 47.7675,
+      "std_hours": 7.709126748220307,
+      "min_hours": 31.4,
+      "max_hours": 67.0
+    },
+    "Custom ML pipeline::High": {
+      "count": 607,
+      "median_hours": 247.4,
+      "mean_hours": 249.99703459637564,
+      "std_hours": 41.35804890240417,
+      "min_hours": 159.8,
+      "max_hours": 387.3
+    },
+    "Custom ML pipeline::Low": {
+      "count": 149,
+      "median_hours": 61.9,
+      "mean_hours": 63.18322147651006,
+      "std_hours": 10.61264163745017,
+      "min_hours": 41.3,
+      "max_hours": 93.6
+    },
+    "Custom ML pipeline::Medium": {
+      "count": 213,
+      "median_hours": 125.9,
+      "mean_hours": 126.41361502347416,
+      "std_hours": 21.580423356535906,
+      "min_hours": 81.2,
+      "max_hours": 214.3
+    },
+    "Custom ML pipeline::Very High": {
+      "count": 513,
+      "median_hours": 517.2,
+      "mean_hours": 524.7947368421052,
+      "std_hours": 87.19854226434244,
+      "min_hours": 335.6,
+      "max_hours": 867.7
+    },
+    "Data migration::High": {
+      "count": 329,
+      "median_hours": 41.5,
+      "mean_hours": 41.64924012158054,
+      "std_hours": 6.169640043170086,
+      "min_hours": 27.4,
+      "max_hours": 60.3
+    },
+    "Data migration::Low": {
+      "count": 466,
+      "median_hours": 8.2,
+      "mean_hours": 8.37510729613734,
+      "std_hours": 1.450169619026219,
+      "min_hours": 4.9,
+      "max_hours": 13.9
+    },
+    "Data migration::Medium": {
+      "count": 685,
+      "median_hours": 18.4,
+      "mean_hours": 18.882481751824816,
+      "std_hours": 3.3682056976047434,
+      "min_hours": 12.3,
+      "max_hours": 37.0
+    },
+    "Data migration::Very High": {
+      "count": 132,
+      "median_hours": 102.25,
+      "mean_hours": 103.26136363636364,
+      "std_hours": 18.278609898066396,
+      "min_hours": 63.8,
+      "max_hours": 146.2
+    },
+    "Deployment/CI-CD::High": {
+      "count": 324,
+      "median_hours": 31.2,
+      "mean_hours": 31.34506172839506,
+      "std_hours": 5.494388383737365,
+      "min_hours": 19.1,
+      "max_hours": 47.5
+    },
+    "Deployment/CI-CD::Low": {
+      "count": 443,
+      "median_hours": 8.3,
+      "mean_hours": 8.476975169300227,
+      "std_hours": 1.4810455114797627,
+      "min_hours": 5.0,
+      "max_hours": 13.8
+    },
+    "Deployment/CI-CD::Medium": {
+      "count": 651,
+      "median_hours": 16.4,
+      "mean_hours": 16.65099846390169,
+      "std_hours": 2.861362464872681,
+      "min_hours": 10.7,
+      "max_hours": 30.7
+    },
+    "Deployment/CI-CD::Very High": {
+      "count": 102,
+      "median_hours": 61.35,
+      "mean_hours": 62.70196078431373,
+      "std_hours": 10.441064969696203,
+      "min_hours": 42.1,
+      "max_hours": 93.1
+    },
+    "Email/SMS notifications::High": {
+      "count": 411,
+      "median_hours": 16.4,
+      "mean_hours": 16.564720194647204,
+      "std_hours": 2.8787355128989067,
+      "min_hours": 9.6,
+      "max_hours": 30.3
+    },
+    "Email/SMS notifications::Low": {
+      "count": 609,
+      "median_hours": 4.1,
+      "mean_hours": 4.136453201970443,
+      "std_hours": 0.6951792874061913,
+      "min_hours": 2.6,
+      "max_hours": 7.2
+    },
+    "Email/SMS notifications::Medium": {
+      "count": 869,
+      "median_hours": 8.3,
+      "mean_hours": 8.410126582278481,
+      "std_hours": 1.4979367092371174,
+      "min_hours": 5.1,
+      "max_hours": 15.4
+    },
+    "Email/SMS notifications::Very High": {
+      "count": 151,
+      "median_hours": 29.1,
+      "mean_hours": 29.41986754966888,
+      "std_hours": 4.4391143240898785,
+      "min_hours": 19.0,
+      "max_hours": 39.1
+    },
+    "File upload/storage::High": {
+      "count": 415,
+      "median_hours": 20.5,
+      "mean_hours": 20.596385542168676,
+      "std_hours": 3.5110951050214294,
+      "min_hours": 11.9,
+      "max_hours": 32.5
+    },
+    "File upload/storage::Low": {
+      "count": 609,
+      "median_hours": 4.1,
+      "mean_hours": 4.155993431855501,
+      "std_hours": 0.7082927769302233,
+      "min_hours": 2.6,
+      "max_hours": 6.8
+    },
+    "File upload/storage::Medium": {
+      "count": 822,
+      "median_hours": 10.3,
+      "mean_hours": 10.419221411192213,
+      "std_hours": 1.7475844828242204,
+      "min_hours": 6.5,
+      "max_hours": 19.6
+    },
+    "File upload/storage::Very High": {
+      "count": 138,
+      "median_hours": 40.3,
+      "mean_hours": 41.369565217391305,
+      "std_hours": 7.37127596136757,
+      "min_hours": 28.7,
+      "max_hours": 62.0
+    },
+    "Maps/geolocation::High": {
+      "count": 358,
+      "median_hours": 33.150000000000006,
+      "mean_hours": 33.982402234636865,
+      "std_hours": 5.774700723223336,
+      "min_hours": 22.0,
+      "max_hours": 53.8
+    },
+    "Maps/geolocation::Low": {
+      "count": 480,
+      "median_hours": 8.4,
+      "mean_hours": 8.466666666666667,
+      "std_hours": 1.363486463999074,
+      "min_hours": 5.4,
+      "max_hours": 13.6
+    },
+    "Maps/geolocation::Medium": {
+      "count": 700,
+      "median_hours": 16.7,
+      "mean_hours": 16.899428571428572,
+      "std_hours": 2.739338749253113,
+      "min_hours": 10.8,
+      "max_hours": 25.9
+    },
+    "Maps/geolocation::Very High": {
+      "count": 113,
+      "median_hours": 65.7,
+      "mean_hours": 66.89646017699116,
+      "std_hours": 10.94474702118669,
+      "min_hours": 47.4,
+      "max_hours": 99.4
+    },
+    "Mobile-specific workflow::High": {
+      "count": 340,
+      "median_hours": 45.75,
+      "mean_hours": 46.62764705882353,
+      "std_hours": 7.705822821853013,
+      "min_hours": 30.0,
+      "max_hours": 83.2
+    },
+    "Mobile-specific workflow::Low": {
+      "count": 456,
+      "median_hours": 12.4,
+      "mean_hours": 12.639254385964913,
+      "std_hours": 2.100835703149838,
+      "min_hours": 7.8,
+      "max_hours": 19.7
+    },
+    "Mobile-specific workflow::Medium": {
+      "count": 647,
+      "median_hours": 24.8,
+      "mean_hours": 25.219165378670787,
+      "std_hours": 4.203054754743169,
+      "min_hours": 16.2,
+      "max_hours": 43.3
+    },
+    "Mobile-specific workflow::Very High": {
+      "count": 103,
+      "median_hours": 92.0,
+      "mean_hours": 94.40194174757279,
+      "std_hours": 17.459488013193514,
+      "min_hours": 62.0,
+      "max_hours": 148.3
+    },
+    "Multi-tenancy::High": {
+      "count": 626,
+      "median_hours": 82.85,
+      "mean_hours": 83.9332268370607,
+      "std_hours": 13.441867065659546,
+      "min_hours": 54.3,
+      "max_hours": 141.4
+    },
+    "Multi-tenancy::Low": {
+      "count": 136,
+      "median_hours": 21.3,
+      "mean_hours": 21.141176470588235,
+      "std_hours": 3.604513026917791,
+      "min_hours": 14.1,
+      "max_hours": 34.7
+    },
+    "Multi-tenancy::Medium": {
+      "count": 212,
+      "median_hours": 41.35,
+      "mean_hours": 42.108018867924535,
+      "std_hours": 8.312953509825153,
+      "min_hours": 27.1,
+      "max_hours": 72.7
+    },
+    "Multi-tenancy::Very High": {
+      "count": 503,
+      "median_hours": 166.2,
+      "mean_hours": 168.81948310139163,
+      "std_hours": 29.548545682038537,
+      "min_hours": 100.7,
+      "max_hours": 276.6
+    },
+    "Payment integration::High": {
+      "count": 365,
+      "median_hours": 41.4,
+      "mean_hours": 41.935890410958905,
+      "std_hours": 7.045464567859826,
+      "min_hours": 28.4,
+      "max_hours": 64.2
+    },
+    "Payment integration::Low": {
+      "count": 511,
+      "median_hours": 12.4,
+      "mean_hours": 12.562230919765167,
+      "std_hours": 2.1402405292494806,
+      "min_hours": 7.7,
+      "max_hours": 22.0
+    },
+    "Payment integration::Medium": {
+      "count": 742,
+      "median_hours": 22.8,
+      "mean_hours": 22.990026954177896,
+      "std_hours": 3.7823023854928484,
+      "min_hours": 13.0,
+      "max_hours": 37.2
+    },
+    "Payment integration::Very High": {
+      "count": 124,
+      "median_hours": 75.85,
+      "mean_hours": 78.79354838709678,
+      "std_hours": 14.329035517134374,
+      "min_hours": 51.1,
+      "max_hours": 121.1
+    },
+    "Performance/load optimization::High": {
+      "count": 306,
+      "median_hours": 47.349999999999994,
+      "mean_hours": 47.76307189542484,
+      "std_hours": 8.003813171646213,
+      "min_hours": 31.0,
+      "max_hours": 73.4
+    },
+    "Performance/load optimization::Low": {
+      "count": 444,
+      "median_hours": 8.3,
+      "mean_hours": 8.379504504504505,
+      "std_hours": 1.4691127610636543,
+      "min_hours": 5.2,
+      "max_hours": 13.4
+    },
+    "Performance/load optimization::Medium": {
+      "count": 625,
+      "median_hours": 20.6,
+      "mean_hours": 20.89856,
+      "std_hours": 3.490814114141164,
+      "min_hours": 12.6,
+      "max_hours": 35.6
+    },
+    "Performance/load optimization::Very High": {
+      "count": 104,
+      "median_hours": 103.85,
+      "mean_hours": 105.07403846153846,
+      "std_hours": 19.177049365516023,
+      "min_hours": 70.4,
+      "max_hours": 167.4
+    },
+    "Real-time features::High": {
+      "count": 619,
+      "median_hours": 62.4,
+      "mean_hours": 63.3281098546042,
+      "std_hours": 10.71087150646678,
+      "min_hours": 42.2,
+      "max_hours": 101.2
+    },
+    "Real-time features::Low": {
+      "count": 176,
+      "median_hours": 16.9,
+      "mean_hours": 17.24318181818182,
+      "std_hours": 3.0418714335391983,
+      "min_hours": 11.6,
+      "max_hours": 27.4
+    },
+    "Real-time features::Medium": {
+      "count": 239,
+      "median_hours": 31.1,
+      "mean_hours": 31.983682008368206,
+      "std_hours": 5.436998353111189,
+      "min_hours": 20.1,
+      "max_hours": 50.2
+    },
+    "Real-time features::Very High": {
+      "count": 569,
+      "median_hours": 123.3,
+      "mean_hours": 125.86801405975395,
+      "std_hours": 22.061915030583883,
+      "min_hours": 79.0,
+      "max_hours": 214.9
+    },
+    "Responsive UI/page::High": {
+      "count": 489,
+      "median_hours": 18.4,
+      "mean_hours": 18.801635991820042,
+      "std_hours": 3.165114237704277,
+      "min_hours": 11.1,
+      "max_hours": 29.2
+    },
+    "Responsive UI/page::Low": {
+      "count": 690,
+      "median_hours": 6.1,
+      "mean_hours": 6.2459420289855085,
+      "std_hours": 1.1169193829907214,
+      "min_hours": 3.9,
+      "max_hours": 12.0
+    },
+    "Responsive UI/page::Medium": {
+      "count": 975,
+      "median_hours": 10.3,
+      "mean_hours": 10.387179487179488,
+      "std_hours": 1.781766462960724,
+      "min_hours": 6.4,
+      "max_hours": 18.1
+    },
+    "Responsive UI/page::Very High": {
+      "count": 181,
+      "median_hours": 32.4,
+      "mean_hours": 32.88618784530386,
+      "std_hours": 5.5703657717590485,
+      "min_hours": 20.1,
+      "max_hours": 47.4
+    },
+    "Role-based permissions::High": {
+      "count": 467,
+      "median_hours": 32.8,
+      "mean_hours": 33.09400428265525,
+      "std_hours": 5.6377565341347475,
+      "min_hours": 21.1,
+      "max_hours": 57.5
+    },
+    "Role-based permissions::Low": {
+      "count": 628,
+      "median_hours": 8.2,
+      "mean_hours": 8.252070063694267,
+      "std_hours": 1.3276877941202214,
+      "min_hours": 4.8,
+      "max_hours": 13.1
+    },
+    "Role-based permissions::Medium": {
+      "count": 864,
+      "median_hours": 16.6,
+      "mean_hours": 16.81863425925926,
+      "std_hours": 2.8397219659787982,
+      "min_hours": 10.2,
+      "max_hours": 31.1
+    },
+    "Role-based permissions::Very High": {
+      "count": 142,
+      "median_hours": 62.25,
+      "mean_hours": 63.70140845070424,
+      "std_hours": 10.857072642797961,
+      "min_hours": 43.9,
+      "max_hours": 98.4
+    },
+    "SEO/content setup::High": {
+      "count": 370,
+      "median_hours": 16.2,
+      "mean_hours": 16.643243243243244,
+      "std_hours": 2.836104865459149,
+      "min_hours": 9.7,
+      "max_hours": 27.0
+    },
+    "SEO/content setup::Low": {
+      "count": 563,
+      "median_hours": 4.1,
+      "mean_hours": 4.200000000000001,
+      "std_hours": 0.7705430908159977,
+      "min_hours": 2.4,
+      "max_hours": 7.2
+    },
+    "SEO/content setup::Medium": {
+      "count": 803,
+      "median_hours": 8.3,
+      "mean_hours": 8.32403486924035,
+      "std_hours": 1.430626062760967,
+      "min_hours": 4.9,
+      "max_hours": 14.3
+    },
+    "SEO/content setup::Very High": {
+      "count": 114,
+      "median_hours": 30.7,
+      "mean_hours": 30.94385964912281,
+      "std_hours": 5.140521565213807,
+      "min_hours": 20.6,
+      "max_hours": 55.0
+    },
+    "Search/filter::High": {
+      "count": 383,
+      "median_hours": 16.3,
+      "mean_hours": 16.577023498694516,
+      "std_hours": 2.837297312357902,
+      "min_hours": 10.6,
+      "max_hours": 26.0
+    },
+    "Search/filter::Low": {
+      "count": 560,
+      "median_hours": 4.1,
+      "mean_hours": 4.164464285714285,
+      "std_hours": 0.7071609686441468,
+      "min_hours": 2.5,
+      "max_hours": 6.8
+    },
+    "Search/filter::Medium": {
+      "count": 787,
+      "median_hours": 8.2,
+      "mean_hours": 8.364548919949174,
+      "std_hours": 1.4067453435722883,
+      "min_hours": 5.1,
+      "max_hours": 14.3
+    },
+    "Search/filter::Very High": {
+      "count": 131,
+      "median_hours": 30.8,
+      "mean_hours": 31.32519083969466,
+      "std_hours": 5.481582358736184,
+      "min_hours": 21.8,
+      "max_hours": 47.9
+    },
+    "Security/compliance::High": {
+      "count": 650,
+      "median_hours": 51.5,
+      "mean_hours": 52.439538461538454,
+      "std_hours": 8.92238868338914,
+      "min_hours": 33.8,
+      "max_hours": 92.4
+    },
+    "Security/compliance::Low": {
+      "count": 180,
+      "median_hours": 12.8,
+      "mean_hours": 12.84388888888889,
+      "std_hours": 2.1023308131501444,
+      "min_hours": 8.7,
+      "max_hours": 21.2
+    },
+    "Security/compliance::Medium": {
+      "count": 234,
+      "median_hours": 25.2,
+      "mean_hours": 25.52264957264957,
+      "std_hours": 4.2438898047613,
+      "min_hours": 17.4,
+      "max_hours": 37.8
+    },
+    "Security/compliance::Very High": {
+      "count": 552,
+      "median_hours": 111.55,
+      "mean_hours": 114.84510869565217,
+      "std_hours": 20.256756028037948,
+      "min_hours": 74.9,
+      "max_hours": 210.1
+    },
+    "Subscription/billing::High": {
+      "count": 295,
+      "median_hours": 46.8,
+      "mean_hours": 47.510169491525424,
+      "std_hours": 8.109113352206272,
+      "min_hours": 26.9,
+      "max_hours": 76.9
+    },
+    "Subscription/billing::Low": {
+      "count": 457,
+      "median_hours": 12.4,
+      "mean_hours": 12.620350109409191,
+      "std_hours": 2.205227413971184,
+      "min_hours": 8.2,
+      "max_hours": 22.6
+    },
+    "Subscription/billing::Medium": {
+      "count": 646,
+      "median_hours": 24.95,
+      "mean_hours": 25.359133126934985,
+      "std_hours": 4.370326494207344,
+      "min_hours": 16.4,
+      "max_hours": 43.1
+    },
+    "Subscription/billing::Very High": {
+      "count": 98,
+      "median_hours": 85.85,
+      "mean_hours": 87.30918367346938,
+      "std_hours": 12.935415197706266,
+      "min_hours": 66.0,
+      "max_hours": 126.6
+    },
+    "Third-party API integration::High": {
+      "count": 383,
+      "median_hours": 29.3,
+      "mean_hours": 29.255613577023503,
+      "std_hours": 4.82315679217558,
+      "min_hours": 17.3,
+      "max_hours": 42.6
+    },
+    "Third-party API integration::Low": {
+      "count": 541,
+      "median_hours": 6.2,
+      "mean_hours": 6.311090573012939,
+      "std_hours": 1.0967067339539123,
+      "min_hours": 4.1,
+      "max_hours": 11.6
+    },
+    "Third-party API integration::Medium": {
+      "count": 742,
+      "median_hours": 14.5,
+      "mean_hours": 14.79312668463612,
+      "std_hours": 2.5341966032404377,
+      "min_hours": 8.7,
+      "max_hours": 25.7
+    },
+    "Third-party API integration::Very High": {
+      "count": 128,
+      "median_hours": 62.5,
+      "mean_hours": 63.50859375,
+      "std_hours": 11.553197923469426,
+      "min_hours": 44.6,
+      "max_hours": 105.1
+    }
+  },
+  "provenance": "Computed from CostPilot_AI_Training_Dataset.xlsx (Simulated dataset)"
+}

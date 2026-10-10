@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CostPilot AI — Machine Learning Software Cost Estimation</title>
+  <meta name="description" content="Professional, defensible, dataset-driven software product cost and effort estimation powered by supervised machine learning and empirical priors.">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- ================================================================= -->
+  <!-- 1. AUTHENTICATION VIEW (FIRST SCREEN FOR UNAUTHENTICATED USERS)   -->
+  <!-- ================================================================= -->
+  <section id="auth-view" class="auth-view">
+    <div class="auth-container">
+      
+      <!-- Left Hero Banner -->
+      <div class="auth-hero">
+        <div class="auth-brand">
+          <div class="brand-icon">⚡</div>
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span class="brand-title">CostPilot AI</span>
+              <span class="badge badge-medium">v2.0 ML</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-hero-content">
+          <h2 class="auth-hero-title">Defensible Software Cost Estimation</h2>
+          <p class="auth-hero-desc">
+            Stop relying on fabricated arbitrary numbers. CostPilot AI pairs empirical feature-level priors with supervised machine learning benchmarks to produce mathematically explainable software project budgets.
+          </p>
+
+          <div class="auth-features-list">
+            <div class="auth-feature-item">
+              <div class="auth-feature-check">✓</div>
+              <span>Empirical Bayes shrinkage from 44,301 feature records</span>
+            </div>
+            <div class="auth-feature-item">
+              <div class="auth-feature-check">✓</div>
+              <span>Supervised Random Forest Regressor models</span>
+            </div>
+            <div class="auth-feature-item">
+              <div class="auth-feature-check">✓</div>
+              <span>Strict financial invariants: Total Labour = ∑(Hours × Rate)</span>
+            </div>
+            <div class="auth-feature-item">
+              <div class="auth-feature-check">✓</div>
+              <span>Brooks' Law coordination & Critical Path scheduling</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:0.8rem; color:var(--text-dim);">
+          Trained on 2,500 projects • Authoritative 23-step calculation engine
+        </div>
+      </div>
+
+      <!-- Right Card (Sign In / Sign Up Forms) -->
+      <div class="auth-card">
+        
+        <!-- SIGN IN FORM -->
+        <div id="signin-box">
+          <div class="auth-header">
+            <h1 class="auth-heading">Sign In to CostPilot AI</h1>
+            <p class="auth-subheading">Access your project estimates, dashboard KPIs, and ML models</p>
+          </div>
+
+          <form id="form-signin" class="auth-form" onsubmit="handleSignIn(event)">
+            <div class="form-group">
+              <label class="form-label" for="signin-email">Email Address</label>
+              <input type="email" id="signin-email" class="form-input" placeholder="name@company.com" required value="demo@costpilot.ai">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="signin-password">Password</label>
+              <div class="input-with-action">
+                <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required value="Password@123">
+                <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signin-password', this)">👁️</button>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
+              <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                <input type="checkbox" id="signin-remember" checked>
+                <span>Remember me</span>
+              </label>
+              <a href="#" onclick="openForgotPasswordModal(event)" style="color:var(--primary); text-decoration:none;">Forgot password?</a>
+            </div>
+
+            <button type="submit" id="btn-signin-submit" class="btn btn-primary btn-block btn-lg" style="margin-top:0.5rem;">
+              Sign In to Dashboard
+            </button>
+
+            <div style="text-align:center; margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
+              Don't have an account? 
+              <a href="#" onclick="showSignUpBox(event)" style="color:var(--primary); font-weight:600; text-decoration:none;">Create an Account</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- SIGN UP FORM -->
+        <div id="signup-box" style="display:none;">
+          <div class="auth-header">
+            <h1 class="auth-heading">Create CostPilot Account</h1>
+            <p class="auth-subheading">Start generating defensible project estimates</p>
+          </div>
+
+          <form id="form-signup" class="auth-form" onsubmit="handleSignUp(event)">
+            <div class="form-group">
+              <label class="form-label" for="signup-name">Full Name</label>
+              <input type="text" id="signup-name" class="form-input" placeholder="e.g. Sarah Connor" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="signup-email">Email Address</label>
+              <input type="email" id="signup-email" class="form-input" placeholder="sarah@company.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="signup-phone">Phone Number <span class="form-hint">(Optional)</span></label>
+              <input type="tel" id="signup-phone" class="form-input" placeholder="+1 (555) 234-5678">
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="signup-password">Password</label>
+                <div class="input-with-action">
+                  <input type="password" id="signup-password" class="form-input" placeholder="Min. 8 characters" required minlength="8">
+                  <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signup-password', this)">👁️</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="signup-confirm-password">Confirm Password</label>
+                <div class="input-with-action">
+                  <input type="password" id="signup-confirm-password" class="form-input" placeholder="Repeat password" required minlength="8">
+                  <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signup-confirm-password', this)">👁️</button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-signup-submit" class="btn btn-primary btn-block btn-lg" style="margin-top:0.5rem;">
+              Create Account
+            </button>
+
+            <div style="text-align:center; margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
+              Already have an account? 
+              <a href="#" onclick="showSignInBox(event)" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign In</a>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 2. AUTHENTICATED APPLICATION SHELL                                -->
+  <!-- ================================================================= -->
+  <div id="app-shell" class="app-shell" style="display:none;">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <div class="auth-brand">
+          <div class="brand-icon" style="width:36px; height:36px; font-size:1.2rem;">⚡</div>
+          <span class="brand-title" style="font-size:1.15rem;">CostPilot AI</span>
+        </div>
+        <button class="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" title="Collapse Sidebar">◀</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" id="nav-dashboard" onclick="navigateTo('dashboard')">
+          <span class="sidebar-link-icon">📊</span>
+          <span class="sidebar-link-text">Dashboard</span>
+        </a>
+        <a class="sidebar-link" id="nav-new-estimate" onclick="navigateTo('new-estimate')">
+          <span class="sidebar-link-icon">⚡</span>
+          <span class="sidebar-link-text">New Estimate</span>
+        </a>
+        <a class="sidebar-link" id="nav-my-projects" onclick="navigateTo('my-projects')">
+          <span class="sidebar-link-icon">📁</span>
+          <span class="sidebar-link-text">My Projects</span>
+        </a>
+        <a class="sidebar-link" id="nav-analytics" onclick="navigateTo('analytics')">
+          <span class="sidebar-link-icon">📈</span>
+          <span class="sidebar-link-text">Analytics & KPIs</span>
+        </a>
+        <a class="sidebar-link" id="nav-ml-lab" onclick="navigateTo('ml-lab')">
+          <span class="sidebar-link-icon">🧪</span>
+          <span class="sidebar-link-text">Datasets & ML Lab</span>
+        </a>
+        <a class="sidebar-link" id="nav-profile" onclick="navigateTo('profile')">
+          <span class="sidebar-link-icon">👤</span>
+          <span class="sidebar-link-text">Profile</span>
+        </a>
+        <a class="sidebar-link" id="nav-settings" onclick="navigateTo('settings')">
+          <span class="sidebar-link-icon">⚙️</span>
+          <span class="sidebar-link-text">Settings</span>
+        </a>
+        <a class="sidebar-link" id="nav-about" onclick="navigateTo('about')">
+          <span class="sidebar-link-icon">ℹ️</span>
+          <span class="sidebar-link-text">About CostPilot AI</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-outline btn-block btn-sm" onclick="handleLogout()">
+          <span>🚪</span>
+          <span class="sidebar-link-text">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- TOP NAVIGATION BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+          <div class="breadcrumb-title" id="topbar-page-title">Dashboard</div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="global-search-input" placeholder="Search saved projects..." oninput="handleGlobalSearch(this.value)">
+          </div>
+
+          <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme" onclick="toggleTheme()">🌙</button>
+
+          <!-- User Menu Dropdown -->
+          <div class="user-menu-wrapper">
+            <div class="user-profile-trigger" onclick="toggleUserDropdown(event)">
+              <div class="user-avatar" id="topbar-user-avatar">AM</div>
+              <span class="user-meta-name" id="topbar-user-name">Alex Mercer</span>
+              <span style="font-size:0.75rem;">▼</span>
+            </div>
+
+            <div class="dropdown-menu" id="user-dropdown-menu">
+              <a class="dropdown-item" onclick="navigateTo('profile'); closeUserDropdown();">👤 View Profile</a>
+              <a class="dropdown-item" onclick="navigateTo('settings'); closeUserDropdown();">⚙️ Account Settings</a>
+              <a class="dropdown-item" onclick="navigateTo('profile'); closeUserDropdown();">🔑 Change Password</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" onclick="handleLogout(); closeUserDropdown();" style="color:var(--accent-rose);">🚪 Logout</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 1: AUTHENTICATED DASHBOARD                               -->
+      <!-- ============================================================= -->
+      <section id="page-dashboard" class="page-content active">
+        <div class="welcome-hero">
+          <div>
+            <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
+            <p class="welcome-desc">
+              CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest regression and historical priors from 2,500 projects.
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-primary btn-lg" onclick="navigateTo('new-estimate')">
+              ⚡ Create New Estimate
+            </button>
+          </div>
+        </div>
+
+        <!-- Dashboard Summary KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Saved Projects</div>
+            <div class="kpi-value" id="dash-kpi-projects">0</div>
+            <div class="kpi-subtext">Persisted in database</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Total Estimates</div>
+            <div class="kpi-value" id="dash-kpi-estimates">0</div>
+            <div class="kpi-subtext">Authoritative calculations</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Average Estimated Budget</div>
+            <div class="kpi-value" id="dash-kpi-budget">₹0</div>
+            <div class="kpi-subtext">Across your saved projects</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Average Estimated Duration</div>
+            <div class="kpi-value" id="dash-kpi-duration">0 Days</div>
+            <div class="kpi-subtext">Likely calendar timeline</div>
+          </div>
+        </div>
+
+        <!-- Recent Projects Section -->
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h2 class="form-section-title">Recent Projects</h2>
+              <p class="form-section-desc">Projects estimated and saved to your account</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="navigateTo('my-projects')">View All Projects →</button>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Domain / Type</th>
+                  <th>Complexity</th>
+                  <th>Estimated Budget</th>
+                  <th>Duration</th>
+                  <th>Risk Level</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-projects-tbody">
+                <tr>
+                  <td colspan="7" style="text-align:center; padding:2rem;">Loading recent projects...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 2: SEPARATE NEW ESTIMATE PAGE (6-STEP WIZARD)            -->
+      <!-- ============================================================= -->
+      <section id="page-new-estimate" class="page-content">
+        
+        <!-- Wizard Progress Stepper -->
+        <div class="wizard-stepper">
+          <div class="step-item active" id="wizard-step-indicator-1" onclick="jumpToWizardStep(1)">
+            <div class="step-number">1</div>
+            <div class="step-label">Project Info</div>
+          </div>
+          <div class="step-item" id="wizard-step-indicator-2" onclick="jumpToWizardStep(2)">
+            <div class="step-number">2</div>
+            <div class="step-label">Tech Requirements</div>
+          </div>
+          <div class="step-item" id="wizard-step-indicator-3" onclick="jumpToWizardStep(3)">
+            <div class="step-number">3</div>
+            <div class="step-label">Feature Builder</div>
+          </div>
+          <div class="step-item" id="wizard-step-indicator-4" onclick="jumpToWizardStep(4)">
+            <div class="step-number">4</div>
+            <div class="step-label">Team & Rates</div>
+          </div>
+          <div class="step-item" id="wizard-step-indicator-5" onclick="jumpToWizardStep(5)">
+            <div class="step-number">5</div>
+            <div class="step-label">Timeline & Constraints</div>
+          </div>
+          <div class="step-item" id="wizard-step-indicator-6" onclick="jumpToWizardStep(6)">
+            <div class="step-number">6</div>
+            <div class="step-label">Review & Generate</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: PROJECT INFORMATION -->
+        <div id="wizard-step-1" class="wizard-step-pane active">
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Step 1 — Project Information</h2>
+                <p class="form-section-desc">Define your project identity, industry domain, platform, and overall difficulty</p>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-name">Project Name</label>
+                <input type="text" id="wiz-proj-name" class="form-input" value="SaaS Customer Portal" placeholder="e.g. HealthTrack Telemedicine Mobile App">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-domain">Project Type / Domain (34+ Options)</label>
+                <select id="wiz-proj-domain" class="form-select">
+                  <optgroup label="Web & Commercial">
+                    <option value="Business Website">Business Website</option>
+                    <option value="Portfolio Website">Portfolio Website</option>
+                    <option value="E-commerce">E-commerce</option>
+                    <option value="Online Marketplace">Online Marketplace</option>
+                    <option value="SaaS Platform" selected>SaaS Platform</option>
+                  </optgroup>
+                  <optgroup label="On-Demand & Services">
+                    <option value="Food Delivery">Food Delivery</option>
+                    <option value="Grocery Delivery">Grocery Delivery</option>
+                    <option value="Ride Booking">Ride Booking</option>
+                    <option value="Travel Booking">Travel Booking</option>
+                  </optgroup>
+                  <optgroup label="Education & Knowledge">
+                    <option value="Education / E-learning">Education / E-learning</option>
+                    <option value="Learning Management System">Learning Management System</option>
+                  </optgroup>
+                  <optgroup label="Health & Medical">
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Telemedicine">Telemedicine</option>
+                  </optgroup>
+                  <optgroup label="Financial Services">
+                    <option value="FinTech">FinTech</option>
+                    <option value="Banking">Banking</option>
+                    <option value="Insurance">Insurance</option>
+                  </optgroup>
+                  <optgroup label="Enterprise & Operations">
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="Inventory Management">Inventory Management</option>
+                    <option value="CRM">CRM</option>
+                    <option value="ERP">ERP</option>
+                    <option value="HR Management">HR Management</option>
+                    <option value="Project Management Software">Project Management Software</option>
+                  </optgroup>
+                  <optgroup label="Social & Media">
+                    <option value="Social Networking">Social Networking</option>
+                    <option value="Messaging Platform">Messaging Platform</option>
+                    <option value="Media Streaming">Media Streaming</option>
+                  </optgroup>
+                  <optgroup label="Advanced Tech & AI">
+                    <option value="IoT Platform">IoT Platform</option>
+                    <option value="AI/ML Application">AI/ML Application</option>
+                    <option value="Generative AI Application">Generative AI Application</option>
+                    <option value="Data Analytics Platform">Data Analytics Platform</option>
+                    <option value="Cybersecurity Software">Cybersecurity Software</option>
+                  </optgroup>
+                  <optgroup label="Public & Custom">
+                    <option value="Government/Public Service">Government/Public Service</option>
+                    <option value="Enterprise Application">Enterprise Application</option>
+                    <option value="Custom / Other">Custom / Other</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-platform">Target Platform (17 Options)</label>
+                <select id="wiz-proj-platform" class="form-select">
+                  <option value="Web Application" selected>Web Application</option>
+                  <option value="Responsive Website">Responsive Website</option>
+                  <option value="Progressive Web App (PWA)">Progressive Web App (PWA)</option>
+                  <option value="Android Application">Android Application</option>
+                  <option value="iOS Application">iOS Application</option>
+                  <option value="Cross-Platform Mobile Application">Cross-Platform Mobile Application</option>
+                  <option value="Desktop Application">Desktop Application</option>
+                  <option value="Web + Mobile">Web + Mobile (Cross-platform)</option>
+                  <option value="Web + Mobile + Desktop">Web + Mobile + Desktop</option>
+                  <option value="API / Backend Service">API / Backend Service</option>
+                  <option value="SaaS / Cloud Platform">SaaS / Cloud Platform</option>
+                  <option value="AI/ML Platform">AI/ML Platform</option>
+                  <option value="Data Engineering Platform">Data Engineering Platform</option>
+                  <option value="IoT / Embedded Software">IoT / Embedded Software</option>
+                  <option value="Browser Extension">Browser Extension</option>
+                  <option value="Chatbot / Conversational Application">Chatbot / Conversational Application</option>
+                  <option value="Custom Platform">Custom Platform</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-complexity">Overall Project Complexity</label>
+                <select id="wiz-proj-complexity" class="form-select">
+                  <option value="Low">Low (Standard architecture, low uncertainty)</option>
+                  <option value="Medium" selected>Medium (Standard enterprise integrations)</option>
+                  <option value="High">High (Complex workflows, strict security, high scale)</option>
+                  <option value="Very High">Very High (R&D, distributed architecture, compliance)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-scale">Expected User Scale</label>
+                <select id="wiz-proj-scale" class="form-select">
+                  <option value="1k-10k" selected>1,000 – 10,000 active users</option>
+                  <option value="10k-100k">10,000 – 100,000 active users</option>
+                  <option value="100k-1M">100,000 – 1,000,000 users</option>
+                  <option value="1M+">1,000,000+ enterprise scale</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-proj-region">Target Market / Region</label>
+                <select id="wiz-proj-region" class="form-select">
+                  <option value="India" selected>India (Domestic)</option>
+                  <option value="North America">North America (US/Canada)</option>
+                  <option value="Europe">Europe / UK</option>
+                  <option value="Southeast Asia">Southeast Asia / APAC</option>
+                  <option value="Global">Global Distributed</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top:1.5rem;">
+              <label class="form-label" for="wiz-proj-desc">Project Description & Scope Overview</label>
+              <textarea id="wiz-proj-desc" class="form-textarea" placeholder="Describe the business objectives, key target users, and key operational requirements..."></textarea>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <div></div>
+            <button class="btn btn-primary" onclick="nextWizardStep(1)">Next: Technical Requirements →</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: TECHNICAL REQUIREMENTS -->
+        <div id="wizard-step-2" class="wizard-step-pane">
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Step 2 — Technical Specifications</h2>
+                <p class="form-section-desc">Choose architecture components. If unsure, select 'Auto / Recommended'.</p>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label" for="tech-frontend">Frontend Stack</label>
+                <select id="tech-frontend" class="form-select">
+                  <option value="React" selected>React</option>
+                  <option value="Vue.js">Vue.js</option>
+                  <option value="Angular">Angular</option>
+                  <option value="Next.js">Next.js</option>
+                  <option value="Flutter">Flutter (Cross-platform)</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-backend">Backend Stack</label>
+                <select id="tech-backend" class="form-select">
+                  <option value="Node.js_Express" selected>Node.js / Express</option>
+                  <option value="FastAPI_Python">FastAPI / Python</option>
+                  <option value="Django">Django / Python</option>
+                  <option value="Spring_Boot">Java Spring Boot</option>
+                  <option value="Go">Go (Golang)</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-database">Database Architecture</label>
+                <select id="tech-database" class="form-select">
+                  <option value="PostgreSQL" selected>PostgreSQL</option>
+                  <option value="MongoDB">MongoDB</option>
+                  <option value="MySQL">MySQL</option>
+                  <option value="PostgreSQL + Redis">PostgreSQL + Redis Cache</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-cloud">Hosting / Cloud Platform</label>
+                <select id="tech-cloud" class="form-select">
+                  <option value="AWS" selected>Amazon Web Services (AWS)</option>
+                  <option value="GCP">Google Cloud Platform (GCP)</option>
+                  <option value="Azure">Microsoft Azure</option>
+                  <option value="Vercel_Supabase">Vercel + Supabase</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-payment">Payment Integration</label>
+                <select id="tech-payment" class="form-select">
+                  <option value="Stripe" selected>Stripe / Razorpay Gateway</option>
+                  <option value="Multiple">Multi-Currency / Multi-Gateway</option>
+                  <option value="None">None (No payments)</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-auth">Authentication Requirements</label>
+                <select id="tech-auth" class="form-select">
+                  <option value="JWT_Sessions" selected>Email/Password + JWT + Sessions</option>
+                  <option value="OAuth_SSO">Social Login + Google/Apple OAuth</option>
+                  <option value="Enterprise_SSO">Enterprise SAML / Okta SSO + MFA</option>
+                  <option value="Auto">Auto / Not Sure</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-security">Security & Compliance</label>
+                <select id="tech-security" class="form-select">
+                  <option value="Standard" selected>Standard Web Security (HTTPS, CORS, OWASP)</option>
+                  <option value="High">High Security (RBAC, Audit Logs, Rate Limiting)</option>
+                  <option value="Critical">Regulated / Critical (HIPAA, PCI-DSS, SOC2)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-realtime">Real-Time Functionality</label>
+                <select id="tech-realtime" class="form-select">
+                  <option value="None" selected>None (Standard HTTP REST/GraphQL)</option>
+                  <option value="WebSockets">WebSockets (Live Chat, Driver GPS, Feeds)</option>
+                  <option value="SSE">Server-Sent Events (Live notifications)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tech-testing">Quality & Testing Level</label>
+                <select id="tech-testing" class="form-select">
+                  <option value="Standard" selected>Standard QA (Manual + Unit Tests)</option>
+                  <option value="High">Comprehensive (End-to-End Cypress + Load Testing)</option>
+                  <option value="MissionCritical">Mission Critical (90%+ Coverage + Pentest)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn btn-secondary" onclick="prevWizardStep(2)">← Back to Step 1</button>
+            <button class="btn btn-primary" onclick="nextWizardStep(2)">Next: Feature Builder →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: FEATURE BUILDER -->
+        <div id="wizard-step-3" class="wizard-step-pane">
+          
+          <!-- AI Scope Assistant Card -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">🤖 AI Scope & Requirements Assistant</h2>
+                <p class="form-section-desc">Paste your scope text to automatically extract features using historical catalog priors</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="scope-description-input">Scope of Work Text</label>
+              <textarea id="scope-description-input" class="form-textarea" placeholder="Paste requirements here... e.g. Customer authentication, catalog browsing, cart checkout, Stripe payments, live GPS order tracking, merchant dashboard..."></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
+              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('food-delivery')">Load Food Delivery Preset</button>
+              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('fintech')">Load FinTech Preset</button>
+              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('saas')">Load SaaS CRM Preset</button>
+              <button class="btn btn-primary btn-sm" onclick="analyzeScopeRequirements()">✨ Extract Features</button>
+            </div>
+          </div>
+
+          <!-- Feature Table & Adder -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Project Features Catalog</h2>
+                <p class="form-section-desc">Each feature will be estimated using Empirical Bayes shrinkage priors</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openAddFeatureModal()">+ Add Custom Feature</button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Feature Name</th>
+                    <th>Category</th>
+                    <th>Complexity</th>
+                    <th>Dependencies</th>
+                    <th>Integrations</th>
+                    <th>Estimated Hours</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="features-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="features-summary-banner" style="margin-top:1.5rem; padding:1rem; background:rgba(59,130,246,0.08); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-weight:700;">Features Count: </span><span id="feat-count-badge">4</span> | 
+                <span style="font-weight:700;">Subtotal Feature Effort: </span><span id="feat-hours-badge">~120 Hours</span>
+              </div>
+              <span class="badge badge-medium">PERT Three-Point Distribution</span>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn btn-secondary" onclick="prevWizardStep(3)">← Back to Step 2</button>
+            <button class="btn btn-primary" onclick="nextWizardStep(3)">Next: Team & Rates →</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: TEAM AND RATES -->
+        <div id="wizard-step-4" class="wizard-step-pane">
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Step 4 — Team Allocation & Hourly Rates</h2>
+                <p class="form-section-desc">Adjust engineering headcount and billable rates. Rates strictly satisfy Total Labour = ∑(Hours × Rate).</p>
+              </div>
+            </div>
+
+            <div class="form-grid-3" style="margin-bottom:1.5rem;">
+              <div class="form-group">
+                <label class="form-label" for="wiz-team-size">Total Team Size (Headcount)</label>
+                <input type="number" id="wiz-team-size" class="form-input" min="1" max="30" value="4">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-rate-profile">Hourly Rate Profile</label>
+                <select id="wiz-rate-profile" class="form-select" onchange="handleRateProfileChange(this.value)">
+                  <option value="Startup">Startup Tier (₹600 - ₹1200 / hr)</option>
+                  <option value="Professional" selected>Professional Tier (₹900 - ₹1800 / hr)</option>
+                  <option value="Enterprise">Enterprise Tier (₹1400 - ₹2600 / hr)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-currency">Billing Currency</label>
+                <select id="wiz-currency" class="form-select">
+                  <option value="INR" selected>Indian Rupee (INR ₹)</option>
+                  <option value="USD">US Dollar (USD $)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Role Rates Grid -->
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Role Designation</th>
+                    <th>Headcount</th>
+                    <th>Hourly Rate (₹ / hr)</th>
+                    <th>Typical Allocation</th>
+                  </tr>
+                </thead>
+                <tbody id="role-rates-tbody">
+                  <tr>
+                    <td><strong>Frontend Developer</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="10"></td>
+                    <td><input type="number" class="form-input" id="rate-frontend" style="width:120px;" value="1200"></td>
+                    <td>25% of build hours</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Backend Developer</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="10"></td>
+                    <td><input type="number" class="form-input" id="rate-backend" style="width:120px;" value="1400"></td>
+                    <td>30% of build hours</td>
+                  </tr>
+                  <tr>
+                    <td><strong>UI/UX Designer</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
+                    <td><input type="number" class="form-input" id="rate-designer" style="width:120px;" value="1100"></td>
+                    <td>12% of build hours</td>
+                  </tr>
+                  <tr>
+                    <td><strong>QA / Test Engineer</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
+                    <td><input type="number" class="form-input" id="rate-qa" style="width:120px;" value="900"></td>
+                    <td>15% of build hours</td>
+                  </tr>
+                  <tr>
+                    <td><strong>DevOps / Cloud Engineer</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="0" min="0" max="5"></td>
+                    <td><input type="number" class="form-input" id="rate-devops" style="width:120px;" value="1500"></td>
+                    <td>8% of build hours</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Project Manager</strong></td>
+                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
+                    <td><input type="number" class="form-input" id="rate-pm" style="width:120px;" value="1500"></td>
+                    <td>10% of build hours</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn btn-secondary" onclick="prevWizardStep(4)">← Back to Step 3</button>
+            <button class="btn btn-primary" onclick="nextWizardStep(4)">Next: Timeline & Constraints →</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: TIMELINE AND CONSTRAINTS -->
+        <div id="wizard-step-5" class="wizard-step-pane">
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Step 5 — Timeline, Capacity & Budget Targets</h2>
+                <p class="form-section-desc">Specify calendar targets and contingency rate. Values are normalized into calendar days.</p>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label" for="wiz-timeline-value">Target Completion Time</label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="number" id="wiz-timeline-value" class="form-input" value="60" min="1">
+                  <select id="wiz-timeline-unit" class="form-select" style="width:130px;" onchange="convertTimelineToDays()">
+                    <option value="days" selected>Days</option>
+                    <option value="weeks">Weeks</option>
+                    <option value="months">Months</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-contingency">Contingency Rate</label>
+                <select id="wiz-contingency" class="form-select">
+                  <option value="0.10">10% (Low Uncertainty)</option>
+                  <option value="0.15" selected>15% (Standard Discovery)</option>
+                  <option value="0.20">20% (High Risk / Multiple APIs)</option>
+                  <option value="0.25">25% (R&D / Novel Algorithms)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-target-budget">Target Budget Constraint <span class="form-hint">(Optional ₹)</span></label>
+                <input type="number" id="wiz-target-budget" class="form-input" placeholder="e.g. 500000">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-work-hours">Working Hours per Day</label>
+                <input type="number" id="wiz-work-hours" class="form-input" value="8" min="4" max="12">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-work-days">Working Days per Week</label>
+                <input type="number" id="wiz-work-days" class="form-input" value="5" min="4" max="7">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="wiz-infra-costs">Infrastructure & Tooling Setup (₹)</label>
+                <input type="number" id="wiz-infra-costs" class="form-input" value="40000">
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn btn-secondary" onclick="prevWizardStep(5)">← Back to Step 4</button>
+            <button class="btn btn-primary" onclick="nextWizardStep(5)">Next: Review & Generate →</button>
+          </div>
+        </div>
+
+        <!-- STEP 6: REVIEW AND GENERATE ESTIMATE -->
+        <div id="wizard-step-6" class="wizard-step-pane">
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h2 class="form-section-title">Step 6 — Review Specifications & Generate Estimate</h2>
+                <p class="form-section-desc">Review your parameters before running the 23-step authoritative estimation engine</p>
+              </div>
+              <button class="btn btn-primary btn-lg" id="btn-run-estimation" onclick="executeFullEstimation()">
+                ⚡ Calculate Defensible Estimate
+              </button>
+            </div>
+
+            <!-- Review Summary Cards -->
+            <div class="form-grid-3" id="review-summary-cards" style="margin-bottom:1.5rem;">
+              <div class="kpi-card">
+                <div class="kpi-label">Project Scope</div>
+                <div style="font-weight:700; font-size:1.1rem;" id="rev-proj-name">SaaS Customer Portal</div>
+                <div class="kpi-subtext" id="rev-proj-type">SaaS Platform • Web Application</div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-label">Complexity & Team</div>
+                <div style="font-weight:700; font-size:1.1rem;" id="rev-proj-complexity">Medium Complexity</div>
+                <div class="kpi-subtext" id="rev-proj-team">4 Engineers • Professional Tier</div>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-label">Features & Target</div>
+                <div style="font-weight:700; font-size:1.1rem;" id="rev-features-count">4 Features Configured</div>
+                <div class="kpi-subtext" id="rev-timeline-target">Target: 60 Calendar Days</div>
+              </div>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="estimation-loading-state" style="display:none; text-align:center; padding:3rem;">
+              <div class="brand-icon" style="margin:0 auto 1.5rem; animation:spin 1s linear infinite;">⚡</div>
+              <h3>Running Authoritative 23-Step Estimation Engine...</h3>
+              <p style="color:var(--text-muted); margin-top:0.5rem;">
+                Computing Empirical Bayes shrinkage, supervised Random Forest predictions, DAG critical path, and Brooks' law capacity.
+              </p>
+            </div>
+
+            <!-- ESTIMATION RESULTS PANEL -->
+            <div id="estimation-results-panel" style="display:none;">
+              
+              <!-- Top Financial Summary Cards -->
+              <div class="kpi-grid">
+                <div class="kpi-card">
+                  <div class="kpi-label">Final Build Budget</div>
+                  <div class="kpi-value" id="res-final-budget">₹0</div>
+                  <div class="kpi-subtext" id="res-budget-range">Confidence Range: ₹0 – ₹0</div>
+                </div>
+
+                <div class="kpi-card">
+                  <div class="kpi-label">Total Engineering Effort</div>
+                  <div class="kpi-value" id="res-total-effort">0 Hours</div>
+                  <div class="kpi-subtext" id="res-effort-pert">PERT: O: 0h • P: 0h</div>
+                </div>
+
+                <div class="kpi-card">
+                  <div class="kpi-label">Likely Duration</div>
+                  <div class="kpi-value" id="res-likely-days">0 Days</div>
+                  <div class="kpi-subtext" id="res-timeline-feasibility">Timeline Feasible</div>
+                </div>
+
+                <div class="kpi-card">
+                  <div class="kpi-label">Overall Project Risk</div>
+                  <div class="kpi-value" id="res-risk-level">Medium</div>
+                  <div class="kpi-subtext" id="res-confidence-score">Confidence Score: 85%</div>
+                </div>
+              </div>
+
+              <!-- Labour Cost Breakdown Table -->
+              <div class="form-section">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Authoritative Labour & Role Cost Breakdown</h3>
+                    <p class="form-section-desc">Financial Invariant: Labour Cost = ∑(Allocated Role Hours × Hourly Rate)</p>
+                  </div>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Role</th>
+                        <th>Allocated Hours</th>
+                        <th>Hourly Rate (₹)</th>
+                        <th>Total Role Cost (₹)</th>
+                        <th>% of Total Effort</th>
+                      </tr>
+                    </thead>
+                    <tbody id="res-role-breakdown-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- ML Model Benchmark & Reconciliation -->
+              <div class="form-section">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Machine Learning Benchmark & Reconciliation</h3>
+                    <p class="form-section-desc">Comparing bottom-up feature priors with supervised Random Forest regression</p>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="kpi-card">
+                    <div class="kpi-label">Bottom-Up Feature Effort</div>
+                    <div style="font-size:1.3rem; font-weight:700;" id="res-feat-subtotal">0 Hours</div>
+                    <div class="kpi-subtext">Sum of PERT priors</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Top-Down ML Prediction</div>
+                    <div style="font-size:1.3rem; font-weight:700;" id="res-ml-effort">0 Hours</div>
+                    <div class="kpi-subtext">Random Forest benchmark</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Reconciliation Delta</div>
+                    <div style="font-size:1.3rem; font-weight:700;" id="res-ml-delta">0%</div>
+                    <div class="kpi-subtext" id="res-ml-warning">Effort reconciled successfully</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Bar to Save Project -->
+              <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                <button class="btn btn-secondary" onclick="jumpToWizardStep(1)">Edit Parameters</button>
+                <button class="btn btn-primary btn-lg" onclick="saveCurrentEstimateToDatabase()">
+                  💾 Save Project to My Projects
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="wizard-footer">
+            <button class="btn btn-secondary" onclick="prevWizardStep(6)">← Back to Step 5</button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 3: MY PROJECTS                                           -->
+      <!-- ============================================================= -->
+      <section id="page-my-projects" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">My Projects</h1>
+              <p class="form-section-desc">Persisted software estimates saved to your account</p>
+            </div>
+            <button class="btn btn-primary" onclick="navigateTo('new-estimate')">+ New Estimate</button>
+          </div>
+
+          <!-- Project Filter Toolbar -->
+          <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+            <input type="text" class="form-input" id="projects-filter-input" placeholder="Filter by name..." style="max-width:280px;" oninput="filterProjectsList(this.value)">
+            <select class="form-select" id="projects-filter-complexity" style="max-width:180px;" onchange="filterProjectsList()">
+              <option value="ALL">All Complexities</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Very High">Very High</option>
+            </select>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Domain</th>
+                  <th>Platform</th>
+                  <th>Complexity</th>
+                  <th>Estimated Budget</th>
+                  <th>Effort (Hours)</th>
+                  <th>Timeline</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="my-projects-tbody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 4: ANALYTICS & KPIS                                      -->
+      <!-- ============================================================= -->
+      <section id="page-analytics" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">Analytics & Estimation KPIs</h1>
+              <p class="form-section-desc">Empirical metrics derived from your real saved estimates and model benchmarks</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="loadAnalyticsData()">🔄 Refresh Analytics</button>
+          </div>
+
+          <!-- Analytics KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Total Saved Projects</div>
+              <div class="kpi-value" id="analytics-total-projects">0</div>
+              <div class="kpi-subtext">Active database records</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Average Budget</div>
+              <div class="kpi-value" id="analytics-avg-budget">₹0</div>
+              <div class="kpi-subtext">Across all domains</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Average Effort</div>
+              <div class="kpi-value" id="analytics-avg-effort">0 Hours</div>
+              <div class="kpi-subtext">Total engineering hours</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Average Duration</div>
+              <div class="kpi-value" id="analytics-avg-duration">0 Days</div>
+              <div class="kpi-subtext">Feasible calendar timeline</div>
+            </div>
+          </div>
+
+          <!-- Breakdown Sections -->
+          <div class="form-grid-2">
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Budget by Project Domain</h3>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Domain</th>
+                      <th>Projects</th>
+                      <th>Average Budget</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analytics-by-domain-tbody">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Effort by Complexity</h3>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Complexity</th>
+                      <th>Count</th>
+                      <th>Average Hours</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analytics-by-comp-tbody">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 5: DATASETS & ML LAB                                     -->
+      <!-- ============================================================= -->
+      <section id="page-ml-lab" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">Datasets & ML Model Lab</h1>
+              <p class="form-section-desc">Transparent model provenance, supervised metrics, and retraining telemetry</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openRetrainModal()">⚡ Retrain ML Models</button>
+          </div>
+
+          <!-- Dataset Provenance Card -->
+          <div class="kpi-card" style="margin-bottom:1.5rem;">
+            <div class="kpi-label">Active Training Dataset</div>
+            <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">CostPilot_AI_Training_Dataset.xlsx</div>
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+              <strong>Provenance:</strong> 2,500 projects • 44,301 feature records • 20 edge cases • 7 workbook sheets.
+              Preserved provenance: This simulated training set provides supervised benchmarks and empirical priors without claiming to represent unverified external commercial contracts.
+            </p>
+          </div>
+
+          <!-- Held-out Test Metrics -->
+          <div class="form-section" style="margin-bottom:1.5rem;">
+            <h3 class="form-section-title" style="margin-bottom:1rem;">Supervised Held-Out Test Evaluation Metrics</h3>
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <div class="kpi-label">Cost Model R² Score</div>
+                <div class="kpi-value">0.6229</div>
+                <div class="kpi-subtext">MAE: ₹138,591 • Random Forest</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Effort Model R² Score</div>
+                <div class="kpi-value">0.7185</div>
+                <div class="kpi-subtext">MAE: 101.4 Hours • Random Forest</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Duration Model R² Score</div>
+                <div class="kpi-value">0.5328</div>
+                <div class="kpi-subtext">MAE: 14.2 Days • Random Forest</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Target Leakage Audit</div>
+                <div class="kpi-value" style="color:var(--accent-emerald);">CLEAN</div>
+                <div class="kpi-subtext">Zero leakage detected</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 6: USER PROFILE                                          -->
+      <!-- ============================================================= -->
+      <section id="page-profile" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">User Profile</h1>
+              <p class="form-section-desc">Manage your personal details and authentication credentials</p>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Edit Profile Details -->
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Account Information</h3>
+              <form id="form-update-profile" onsubmit="handleUpdateProfile(event)">
+                <div class="form-group" style="margin-bottom:1rem;">
+                  <label class="form-label" for="prof-name">Full Name</label>
+                  <input type="text" id="prof-name" class="form-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                  <label class="form-label" for="prof-email">Email Address <span class="form-hint">(Read-only)</span></label>
+                  <input type="email" id="prof-email" class="form-input" disabled style="opacity:0.6;">
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                  <label class="form-label" for="prof-phone">Phone Number</label>
+                  <input type="tel" id="prof-phone" class="form-input">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+              </form>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Change Password</h3>
+              <form id="form-change-password" onsubmit="handleChangePassword(event)">
+                <div class="form-group" style="margin-bottom:1rem;">
+                  <label class="form-label" for="pwd-current">Current Password</label>
+                  <input type="password" id="pwd-current" class="form-input" required>
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                  <label class="form-label" for="pwd-new">New Password</label>
+                  <input type="password" id="pwd-new" class="form-input" required minlength="8">
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                  <label class="form-label" for="pwd-confirm">Confirm New Password</label>
+                  <input type="password" id="pwd-confirm" class="form-input" required minlength="8">
+                </div>
+                <button type="submit" class="btn btn-secondary">Update Password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 7: SETTINGS                                              -->
+      <!-- ============================================================= -->
+      <section id="page-settings" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">Application Settings</h1>
+              <p class="form-section-desc">Configure default estimation parameters, rate profiles, and theme preferences</p>
+            </div>
+            <button class="btn btn-primary" onclick="saveAppSettings()">Save Preferences</button>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Estimation Defaults</h3>
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="sett-currency">Default Currency</label>
+                <select id="sett-currency" class="form-select">
+                  <option value="INR" selected>Indian Rupee (INR ₹)</option>
+                  <option value="USD">US Dollar (USD $)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="sett-rate-profile">Default Rate Profile</label>
+                <select id="sett-rate-profile" class="form-select">
+                  <option value="Startup">Startup Tier (₹600 - ₹1200 / hr)</option>
+                  <option value="Professional" selected>Professional Tier (₹900 - ₹1800 / hr)</option>
+                  <option value="Enterprise">Enterprise Tier (₹1400 - ₹2600 / hr)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="sett-hours">Working Hours per Day</label>
+                <input type="number" id="sett-hours" class="form-input" value="8" min="4" max="12">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="sett-contingency">Default Contingency Rate</label>
+                <select id="sett-contingency" class="form-select">
+                  <option value="0.10">10%</option>
+                  <option value="0.15" selected>15%</option>
+                  <option value="0.20">20%</option>
+                  <option value="0.25">25%</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section" style="margin-bottom:0;">
+              <h3 class="form-section-title" style="margin-bottom:1rem;">Appearance & Environment</h3>
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label" for="sett-theme">Interface Theme</label>
+                <select id="sett-theme" class="form-select" onchange="handleThemeSelect(this.value)">
+                  <option value="dark" selected>Sleek Dark Mode (Default)</option>
+                  <option value="light">Clean Light Mode</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Platform Multipliers Active</label>
+                <div style="font-size:0.85rem; color:var(--text-muted);">
+                  17 Platforms configured in backend • Strict frontend client scaling only
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- PAGE 8: ABOUT COSTPILOT AI                                    -->
+      <!-- ============================================================= -->
+      <section id="page-about" class="page-content">
+        <div class="form-section">
+          <div class="form-section-header">
+            <div>
+              <h1 class="form-section-title">About CostPilot AI</h1>
+              <p class="form-section-desc">Authoritative estimation pipeline and methodology</p>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1.5rem; line-height:1.7;">
+            <p>
+              <strong>CostPilot AI</strong> is an enterprise software cost estimation platform designed to replace unverified arbitrary price guesses with defensible, mathematically grounded engineering estimates.
+            </p>
+
+            <div class="form-grid-3">
+              <div class="kpi-card">
+                <div class="kpi-label">1. Empirical Bayes Priors</div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+                  Every discrete feature is estimated using Three-Point PERT (Optimistic, Most Likely, Pessimistic) shrunk toward historical category distributions from 44,301 features.
+                </p>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-label">2. Supervised Random Forest</div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+                  Trained scikit-learn models predict top-down effort, cost, and duration benchmarks with zero target leakage and held-out cross-validation.
+                </p>
+              </div>
+
+              <div class="kpi-card">
+                <div class="kpi-label">3. Financial Invariants</div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
+                  Strict financial consistency: Labour Cost = ∑(Allocated Role Hours × Hourly Rate). Contingency is applied strictly once to pre-contingency totals.
+                </p>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">Brooks' Law Coordination & Critical Path</div>
+              <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.5rem;">
+                Software development capacity is not strictly linear. As team size increases, communication coordination channels scale at n(n-1)/2, reducing individual productive throughput. Feature dependencies are modeled as a Directed Acyclic Graph (DAG) to calculate the real critical path.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODALS                                                            -->
+  <!-- ================================================================= -->
+  
+  <!-- Delete Project Confirmation Modal -->
+  <div id="modal-delete-project" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete Project Confirmation</h3>
+        <button class="modal-close-btn" onclick="closeDeleteModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="delete-modal-project-name">Project</strong>?</p>
+        <p style="color:var(--accent-rose); font-size:0.85rem; margin-top:0.5rem;">
+          This will permanently delete the project record, its estimates, and what-if history from the database. This action cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn btn-danger" id="btn-confirm-delete" onclick="confirmDeleteProject()">Delete Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Project Details Modal -->
+  <div id="modal-view-project" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="view-modal-title">Project Estimate Details</h3>
+        <button class="modal-close-btn" onclick="closeViewProjectModal()">×</button>
+      </div>
+      <div class="modal-body" id="view-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeViewProjectModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Feature Modal -->
+  <div id="modal-feature-form" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="feature-modal-title">Add Custom Feature</h3>
+        <button class="modal-close-btn" onclick="closeFeatureModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-feature-modal" onsubmit="handleSaveFeatureModal(event)">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="feat-modal-name">Feature Name</label>
+            <input type="text" id="feat-modal-name" class="form-input" required placeholder="e.g. Stripe Subscription Billing">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="feat-modal-category">Category</label>
+            <select id="feat-modal-category" class="form-select">
+              <option value="Authentication">Authentication</option>
+              <option value="CRUD/data module">CRUD/data module</option>
+              <option value="Payment integration">Payment integration</option>
+              <option value="Admin dashboard">Admin dashboard</option>
+              <option value="Real-time features">Real-time features</option>
+              <option value="AI API feature">AI API feature</option>
+              <option value="Third-party API integration">Third-party API integration</option>
+              <option value="Search/filter">Search/filter</option>
+              <option value="Analytics/reporting">Analytics/reporting</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="feat-modal-complexity">Complexity</label>
+            <select id="feat-modal-complexity" class="form-select">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+              <option value="Very High">Very High</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label" for="feat-modal-integrations">External API Integrations Count</label>
+            <input type="number" id="feat-modal-integrations" class="form-input" value="0" min="0" max="10">
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeFeatureModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Feature</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Retrain ML Modal -->
+  <div id="modal-retrain" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Retrain Machine Learning Models</h3>
+        <button class="modal-close-btn" onclick="closeRetrainModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>This will retrain the Random Forest Regression models on <code>CostPilot_AI_Training_Dataset.xlsx</code> with zero target leakage.</p>
+        <div id="retrain-status-text" style="margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
+          Current status: Ready to train.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeRetrainModal()">Cancel</button>
+        <button class="btn btn-primary" id="btn-start-retrain" onclick="executeRetrain()">Start Training Pipeline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+{
+  "dataset_file": "CostPilot_AI_Training_Dataset.xlsx",
+  "is_synthetic": true,
+  "provenance_notice": "SIMULATED / SYNTHETIC DATASET. Not verified commercial contract actuals.",
+  "sheets_found": [
+    "README_START_HERE",
+    "Projects_Training",
+    "Feature_Level_Data",
+    "Edge_Cases",
+    "Feature_Effort_Priors",
+    "Summary_By_Project_Type",
+    "Data_Dictionary"
+  ],
+  "projects_count": 2500,
+  "features_count": 44301,
+  "edge_cases_count": 20,
+  "validation_errors": [],
+  "validation_warnings": [],
+  "summary": {
+    "projects_count": 2500,
+    "features_count": 44301,
+    "priors_count": 25,
+    "edge_cases_count": 20,
+    "project_types": [
+      "AI-enabled Platform",
+      "Blog_CMS",
+      "Booking Platform",
+      "Business Website",
+      "CRM",
+      "E-commerce",
+      "Fintech Application",
+      "Healthcare Portal",
+      "Internal Admin Tool",
+      "Learning Management System",
+      "Logistics/Tracking",
+      "Marketplace",
+      "Mobile App + Backend",
+      "Portfolio Website",
+      "SaaS Web Application"
+    ],
+    "complexity_levels": [
+      "High",
+      "Low",
+      "Medium",
+      "Very High"
+    ],
+    "frontend_stacks": [
+      "Angular",
+      "HTML_CSS_JS",
+      "Next.js",
+      "React",
+      "Shopify",
+      "Vue",
+      "WordPress"
+    ],
+    "backend_stacks": [
+      "Django",
+      "Laravel",
+      "Node.js_Express",
+      "Ruby_on_Rails",
+      "Serverless",
+      "Spring_Boot",
+      "WordPress_PHP"
+    ],
+    "databases": [
+      "Firebase",
+      "MongoDB",
+      "MySQL",
+      "NoSQL_Managed",
+      "PostgreSQL",
+      "SQLite"
+    ],
+    "hosting_platforms": [
+      "AWS",
+      "Azure",
+      "DigitalOcean",
+      "Google_Cloud",
+      "Managed_SaaS",
+      "Shared_Hosting",
+      "Vercel"
+    ],
+    "client_regions": [
+      "India_metro",
+      "India_tier2",
+      "International_remote"
+    ],
+    "null_values_projects": {},
+    "null_values_features": {},
+    "cost_target_mean_inr": 1285472.28,
+    "cost_target_median_inr": 1121150.0,
+    "effort_target_mean_hours": 970.7188800000001,
+    "effort_target_median_hours": 930.75,
+    "duration_target_mean_days": 57.2016
+  }
+}

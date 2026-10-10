@@ -1,0 +1,1074 @@
+# COSTPILOT AI — MASTER IMPLEMENTATION PROMPT
+## Dataset-Driven Machine Learning + Full-Stack Software Cost Estimation
+
+Act as a senior full-stack engineer, machine learning engineer, data scientist, software estimation specialist, database architect, and QA engineer.
+
+Your task is to inspect, upgrade, integrate, test, and complete my EXISTING CostPilot AI website using the supplied Excel training dataset and implementation plan.
+
+Do not build an unrelated replacement website. Preserve the existing working interface, features, branding, and user workflow wherever possible. Upgrade the underlying estimation system so that the website produces defensible, explainable, dataset-driven software project estimates.
+
+The highest priority is estimation correctness, not decorative UI.
+
+==================================================
+PHASE 1 — INSPECT THE EXISTING PROJECT
+==================================================
+
+Before editing any file:
+
+1. Inspect the complete repository and identify:
+   - Existing frontend framework and entry point.
+   - Existing CSS, JavaScript, React components or other UI code.
+   - Existing backend and API endpoints.
+   - Current estimation functions and formulas.
+   - Existing authentication, dashboard, feature builder and results pages.
+   - Current database and saved-project implementation.
+   - Existing AI provider integration and environment variables.
+   - Existing dependencies, configuration and startup commands.
+   - Existing tests and model artifacts.
+
+2. Identify the current implementation of the CostPilot AI estimation workflow.
+
+3. Find all hardcoded effort values, complexity multipliers, platform multipliers, cost rates, arbitrary confidence percentages, fabricated results and duplicate estimation formulas.
+
+4. Create a short implementation checklist and map each existing UI input to the backend field that should receive it.
+
+5. Preserve working functionality. Do not delete working features or replace the entire project merely to use a preferred framework.
+
+6. If the current website uses HTML, CSS and JavaScript, retain that stack unless a migration is genuinely necessary. If it already uses React, TypeScript or another framework, work with the existing architecture.
+
+7. Implement in small, testable stages. Do not stop after writing a plan or creating empty files.
+
+==================================================
+PHASE 2 — INTEGRATE AND INSPECT THE EXCEL DATASET
+==================================================
+
+Use the actual uploaded workbook:
+
+CostPilot_AI_Training_Dataset(3).xlsx
+
+Locate the workbook in the current project or its supplied upload location. Copy it into an appropriate backend data directory without modifying the original.
+
+Suggested location:
+
+backend/data/CostPilot_AI_Training_Dataset.xlsx
+
+Inspect every sheet, its column names, data types, missing values, duplicate identifiers, target definitions and provenance.
+
+The supplied workbook contains these sheets:
+
+- README_START_HERE
+- Projects_Training
+- Feature_Level_Data
+- Edge_Cases
+- Feature_Effort_Priors
+- Summary_By_Project_Type
+- Data_Dictionary
+
+The documented dataset contains 2,500 simulated project records, 44,301 simulated feature records and 20 synthetic stress-test scenarios.
+
+Do not assume that the data is genuine commercial contract data. Mark it as synthetic throughout model metadata and the user-facing methodology.
+
+Use pandas and openpyxl to load Excel data.
+
+Create a reproducible data preparation module, for example:
+
+backend/app/services/ml/data_loader.py
+
+Responsibilities:
+
+- Load the required sheets.
+- Validate required columns.
+- Check data types.
+- Validate non-negative numeric fields.
+- Check duplicate project identifiers.
+- Check duplicate or invalid feature records.
+- Validate feature-to-project relationships using project_id.
+- Detect missing values and invalid categories.
+- Identify target leakage risks.
+- Preserve source provenance.
+- Produce a data quality report.
+- Fail with a useful error if a required target or input is missing.
+
+Do not silently invent missing dataset columns.
+
+If the workbook changes, use explicit schema mappings and clear validation errors instead of assuming the old schema still applies.
+
+Keep synthetic training records, genuine future project outcomes and illustrative edge cases distinguishable.
+
+Do not automatically add the Edge_Cases sheet to model training. Use it for separate stress testing unless a documented and justified alternative is implemented.
+
+==================================================
+PHASE 3 — BUILD THE MACHINE LEARNING TRAINING PIPELINE
+==================================================
+
+Create a reproducible scikit-learn training pipeline.
+
+Suggested files:
+
+backend/app/services/ml/train_model.py
+backend/app/services/ml/data_loader.py
+backend/app/services/ml/predictor.py
+backend/app/services/ml/model_registry.py
+backend/artifacts/
+backend/reports/model_metrics.json
+
+Use RandomForestRegressor as the primary model where the available labels support regression.
+
+Build separate models for supported prediction targets.
+
+Potential targets:
+
+1. total_estimated_effort_hours
+2. estimated_duration_calendar_days
+3. target_cost_excluding_contingency_inr
+4. target_estimated_cost_inr
+5. target_labour_cost_inr
+
+Only train targets after confirming their definitions and ensuring that the required target is appropriate for the intended prediction.
+
+A target must be predicted using information available when a user requests a new estimate.
+
+DATA LEAKAGE PREVENTION IS MANDATORY.
+
+For the target target_estimated_cost_inr, never use the following as input features:
+
+- target_estimated_cost_inr
+- target_cost_excluding_contingency_inr
+- target_labour_cost_inr
+- Any mathematical transformation that reveals the target.
+- Effort or duration outputs that would not be available at prediction time.
+- Post-project information or other future measurements.
+
+Perform a separate leakage audit for each model target.
+
+Do not merely remove the target column while leaving equivalent information in the inputs.
+
+For a project-level model, suitable candidate input features include:
+
+- project_type
+- project_complexity
+- feature_count
+- website_pages_or_screens
+- frontend_stack
+- backend_stack
+- database
+- hosting_platform
+- expected_user_band
+- integration_count
+- user_role_count
+- deadline_pressure
+- quality_requirement
+- client_region
+
+Include other columns only after checking their meaning and availability at estimation time.
+
+Feature-level complexity aggregates may be calculated from Feature_Level_Data, but they must be computed without accessing target-derived information.
+
+When predicting project effort, do not use total_estimated_effort_hours as an input.
+
+When predicting duration, do not use the known final duration as an input.
+
+Do not use cost targets as input features for another cost target when they mathematically reveal the answer.
+
+PREPROCESSING:
+
+- Use ColumnTransformer where appropriate.
+- Impute missing numeric values.
+- Impute and encode categorical values.
+- Use a reproducible scikit-learn Pipeline.
+- Ensure inference uses exactly the same preprocessing as training.
+- Handle previously unseen categories safely.
+- Fix the random seed.
+- Save the fitted pipeline and model metadata with joblib.
+
+SPLITTING:
+
+- Split project-level records by project_id.
+- Never allow features from the same project to leak into both training and testing.
+- Keep all feature records belonging to a project in the same partition.
+- Use a held-out test set.
+- Use grouped validation where applicable.
+- Do not train and evaluate on the same records.
+- Do not include edge-case stress tests in the ordinary random training split.
+
+MODEL EVALUATION:
+
+Calculate actual held-out metrics:
+
+- MAE
+- RMSE
+- R²
+- MMRE only where its denominator is mathematically valid, with zero-target cases handled explicitly.
+- Median percentage error or MdMRE where appropriate.
+- Baseline model performance.
+- Training record count.
+- Validation record count.
+- Test record count.
+
+Save actual metrics to a JSON report.
+
+Never fabricate metrics or display assumed accuracy.
+
+Compare the trained model against a simple baseline such as a median predictor.
+
+If the model performs poorly, report that clearly and use a documented fallback rather than claiming the model is accurate.
+
+Because the current workbook is synthetic, label model results as performance on simulated data. Do not describe them as proven real-world pricing accuracy.
+
+TRAINING COMMAND:
+
+Provide a working command from the actual backend directory:
+
+python -m app.services.ml.train_model
+
+Adapt this command to the final package structure if needed.
+
+Train models offline or during an explicit model-training operation. Do not retrain every time a user requests an estimate.
+
+Save a model version, feature schema, target definition, training timestamp, dataset provenance, hyperparameters, metrics and preprocessing information.
+
+Never replace a working model artifact unless the new artifact has passed validation and loads successfully.
+
+==================================================
+PHASE 4 — CREATE THE FEATURE-LEVEL EFFORT ENGINE
+==================================================
+
+Use Feature_Effort_Priors and Feature_Level_Data as distinct sources of information.
+
+Feature_Effort_Priors contains initial hours by feature category and complexity. Treat these as configurable planning priors, not verified market averages.
+
+Feature_Level_Data contains project-linked simulated feature records.
+
+Implement feature matching using:
+
+- Normalized feature category.
+- Feature complexity.
+- Available feature attributes.
+- Relevant integration count.
+- Reuse level, where available.
+- Project and technology context, where supported.
+
+For each requested feature, choose one primary estimation method.
+
+Priority:
+
+1. Validated feature-level model, if one has been trained and evaluated appropriately.
+2. Matched historical feature-effort estimate or catalog prior.
+3. Documented rule-based fallback.
+4. Clearly labelled generic fallback for unknown features.
+
+Where possible, use robust statistics such as median effort for matched historical feature groups. Apply minimum sample thresholds and shrink unreliable small-sample estimates toward an appropriate broader category prior.
+
+Do not pretend a small sample provides a reliable category-specific prediction.
+
+Normalize category names consistently. For example, authentication-related features should not be split into unrelated categories simply because users enter slightly different wording.
+
+For a custom feature, explain which category or fallback was used.
+
+Each feature result must contain:
+
+- Feature name.
+- Normalized category.
+- Complexity.
+- Optimistic effort.
+- Most likely effort.
+- Pessimistic effort.
+- Expected effort.
+- Estimation method.
+- Matched record count, if applicable.
+- Relevant assumptions.
+- Whether the estimate needs user review.
+
+Every expected feature effort must be non-negative.
+
+Use one primary effort estimate per feature. Do not add the catalog estimate and the ML estimate together.
+
+==================================================
+PHASE 5 — COMPLEXITY AND REQUIREMENT ANALYSIS
+==================================================
+
+Support four complexity levels:
+
+- Low
+- Medium
+- High
+- Very High
+
+Support three ways of setting feature complexity:
+
+1. Automatic suggestion.
+2. Manual complexity selection.
+3. Advanced factor-based editing.
+
+Where the implementation plan's nine-factor complexity model is used, define the factors and weights in configuration:
+
+- Technical difficulty: 20%
+- Database complexity: 10%
+- Integration complexity: 15%
+- Security: 15%
+- UI/UX complexity: 10%
+- Real-time requirements: 10%
+- AI/ML requirements: 10%
+- Platform complexity: 5%
+- Dependencies: 5%
+
+Each factor ranges from 0 to 5.
+
+Weighted score:
+
+WeightedScore = Sum(FactorScore × FactorWeight)
+
+ComplexityScore = WeightedScore / 5 × 100
+
+Suggested levels:
+
+- 0–24: Low
+- 25–49: Medium
+- 50–74: High
+- 75–100: Very High
+
+Store these weights and thresholds in configuration.
+
+If users choose a manual complexity level, preserve their choice unless they explicitly request re-analysis.
+
+If a configured complexity factor is unavailable, use a documented default and disclose that assumption.
+
+Implement optional AI requirement extraction through the existing AI provider, if configured.
+
+AI can suggest:
+
+- Features.
+- Feature categories.
+- Complexity.
+- Dependencies.
+- Integrations.
+- Missing requirements.
+- Assumptions.
+
+Validate the returned JSON using Pydantic or the project's existing schema validation system.
+
+If AI is unavailable or returns invalid data, fall back to manual or rule-based analysis.
+
+Never claim an LLM was called if no successful call occurred.
+
+AI must not directly set the final budget or modify model parameters, rate tables, formulas or application configuration.
+
+==================================================
+PHASE 6 — IMPLEMENT THE AUTHORITATIVE ESTIMATION ENGINE
+==================================================
+
+Create one authoritative backend estimation service.
+
+Suggested file:
+
+backend/app/services/estimation/engine.py
+
+All estimates, recalculations, comparisons and what-if scenarios must use this service.
+
+Do not maintain separate competing estimation formulas in the frontend, dashboard, API, comparison module and analytics module.
+
+Implement this calculation sequence:
+
+1. Validate project inputs.
+2. Validate features and identifiers.
+3. Validate dependencies.
+4. Calculate dependency graph properties.
+5. Calculate feature complexity.
+6. Obtain feature-level O/M/P effort.
+7. Apply justified integration adjustments.
+8. Apply platform adjustment only to the relevant client-side effort.
+9. Add fixed project-level work not already included in feature estimates.
+10. Calculate expected total effort.
+11. Reconcile the project-level ML prediction with feature-level totals.
+12. Allocate effort by role.
+13. Calculate staffing and available capacity.
+14. Calculate team scaling and coordination adjustments if supported.
+15. Calculate the critical path.
+16. Calculate timeline feasibility.
+17. Calculate uncertainty and contingency.
+18. Calculate role-based labour costs.
+19. Add applicable infrastructure, tools and other direct costs.
+20. Calculate the final budget range.
+21. Calculate risk and confidence using documented rules.
+22. Generate recommendations and assumptions.
+23. Return the structured estimate and its version metadata.
+
+THREE-POINT ESTIMATION:
+
+For each work item, use:
+
+ExpectedHours = (Optimistic + 4 × MostLikely + Pessimistic) / 6
+
+StandardDeviation = (Pessimistic - Optimistic) / 6
+
+Apply this to features and fixed project work whenever O/M/P inputs are available.
+
+Fixed work may include:
+
+- Kickoff and requirements.
+- Architecture.
+- Repository setup.
+- Environment setup.
+- CI/CD.
+- Deployment.
+- Documentation.
+- Basic monitoring.
+
+Only include work not already covered by feature estimates.
+
+Use a documented correlation adjustment for project-level uncertainty if the statistical assumptions justify it.
+
+Do not invent statistically calibrated confidence intervals from unsupported percentages.
+
+Do not blindly multiply every feature by every complexity, platform, integration and risk multiplier. This would inflate costs by repeatedly counting the same work.
+
+PLATFORM ADJUSTMENT:
+
+Use configurable platform multipliers, but apply them only to the appropriate client-side portion of feature effort.
+
+AdjustedEffort = BackendEffort + (ClientEffort × PlatformMultiplier)
+
+Do not multiply the entire backend effort by the number of platforms.
+
+If the dataset does not provide a reliable client/backend split, use a documented configurable assumption and disclose it.
+
+EFFORT RECONCILIATION:
+
+The project-level ML model and feature-level estimator must not be added together as two complete estimates.
+
+Compare their outputs and use a documented reconciliation strategy.
+
+Default strategy:
+
+- Feature-level estimates provide the primary explainable breakdown.
+- The project-level model provides a cross-check and contextual benchmark.
+- A calibrated combination may be used only if validated on held-out data.
+
+If predictions differ substantially, display a warning, identify the discrepancy and explain that the estimate requires review.
+
+Do not silently force the outputs to match.
+
+==================================================
+PHASE 7 — DEPENDENCIES, TEAM AND TIMELINE
+==================================================
+
+DEPENDENCY GRAPH:
+
+Allow users to link dependent features.
+
+Calculate upstream dependencies, downstream dependencies and dependency depth.
+
+Reject circular dependencies before estimation.
+
+Use a directed acyclic graph for critical-path calculation.
+
+Do not double-count the same integration in the feature effort and as a separate project item.
+
+TEAM ROLES:
+
+Support:
+
+- Frontend Developer.
+- Backend Developer.
+- Full-Stack Developer, if used by the current interface.
+- UI/UX Designer.
+- QA/Test Engineer.
+- DevOps/Cloud Engineer.
+- Data/ML Engineer.
+- Project Manager.
+- Security Specialist when justified.
+
+Choose relevant roles based on the project.
+
+Use configurable role allocation profiles. A single generic split must not be imposed on every project type.
+
+Role allocations must be consistent with the definition of total effort.
+
+If the project's effort is total person-hours, role allocation percentages must sum to 100% for the work being allocated.
+
+If different workstreams represent separate activities, account for them explicitly and ensure that the same work is not counted twice.
+
+For each role, calculate:
+
+- Allocated hours.
+- Required FTE.
+- Recommended number of people.
+- Configured hourly rate.
+- Labour cost.
+
+Allow fractional FTE allocations for scheduling. Do not charge for a full-time person when only a fraction of their hours is allocated.
+
+CAPACITY:
+
+Use configurable:
+
+- Working hours per day.
+- Productive hours per day.
+- Working days per week.
+- Availability and leave assumptions.
+- Team size limits.
+
+Basic capacity:
+
+CapacityHours = People × ProductiveHoursPerDay × WorkingDays
+
+For project capacity, calculate across the requested duration.
+
+For role capacity, calculate separately by role.
+
+Do not apply the same productivity or efficiency reduction twice.
+
+TIMELINE:
+
+Calculate a feasible timeline from:
+
+- Required effort.
+- Critical-path duration.
+- Dependencies.
+- Available role capacity.
+- Work that can be performed in parallel.
+- Fixed project work.
+- Testing and deployment.
+- Coordination overhead.
+- Team size.
+
+Display the requested timeline, estimated feasible timeline, capacity constraints and feasibility status.
+
+If the requested deadline is impossible under the configured capacity constraints, report it as infeasible rather than fabricating a feasible schedule.
+
+Adding team members must not reduce duration in direct proportion without accounting for dependencies and coordination.
+
+A shorter deadline can increase staffing needs, cost and schedule risk, but must not arbitrarily change the underlying feature effort.
+
+==================================================
+PHASE 8 — COST ENGINE AND BUDGET RANGE
+==================================================
+
+Use configurable role-specific hourly rates.
+
+Provide rate profiles such as:
+
+- Startup.
+- Professional.
+- Enterprise.
+- Custom.
+
+The current workbook's rates are simulated estimates, not verified market rates. Label them accordingly.
+
+Allow users to edit rates and show the source or status of each rate.
+
+ROLE COST:
+
+RoleCost = AllocatedRoleHours × RoleHourlyRate
+
+LABOUR COST:
+
+TotalLabourCost = Sum(RoleCost)
+
+ADDITIONAL COSTS:
+
+Track separately:
+
+- One-time infrastructure setup.
+- Software and development tools.
+- Other direct project expenses.
+- Recurring hosting, if explicitly included.
+- Ongoing maintenance, if explicitly included.
+- Taxes, if explicitly included.
+
+Do not include recurring hosting or maintenance in a one-time build estimate unless the user explicitly requests it.
+
+PRE-CONTINGENCY COST:
+
+PreContingencyCost = TotalLabourCost + OneTimeInfrastructure + Tools + OtherDirectCosts
+
+CONTINGENCY:
+
+ContingencyAmount = PreContingencyCost × ContingencyRate
+
+FINAL BUILD BUDGET:
+
+FinalBudget = PreContingencyCost + ContingencyAmount
+
+Ensure that contingency is not added twice.
+
+If the selected target already includes contingency, do not add it again.
+
+For an uncertainty-aware estimate, calculate low, likely and high values consistently. Use O/M/P effort and a documented uncertainty method where the inputs justify it.
+
+The headline budget should be a range where appropriate, not a falsely precise guaranteed quotation.
+
+For the cost range, maintain consistency between effort, role allocations and rates.
+
+If fixed rates are used:
+
+CostLow = LowEffort × BlendedRate
+
+CostLikely = ExpectedEffort × BlendedRate
+
+CostHigh = HighEffort × BlendedRate
+
+Use this shortcut only when the blended rate is genuinely appropriate. Otherwise, calculate each range using role-specific hours and rates.
+
+Contingency must be included exactly once.
+
+Do not add feature costs to role costs when feature costs are merely a breakdown of the same labour.
+
+MANDATORY FINANCIAL INVARIANT:
+
+ReportedBuildLabourCost must equal:
+
+Sum(RoleHours × RoleHourlyRate)
+
+within a defined numerical tolerance.
+
+Infrastructure, maintenance and other direct costs must remain separately visible.
+
+Use INR as the default currency.
+
+Retain full precision internally and round only for display.
+
+==================================================
+PHASE 9 — RISK, CONFIDENCE AND EXPLANATIONS
+==================================================
+
+Implement formula-driven risk scoring.
+
+Use configurable factors such as:
+
+- Project complexity.
+- Deadline pressure.
+- Dependency complexity.
+- External integrations.
+- Security requirements.
+- Platform count.
+- Team pressure.
+- Unknown requirements.
+
+If using the implementation plan's weighted risk matrix, define all factor weights, thresholds and normalization rules in configuration.
+
+The risk weights must sum to 100%.
+
+Suggested levels:
+
+- Low.
+- Medium.
+- High.
+- Critical.
+
+Do not randomly assign risk based on the project name or use an unexplained fixed risk score.
+
+Confidence must be based on measurable signals, including:
+
+- Completeness of the project description.
+- Missing required inputs.
+- Number of reviewed features.
+- Dependency completeness.
+- Availability of a suitable feature prior.
+- Model validation quality.
+- Missing values.
+- Uncertainty and ambiguity.
+- Whether the estimation method is a fallback.
+
+Do not use an LLM's self-reported confidence as the final estimate confidence.
+
+Clearly distinguish:
+
+- ML model performance metrics.
+- Estimate uncertainty.
+- Estimate completeness or confidence.
+
+These are not the same measurement.
+
+If a reliable statistical confidence measure cannot be established, display an appropriate uncertainty label instead of an invented probability.
+
+Every estimate must provide a readable explanation of:
+
+- Main effort drivers.
+- Features contributing the most effort.
+- Complexity adjustments.
+- Relevant technology assumptions.
+- Rate assumptions.
+- Team and timeline constraints.
+- Additional costs.
+- Applied contingency.
+- Risks and missing information.
+- ML model versus catalog versus fallback contributions.
+
+==================================================
+PHASE 10 — CONNECT THE EXISTING FRONTEND
+==================================================
+
+Preserve the existing CostPilot AI visual identity and working pages.
+
+The required application flow is:
+
+OPEN WEBSITE
+→ SIGN IN / SIGN UP
+→ DASHBOARD
+→ NEW ESTIMATE
+→ PROJECT INFORMATION
+→ FEATURE BUILDER
+→ COMPLEXITY REVIEW
+→ EFFORT ESTIMATION
+→ TEAM RECOMMENDATION
+→ TIMELINE AND CAPACITY
+→ COST BREAKDOWN
+→ FINAL RESULTS
+→ SAVE OR COMPARE
+
+Maintain the current professional light/dark design, responsive layout, navigation, logo, profile controls, language selector, About Us page and other working interface elements.
+
+PROJECT INPUTS:
+
+Support:
+
+- Project name.
+- Project description.
+- Project type.
+- Overall complexity.
+- Feature count or individually entered features.
+- Technology stack.
+- Database.
+- Hosting platform.
+- Expected user scale.
+- Integrations.
+- User roles.
+- Security and quality requirements.
+- Target deadline.
+- Optional target budget.
+- Other project constraints.
+
+FEATURE BUILDER:
+
+Users must be able to add, edit and delete features individually.
+
+Each feature must include:
+
+- Name.
+- Description.
+- Category.
+- Complexity.
+- Dependencies.
+- Integration requirements.
+- Optional priority.
+- Estimation method.
+- Estimated effort.
+
+Allow manual edits after AI analysis.
+
+RESULTS DASHBOARD:
+
+Display:
+
+1. Estimated budget range.
+2. Expected total effort.
+3. Minimum feasible and likely timeline.
+4. Requested timeline feasibility.
+5. Recommended team composition.
+6. Labour cost.
+7. Infrastructure and tool costs.
+8. Contingency.
+9. Final build budget.
+10. Risk and estimate uncertainty.
+11. Feature-level effort table.
+12. Role-level cost table.
+13. Cost breakdown chart.
+14. Main assumptions and recommendations.
+15. Model provenance and limitations.
+
+Every value must come from the backend estimation response.
+
+Do not use hardcoded sample numbers in live results.
+
+If no real estimate exists, show a clear empty state rather than fabricated analytics.
+
+==================================================
+PHASE 11 — BACKEND API INTEGRATION
+==================================================
+
+Use the existing backend if it is working. If the backend uses FastAPI, preserve and extend it.
+
+Provide appropriate validated endpoints, adapting to existing routes where possible.
+
+Suggested endpoints:
+
+GET /health
+
+GET /model/status
+
+GET /model/metrics
+
+POST /scope/analyze
+
+POST /features/estimate-effort
+
+POST /estimate
+
+POST /estimate/compare
+
+POST /estimate/recalculate
+
+POST /projects
+
+GET /projects
+
+GET /projects/{id}
+
+PUT /projects/{id}
+
+DELETE /projects/{id}
+
+GET /analytics
+
+GET /settings
+
+PUT /settings
+
+The main POST /estimate endpoint must invoke the authoritative backend engine.
+
+Use Pydantic schemas for request and response validation.
+
+Return structured JSON containing:
+
+- Project inputs.
+- Feature breakdown.
+- Feature effort estimates.
+- Project effort total.
+- Uncertainty range.
+- Role allocations.
+- Team recommendations.
+- Capacity calculations.
+- Timeline feasibility.
+- Role-based costs.
+- Additional costs.
+- Final budget range.
+- Risk information.
+- Confidence or uncertainty information.
+- Estimation method.
+- Model version.
+- Configuration version.
+- Assumptions.
+- Warnings.
+- Calculation explanation.
+
+Use consistent error handling and useful HTTP status codes.
+
+Do not expose Python exceptions, secrets or internal file paths to ordinary users.
+
+The frontend must display an understandable error if the backend is unavailable. Do not silently switch to the old unrealistic frontend formula.
+
+==================================================
+PHASE 12 — SAVED PROJECTS AND WHAT-IF SCENARIOS
+==================================================
+
+Use the existing database when possible. For a local prototype, SQLite is acceptable.
+
+Persist the necessary project and estimate data, including:
+
+- Project information.
+- Feature records.
+- Dependencies.
+- Selected technologies.
+- Role allocations.
+- Rate assumptions.
+- Effort and budget breakdown.
+- Risk and uncertainty.
+- Estimation method.
+- Model and engine versions.
+- Configuration version.
+- Timestamp.
+
+Saved estimates must not silently change after model retraining or rate updates.
+
+A user must explicitly request recalculation to create a new estimate.
+
+WHAT-IF:
+
+Allow changes to:
+
+- Team size.
+- Role distribution.
+- Hourly rates.
+- Target timeline.
+- Feature scope.
+- Feature complexity.
+- Technology choices.
+- Infrastructure assumptions.
+- Contingency.
+
+Every scenario must rerun the same estimation engine.
+
+Do not calculate scenario budgets by blindly adding or subtracting arbitrary percentages.
+
+Display differences in budget, effort, team, duration, feasibility and risk.
+
+==================================================
+PHASE 13 — TESTS AND QUALITY ASSURANCE
+==================================================
+
+Implement automated tests for data preparation, ML prediction, effort estimation, cost calculation, dependencies, team capacity and API integration.
+
+Use pytest. Add Hypothesis property-based tests where appropriate.
+
+MANDATORY TESTS:
+
+1. Simple CRUD website.
+2. Food delivery platform.
+3. Dashboard application.
+4. FinTech application.
+5. Complex multi-platform application.
+6. Unknown feature category.
+7. Missing project description.
+8. Zero features.
+9. One feature.
+10. Many features.
+11. Very high complexity.
+12. Extreme deadline.
+13. Missing technology stack.
+14. Missing feature effort.
+15. Circular dependency.
+16. Invalid negative hours.
+17. Invalid or missing target data.
+18. Unseen categorical values.
+19. AI provider failure.
+20. ML artifact missing or invalid.
+21. Empty saved-project history.
+22. Recalculation after changing a feature.
+23. Recalculation after changing team size.
+24. Recalculation after changing a rate.
+25. Contingency double-counting prevention.
+26. Cost reconciliation.
+27. Model leakage checks.
+28. Dataset project-feature linkage.
+29. Train/test project separation.
+30. Regression tests against saved golden scenarios.
+
+Verify these properties:
+
+- No negative effort or cost.
+- Higher-effort features do not reduce total effort when other inputs are unchanged.
+- Adding a feature does not reduce estimated effort under unchanged estimation assumptions.
+- Removing a feature recalculates the estimate.
+- Higher hourly rates increase labour cost when allocated hours are unchanged.
+- Cost totals reconcile with role hours and rates.
+- Infrastructure is not counted twice.
+- Contingency is not counted twice.
+- Invalid dependency graphs are rejected.
+- Infeasible timelines are reported as infeasible.
+- ML training and inference use the same preprocessing.
+- Model performance metrics are calculated on held-out data.
+- All estimates disclose relevant assumptions.
+
+If a property does not hold because a legitimate interaction changes the outcome, document the reason and write a more precise test rather than hiding the discrepancy.
+
+Run the actual tests and fix failures. Do not claim that tests passed unless they were executed successfully.
+
+==================================================
+PHASE 14 — SECURITY AND CONFIGURATION
+==================================================
+
+Keep all AI API keys in backend environment variables.
+
+Never place API keys in frontend JavaScript or source-controlled configuration.
+
+Use a .env.example file containing placeholders, not real secrets.
+
+Validate uploaded files and do not accept arbitrary uploaded data as trusted training input.
+
+Restrict access to model administration operations.
+
+Protect saved projects according to the existing authentication model.
+
+Do not expose one user's project records to another user.
+
+If authentication is already implemented, preserve and test it. If it is not implemented, do not claim secure authentication merely because a login form exists.
+
+Make the estimation engine work in manual/offline mode when the external AI provider is unavailable.
+
+==================================================
+PHASE 15 — IMPLEMENTATION ORDER
+==================================================
+
+Follow this order:
+
+1. Inspect the existing repository.
+2. Map current UI inputs to backend fields.
+3. Inspect and validate the Excel workbook.
+4. Audit the existing formulas and model artifacts.
+5. Build the dataset loader and quality report.
+6. Implement the training pipeline and leakage checks.
+7. Train and evaluate supported ML models.
+8. Implement the feature-level effort engine.
+9. Implement complexity and dependency logic.
+10. Implement effort reconciliation.
+11. Implement role allocation and rates.
+12. Implement capacity and timeline feasibility.
+13. Implement the authoritative cost and uncertainty engine.
+14. Implement risk and explanation generation.
+15. Connect the existing frontend to the backend.
+16. Connect results, editing and what-if scenarios.
+17. Connect saved projects and analytics.
+18. Add and run tests.
+19. Fix integration and regression failures.
+20. Document setup, training, startup and known limitations.
+
+Do not spend time redesigning an already working page while the core estimation engine is still incorrect.
+
+==================================================
+PHASE 16 — FINAL ACCEPTANCE CRITERIA
+==================================================
+
+The implementation is complete only when the following workflow works:
+
+1. A user enters a software project description.
+2. The system analyzes the requirements or supports manual feature entry.
+3. The user reviews and edits the proposed features.
+4. The system obtains feature-level effort estimates.
+5. The project-level ML model provides a prediction where a validated model is available.
+6. The engine reconciles estimates without double-counting.
+7. The system calculates role allocations and team recommendations.
+8. The system checks team capacity and timeline feasibility.
+9. The engine calculates labour, additional expenses, contingency and budget range.
+10. The system displays risk, uncertainty and assumptions.
+11. The user changes the deadline or removes a feature.
+12. The engine recalculates the result using the same authoritative service.
+13. The user can save the estimate and view it again.
+14. The model status and evaluation metrics are available.
+15. The offline/manual workflow continues to function if AI is unavailable.
+
+FINAL DELIVERABLES:
+
+- Working integrated website.
+- Working backend APIs.
+- Dataset validation report.
+- Reproducible ML training script.
+- Saved model artifacts and metadata.
+- Actual held-out evaluation report.
+- Authoritative estimation engine.
+- Feature-level estimate explanations.
+- Connected results dashboard.
+- Automated tests and test results.
+- requirements.txt or the existing dependency manifest.
+- .env.example.
+- README with exact setup and startup commands.
+- Documentation of formulas, assumptions, model limitations and data provenance.
+- A clear list of completed features and any remaining limitations.
+
+IMPORTANT NON-NEGOTIABLE RULES:
+
+- Do not invent dataset records or model metrics.
+- Do not claim synthetic data represents actual paid contracts.
+- Do not train with target leakage.
+- Do not add two complete estimates together.
+- Do not count the same feature effort twice.
+- Do not double-count contingency, labour or infrastructure.
+- Do not use AI-generated text as a substitute for actual calculations.
+- Do not display hardcoded results as live predictions.
+- Do not replace working project functionality unnecessarily.
+- Do not mark unfinished functionality as complete.
+- Do not stop after creating files; execute, integrate, test and fix the implementation.
+
+Start by inspecting the current repository and the actual Excel workbook. Then implement the system in the specified order, keeping the existing CostPilot AI website connected to the new dataset-driven estimation engine.
+
+At the end, report exactly which files were created or changed, which models were actually trained, the real evaluation metrics, which tests passed or failed, how to run the application, and what limitations remain.

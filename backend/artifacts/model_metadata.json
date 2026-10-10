@@ -1,0 +1,85 @@
+{
+  "provenance": "SIMULATED / SYNTHETIC DATASET (CostPilot_AI_Training_Dataset.xlsx)",
+  "training_timestamp": "2026-10-09T21:26:17.948403+00:00",
+  "input_features": [
+    "project_type",
+    "project_complexity",
+    "frontend_stack",
+    "backend_stack",
+    "database",
+    "hosting_platform",
+    "expected_user_band",
+    "deadline_pressure",
+    "quality_requirement",
+    "client_region",
+    "feature_count",
+    "website_pages_or_screens",
+    "integration_count",
+    "user_role_count"
+  ],
+  "models": {
+    "target_estimated_cost_inr": {
+      "artifact_file": "cost_model.joblib",
+      "version": "1.0.0",
+      "target": "target_estimated_cost_inr",
+      "algorithm": "RandomForestRegressor",
+      "n_estimators": 100,
+      "train_samples": 2000,
+      "test_samples": 500,
+      "metrics": {
+        "test_mae": 375580.23,
+        "test_rmse": 553335.94,
+        "test_r2": 0.6229,
+        "test_mmre": 0.3668,
+        "test_mdmre": 0.2685,
+        "baseline_mae": 681849.2,
+        "baseline_rmse": 910531.72,
+        "baseline_r2": -0.0211,
+        "baseline_mmre": 1.0497
+      },
+      "status": "validated_and_saved"
+    },
+    "total_estimated_effort_hours": {
+      "artifact_file": "effort_model.joblib",
+      "version": "1.0.0",
+      "target": "total_estimated_effort_hours",
+      "algorithm": "RandomForestRegressor",
+      "n_estimators": 100,
+      "train_samples": 2000,
+      "test_samples": 500,
+      "metrics": {
+        "test_mae": 234.88,
+        "test_rmse": 316.31,
+        "test_r2": 0.7185,
+        "test_mmre": 0.305,
+        "test_mdmre": 0.2331,
+        "baseline_mae": 483.98,
+        "baseline_rmse": 596.6,
+        "baseline_r2": -0.0015,
+        "baseline_mmre": 1.0949
+      },
+      "status": "validated_and_saved"
+    },
+    "estimated_duration_calendar_days": {
+      "artifact_file": "duration_model.joblib",
+      "version": "1.0.0",
+      "target": "estimated_duration_calendar_days",
+      "algorithm": "RandomForestRegressor",
+      "n_estimators": 100,
+      "train_samples": 2000,
+      "test_samples": 500,
+      "metrics": {
+        "test_mae": 20.25,
+        "test_rmse": 28.03,
+        "test_r2": 0.5328,
+        "test_mmre": 0.4454,
+        "test_mdmre": 0.334,
+        "baseline_mae": 31.07,
+        "baseline_rmse": 41.69,
+        "baseline_r2": -0.0334,
+        "baseline_mmre": 0.9964
+      },
+      "status": "validated_and_saved"
+    }
+  }
+}

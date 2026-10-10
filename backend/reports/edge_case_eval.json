@@ -1,0 +1,227 @@
+{
+  "status": "completed",
+  "evaluated_at": "2026-10-09T21:26:24.565334+00:00",
+  "edge_case_count": 20,
+  "results": [
+    {
+      "edge_case_id": "EDGE001",
+      "scenario_name": "Simple portfolio with many pages",
+      "why_this_case_matters": "Low feature complexity but unusually high page count; content entry may dominate.",
+      "predictions": {
+        "target_estimated_cost_inr": 1093333.54,
+        "total_estimated_effort_hours": 1015.8,
+        "estimated_duration_calendar_days": 55.03
+      },
+      "illustrative_target_cost_inr": 45000
+    },
+    {
+      "edge_case_id": "EDGE002",
+      "scenario_name": "One-feature high-complexity payment workflow",
+      "why_this_case_matters": "Feature count is low but payment, refunds, webhooks and reconciliation are complex.",
+      "predictions": {
+        "target_estimated_cost_inr": 146415.28,
+        "total_estimated_effort_hours": 103.72,
+        "estimated_duration_calendar_days": 10.49
+      },
+      "illustrative_target_cost_inr": 350000
+    },
+    {
+      "edge_case_id": "EDGE003",
+      "scenario_name": "Large feature count with heavy reuse",
+      "why_this_case_matters": "Many features reuse a mature CMS/plugin ecosystem; reuse must be confirmed.",
+      "predictions": {
+        "target_estimated_cost_inr": 1542573.32,
+        "total_estimated_effort_hours": 1320.78,
+        "estimated_duration_calendar_days": 71.94
+      },
+      "illustrative_target_cost_inr": 180000
+    },
+    {
+      "edge_case_id": "EDGE004",
+      "scenario_name": "Very high traffic",
+      "why_this_case_matters": "High availability, load testing, caching and observability increase cost.",
+      "predictions": {
+        "target_estimated_cost_inr": 1230620.68,
+        "total_estimated_effort_hours": 1211.94,
+        "estimated_duration_calendar_days": 61.45
+      },
+      "illustrative_target_cost_inr": 1200000
+    },
+    {
+      "edge_case_id": "EDGE005",
+      "scenario_name": "Regulated healthcare portal",
+      "why_this_case_matters": "Security, access control, audit logs and compliance review require specialist validation.",
+      "predictions": {
+        "target_estimated_cost_inr": 2069722.51,
+        "total_estimated_effort_hours": 1468.76,
+        "estimated_duration_calendar_days": 81.59
+      },
+      "illustrative_target_cost_inr": 1800000
+    },
+    {
+      "edge_case_id": "EDGE006",
+      "scenario_name": "Legacy migration with poor data quality",
+      "why_this_case_matters": "Data cleansing, mapping, reconciliation and rollback planning are significant.",
+      "predictions": {
+        "target_estimated_cost_inr": 764212.51,
+        "total_estimated_effort_hours": 650.46,
+        "estimated_duration_calendar_days": 42.73
+      },
+      "illustrative_target_cost_inr": 750000
+    },
+    {
+      "edge_case_id": "EDGE007",
+      "scenario_name": "AI API wrapper vs custom ML",
+      "why_this_case_matters": "Calling a hosted model API differs greatly from training and operating a custom ML pipeline.",
+      "predictions": {
+        "target_estimated_cost_inr": 333745.11,
+        "total_estimated_effort_hours": 255.89,
+        "estimated_duration_calendar_days": 16.23
+      },
+      "illustrative_target_cost_inr": 250000
+    },
+    {
+      "edge_case_id": "EDGE008",
+      "scenario_name": "Custom ML training pipeline",
+      "why_this_case_matters": "Data acquisition, labeling, training, evaluation, serving and monitoring required.",
+      "predictions": {
+        "target_estimated_cost_inr": 1178166.72,
+        "total_estimated_effort_hours": 1237.63,
+        "estimated_duration_calendar_days": 82.69
+      },
+      "illustrative_target_cost_inr": 2200000
+    },
+    {
+      "edge_case_id": "EDGE009",
+      "scenario_name": "Multilingual RTL experience",
+      "why_this_case_matters": "Translation, right-to-left layout, locale formats and QA across languages.",
+      "predictions": {
+        "target_estimated_cost_inr": 592425.17,
+        "total_estimated_effort_hours": 608.05,
+        "estimated_duration_calendar_days": 30.43
+      },
+      "illustrative_target_cost_inr": 420000
+    },
+    {
+      "edge_case_id": "EDGE010",
+      "scenario_name": "Accessibility-critical public service",
+      "why_this_case_matters": "Accessibility audits, keyboard support, screen reader and remediation work.",
+      "predictions": {
+        "target_estimated_cost_inr": 724610.02,
+        "total_estimated_effort_hours": 678.11,
+        "estimated_duration_calendar_days": 36.55
+      },
+      "illustrative_target_cost_inr": 500000
+    },
+    {
+      "edge_case_id": "EDGE011",
+      "scenario_name": "Third-party API instability",
+      "why_this_case_matters": "Retries, idempotency, monitoring and fallbacks increase effort.",
+      "predictions": {
+        "target_estimated_cost_inr": 693307.34,
+        "total_estimated_effort_hours": 723.03,
+        "estimated_duration_calendar_days": 34.72
+      },
+      "illustrative_target_cost_inr": 680000
+    },
+    {
+      "edge_case_id": "EDGE012",
+      "scenario_name": "Offline-first mobile workflows",
+      "why_this_case_matters": "Sync conflict resolution and intermittent connectivity are major complexities.",
+      "predictions": {
+        "target_estimated_cost_inr": 1037932.67,
+        "total_estimated_effort_hours": 892.13,
+        "estimated_duration_calendar_days": 61.05
+      },
+      "illustrative_target_cost_inr": 1250000
+    },
+    {
+      "edge_case_id": "EDGE013",
+      "scenario_name": "Security incident remediation",
+      "why_this_case_matters": "Threat modeling, penetration testing and remediation should be scoped separately.",
+      "predictions": {
+        "target_estimated_cost_inr": 855763.54,
+        "total_estimated_effort_hours": 831.38,
+        "estimated_duration_calendar_days": 50.66
+      },
+      "illustrative_target_cost_inr": 2500000
+    },
+    {
+      "edge_case_id": "EDGE014",
+      "scenario_name": "Small team with hard deadline",
+      "why_this_case_matters": "Parallelization is limited; deadline may require scope reduction or extra staffing.",
+      "predictions": {
+        "target_estimated_cost_inr": 1616683.22,
+        "total_estimated_effort_hours": 1611.65,
+        "estimated_duration_calendar_days": 87.1
+      },
+      "illustrative_target_cost_inr": 950000
+    },
+    {
+      "edge_case_id": "EDGE015",
+      "scenario_name": "No-code/low-code existing platform",
+      "why_this_case_matters": "Platform configuration can lower build effort but may impose future constraints.",
+      "predictions": {
+        "target_estimated_cost_inr": 497910.75,
+        "total_estimated_effort_hours": 394.62,
+        "estimated_duration_calendar_days": 21.83
+      },
+      "illustrative_target_cost_inr": 65000
+    },
+    {
+      "edge_case_id": "EDGE016",
+      "scenario_name": "Multi-tenant data isolation",
+      "why_this_case_matters": "Tenant isolation, permission tests and data-leak prevention are critical.",
+      "predictions": {
+        "target_estimated_cost_inr": 533489.33,
+        "total_estimated_effort_hours": 385.59,
+        "estimated_duration_calendar_days": 23.86
+      },
+      "illustrative_target_cost_inr": 1600000
+    },
+    {
+      "edge_case_id": "EDGE017",
+      "scenario_name": "Payment provider with refunds and disputes",
+      "why_this_case_matters": "Payouts, refunds, disputes, webhooks and reconciliation beyond basic checkout.",
+      "predictions": {
+        "target_estimated_cost_inr": 268095.79,
+        "total_estimated_effort_hours": 235.65,
+        "estimated_duration_calendar_days": 13.7
+      },
+      "illustrative_target_cost_inr": 900000
+    },
+    {
+      "edge_case_id": "EDGE018",
+      "scenario_name": "Very low budget unrealistic scope",
+      "why_this_case_matters": "Flag budget/scope mismatch; do not force estimate to match client budget.",
+      "predictions": {
+        "target_estimated_cost_inr": 1830626.72,
+        "total_estimated_effort_hours": 1539.0,
+        "estimated_duration_calendar_days": 87.72
+      },
+      "illustrative_target_cost_inr": 100000
+    },
+    {
+      "edge_case_id": "EDGE019",
+      "scenario_name": "Maintenance-only project",
+      "why_this_case_matters": "Bug fixing and small updates should not be estimated like a greenfield build.",
+      "predictions": {
+        "target_estimated_cost_inr": 220713.13,
+        "total_estimated_effort_hours": 126.9,
+        "estimated_duration_calendar_days": 12.58
+      },
+      "illustrative_target_cost_inr": 30000
+    },
+    {
+      "edge_case_id": "EDGE020",
+      "scenario_name": "Unknown requirements / discovery needed",
+      "why_this_case_matters": "Low requirements clarity should widen uncertainty and may require a paid discovery phase.",
+      "predictions": {
+        "target_estimated_cost_inr": 1281742.81,
+        "total_estimated_effort_hours": 1177.12,
+        "estimated_duration_calendar_days": 58.34
+      },
+      "illustrative_target_cost_inr": 800000
+    }
+  ]
+}
