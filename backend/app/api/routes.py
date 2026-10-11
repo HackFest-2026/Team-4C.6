@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException, Depends, Header, Body, status, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, Header, Body, status
 
 from app.core.config import settings
 from app.core.security import get_current_user_optional
@@ -19,6 +19,19 @@ from app.schemas.estimation import (
     InfraRecommendRequest,
     ProjectReconciliationRequest,
     CurrencyConvertRequest,
+    JiraSyncRequest,
+    JiraDirectSyncRequest,
+)
+from app.services.estimation.jira_client import (
+    jira_cloud_client,
+    JiraError,
+    JiraConfigurationError,
+    JiraAuthenticationError,
+    JiraPermissionError,
+    JiraNotFoundError,
+    JiraRateLimitError,
+    JiraValidationError,
+    JiraConnectionError,
 )
 from app.services.estimation.engine import estimation_engine
 from app.services.estimation.feature_effort import feature_effort_engine
@@ -37,7 +50,6 @@ from app.services.estimation.monte_carlo import monte_carlo_simulator
 from app.services.estimation.parametric_model import parametric_cocomo_engine
 from app.services.estimation.historical_benchmarker import historical_benchmarker
 from app.services.estimation.integrations import integration_service
-from app.services.ml.dataset_pipeline import dataset_pipeline
 from fastapi.responses import PlainTextResponse
 
 router = APIRouter()
@@ -1173,104 +1185,152 @@ def export_project_erp(project_id: str, authorization: Optional[str] = Header(No
 
 
 # =====================================================================
-# DATASET MANAGEMENT & MODEL RETRAINING PIPELINE ENDPOINTS
+# JIRA CLOUD REST API v3 LIVE INTEGRATION ENDPOINTS
 # =====================================================================
 
-@router.post("/datasets/upload", tags=["Datasets"])
-async def upload_dataset(
-    file: UploadFile = File(...),
-    provenance: str = Form("Organization-provided"),
-    dataset_name: Optional[str] = Form(None),
-    authorization: Optional[str] = Header(None),
+@router.get("/integrations/jira/status", tags=["Jira Integration"])
+def get_jira_status():
+    """
+    Returns safe configuration status for Jira Cloud REST API v3 integration.
+    Never exposes raw API tokens or credentials.
+    """
+    return {
+        "status": "success",
+        "jira": jira_cloud_client.get_status()
+    }
+
+
+@router.post("/integrations/jira/test", tags=["Jira Integration"])
+def test_jira_connection():
+    """
+    Tests connection and verifies credentials with Jira Cloud using GET /rest/api/3/myself.
+    """
+    try:
+        result = jira_cloud_client.test_connection()
+        return {"status": "success", "result": result}
+    except JiraConfigurationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraAuthenticationError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=exc.message)
+    except JiraPermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=exc.message)
+    except JiraRateLimitError as exc:
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=exc.message)
+    except JiraConnectionError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=exc.message)
+    except JiraError as exc:
+        raise HTTPException(status_code=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error testing Jira connection: {str(exc)}")
+
+
+@router.get("/integrations/jira/projects", tags=["Jira Integration"])
+def get_jira_projects():
+    """
+    Retrieves accessible Jira projects for the authenticated Jira Cloud user.
+    """
+    try:
+        projects = jira_cloud_client.get_accessible_projects()
+        return {"status": "success", "projects": projects}
+    except JiraConfigurationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraAuthenticationError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=exc.message)
+    except JiraPermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=exc.message)
+    except JiraConnectionError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=exc.message)
+    except JiraError as exc:
+        raise HTTPException(status_code=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to retrieve Jira projects: {str(exc)}")
+
+
+@router.post("/projects/{project_id}/export/jira/sync", tags=["Jira Integration"])
+def sync_saved_project_to_jira(
+    project_id: str,
+    payload: Optional[JiraSyncRequest] = Body(default=None),
+    authorization: Optional[str] = Header(None)
 ):
     """
-    Uploads an Excel (.xlsx/.xls) or CSV (.csv) historical dataset.
-    Performs immediate schema profiling, type inference, missing value tallying,
-    duplicate detection, and candidate field validation.
+    Creates hierarchical Epics, Stories, and Sub-tasks in Jira Cloud from a saved project estimate WBS.
     """
-    current_user = get_current_user_optional(authorization)
-    user_id = current_user["id"] if current_user else None
-    try:
-        content = await file.read()
-        res = dataset_pipeline.upload_and_profile(
-            file_bytes=content,
-            filename=file.filename or "uploaded_dataset.csv",
-            provenance=provenance,
-            user_id=user_id,
-            dataset_name=dataset_name,
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    wbs = est.get("wbs")
+    if not wbs:
+        features = est.get("features", [])
+        if not features and p_dict.get("raw_features_json"):
+            features = json.loads(p_dict["raw_features_json"])
+        wbs = wbs_generator.generate_wbs(
+            project_name=p_dict["name"],
+            project_type=p_dict["project_type"],
+            features=features,
+            overall_complexity=p_dict["overall_complexity"],
+            platform=p_dict["platform"],
         )
-        return {"status": "success", "dataset": res}
-    except Exception as e:
-        logger.error(f"Dataset upload failed: {e}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+    target_key = payload.target_project_key if payload and payload.target_project_key else None
 
-@router.get("/datasets", tags=["Datasets"])
-def list_datasets():
-    """Lists all uploaded datasets with record counts, validation status, and provenance."""
-    return {"status": "success", "datasets": dataset_pipeline.list_datasets()}
-
-
-@router.get("/datasets/{dataset_id}", tags=["Datasets"])
-def get_dataset_details(dataset_id: str):
-    """Retrieves full column profiling, detected field mappings, and validation report for a dataset."""
     try:
-        details = dataset_pipeline.get_dataset_details(dataset_id)
-        return {"status": "success", "dataset": details}
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        sync_result = jira_cloud_client.sync_wbs_to_jira(
+            project=p_dict,
+            wbs=wbs,
+            target_project_key=target_key,
+        )
+        return {"status": "success", "sync_result": sync_result}
+    except JiraConfigurationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraAuthenticationError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=exc.message)
+    except JiraPermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=exc.message)
+    except JiraRateLimitError as exc:
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=exc.message)
+    except JiraValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraConnectionError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=exc.message)
+    except JiraError as exc:
+        raise HTTPException(status_code=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error syncing to Jira: {str(exc)}")
 
 
-@router.post("/datasets/{dataset_id}/clean", tags=["Datasets"])
-def clean_dataset(dataset_id: str, payload: Optional[Dict[str, Any]] = Body(None)):
+@router.post("/integrations/jira/create-issues", tags=["Jira Integration"])
+def create_jira_issues_direct(payload: JiraDirectSyncRequest, authorization: Optional[str] = Header(None)):
     """
-    Executes field-appropriate imputation, categorical normalization, and outlier detection.
-    Stores cleaned dataset separately from raw upload.
+    Directly creates hierarchical Jira issues from an in-memory WBS payload (e.g. from active estimation wizard).
     """
-    custom_mapping = payload.get("mapping") if payload else None
+    if not payload.wbs or not payload.wbs.get("modules"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid WBS payload: must contain modules.")
+
+    project_data = {
+        "name": payload.project_name or "CostPilot Project"
+    }
+
     try:
-        res = dataset_pipeline.clean_and_preprocess(dataset_id=dataset_id, custom_mapping=custom_mapping)
-        return {"status": "success", "cleaning": res}
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-
-@router.post("/datasets/{dataset_id}/train", tags=["Datasets"])
-def train_candidate_model(dataset_id: str, authorization: Optional[str] = Header(None)):
-    """
-    Trains candidate Random Forest regressors on cleaned dataset with held-out 80/20 test split.
-    Calculates test metrics (MAE, RMSE, R², MMRE, MdMRE, PRED(25)) without overwriting production models.
-    """
-    current_user = get_current_user_optional(authorization)
-    user_id = current_user["id"] if current_user else None
-    try:
-        run_res = dataset_pipeline.train_candidate_model(dataset_id=dataset_id, user_id=user_id)
-        return {"status": "success", "training_run": run_res}
-    except Exception as e:
-        logger.error(f"Candidate training failed: {e}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-
-@router.post("/datasets/models/{run_id}/promote", tags=["Datasets"])
-def promote_candidate_model(run_id: str, authorization: Optional[str] = Header(None)):
-    """
-    Promotes an evaluated candidate model run to production active status.
-    Updates model metadata and reloads active models in memory.
-    """
-    current_user = get_current_user_optional(authorization)
-    user_id = current_user["id"] if current_user else None
-    try:
-        res = dataset_pipeline.promote_candidate_model(run_id=run_id, user_id=user_id)
-        return {"status": "success", "promotion": res}
-    except Exception as e:
-        logger.error(f"Model promotion failed: {e}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-
-@router.get("/datasets/models/history", tags=["Datasets"])
-def get_model_training_history():
-    """Retrieves audit trail of all candidate and promoted model training runs."""
-    return {"status": "success", "history": dataset_pipeline.get_training_history()}
+        sync_result = jira_cloud_client.sync_wbs_to_jira(
+            project=project_data,
+            wbs=payload.wbs,
+            target_project_key=payload.target_project_key,
+        )
+        return {"status": "success", "sync_result": sync_result}
+    except JiraConfigurationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraAuthenticationError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=exc.message)
+    except JiraPermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=exc.message)
+    except JiraRateLimitError as exc:
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=exc.message)
+    except JiraValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
+    except JiraConnectionError as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=exc.message)
+    except JiraError as exc:
+        raise HTTPException(status_code=exc.status_code or status.HTTP_500_INTERNAL_SERVER_ERROR, detail=exc.message)
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error syncing to Jira: {str(exc)}")
 
 
 

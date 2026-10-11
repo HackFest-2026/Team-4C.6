@@ -165,6 +165,7 @@ class EstimationEngine:
                 notes=f.get("description", ""),
             )
             est["id"] = f["id"]
+            est["name"] = f.get("name") or est.get("feature_name", "Untitled Feature")
             est["dependencies"] = f.get("dependencies", [])
 
             if est["estimation_method"] == "generic_fallback":

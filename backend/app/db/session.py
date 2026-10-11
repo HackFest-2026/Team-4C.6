@@ -161,51 +161,6 @@ def init_db() -> None:
     );
     """)
 
-    # 6. Uploaded datasets table (Historical data pipeline)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS uploaded_datasets (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        original_filename TEXT NOT NULL,
-        file_format TEXT NOT NULL,
-        file_path TEXT NOT NULL,
-        cleaned_file_path TEXT,
-        file_size_bytes INTEGER NOT NULL,
-        provenance TEXT NOT NULL,
-        total_rows INTEGER NOT NULL,
-        total_columns INTEGER NOT NULL,
-        valid_rows INTEGER NOT NULL,
-        invalid_rows INTEGER NOT NULL,
-        duplicate_rows INTEGER NOT NULL,
-        missing_values_count INTEGER NOT NULL,
-        column_schema_json TEXT NOT NULL,
-        validation_report_json TEXT NOT NULL,
-        status TEXT NOT NULL,
-        user_id TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
-    );
-    """)
-
-    # 7. Model training runs table (Champion vs Candidate tracking)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS model_training_runs (
-        id TEXT PRIMARY KEY,
-        dataset_id TEXT NOT NULL,
-        model_version TEXT NOT NULL,
-        algorithm TEXT NOT NULL,
-        targets_json TEXT NOT NULL,
-        features_json TEXT NOT NULL,
-        train_samples INTEGER NOT NULL,
-        test_samples INTEGER NOT NULL,
-        metrics_json TEXT NOT NULL,
-        status TEXT NOT NULL,
-        promoted_at TEXT,
-        created_at TEXT NOT NULL,
-        FOREIGN KEY(dataset_id) REFERENCES uploaded_datasets(id) ON DELETE CASCADE
-    );
-    """)
-
     # Seed Default Demo User if users table is empty
     cursor.execute("SELECT COUNT(*) as cnt FROM users;")
     row = cursor.fetchone()

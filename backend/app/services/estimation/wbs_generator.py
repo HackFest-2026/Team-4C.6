@@ -99,7 +99,7 @@ class WBSGenerator:
 
         # Classify and map features into appropriate modules
         for feat in features:
-            f_name = feat.get("name", f"Feature {feature_index}")
+            f_name = feat.get("name") or feat.get("feature_name") or f"Feature {feature_index}"
             f_cat = feat.get("category", "CRUD/data module")
             f_comp = feat.get("complexity", overall_complexity)
             f_effort = float(feat.get("expected_effort_hours", feat.get("estimated_effort_hours", 24.0)))

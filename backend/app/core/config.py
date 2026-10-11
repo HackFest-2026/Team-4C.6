@@ -23,6 +23,27 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "costpilot-super-secret-dev-key-2026")
     AI_PROVIDER: str = os.getenv("AI_PROVIDER", "offline")  # offline | gemini | openai
     AI_API_KEY: str = os.getenv("AI_API_KEY", "")
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    GEMINI_TIMEOUT_SECONDS: float = float(os.getenv("GEMINI_TIMEOUT_SECONDS", "30.0"))
+    GEMINI_MAX_RETRIES: int = int(os.getenv("GEMINI_MAX_RETRIES", "2"))
+
+    @property
+    def effective_gemini_api_key(self) -> str:
+        """Primary AI_API_KEY with fallback to GEMINI_API_KEY."""
+        return (self.AI_API_KEY or self.GEMINI_API_KEY or "").strip()
+
+    # Jira Cloud Integration Settings
+    JIRA_BASE_URL: str = os.getenv("JIRA_BASE_URL", "")
+    JIRA_EMAIL: str = os.getenv("JIRA_EMAIL", "")
+    JIRA_API_TOKEN: str = os.getenv("JIRA_API_TOKEN", "")
+    JIRA_PROJECT_KEY: str = os.getenv("JIRA_PROJECT_KEY", "")
+    JIRA_TIMEOUT_SECONDS: float = float(os.getenv("JIRA_TIMEOUT_SECONDS", "25.0"))
+
+    @property
+    def is_jira_configured(self) -> bool:
+        """Returns True if Jira base URL, email, and API token are provided."""
+        return bool(self.JIRA_BASE_URL.strip() and self.JIRA_EMAIL.strip() and self.JIRA_API_TOKEN.strip())
     
     # Database
     DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR}/app/db/costpilot.db")

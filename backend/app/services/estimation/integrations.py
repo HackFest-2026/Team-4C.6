@@ -27,14 +27,19 @@ class IntegrationService:
         """
         Returns the official integration catalog distinguishing implemented capabilities from planned syncs.
         """
+        from app.services.estimation.jira_client import jira_cloud_client
+        jira_status = jira_cloud_client.get_status()
+        is_cfg = jira_status.get("configured", False)
+
         return {
             "jira": {
-                "name": "Atlassian Jira",
+                "name": "Atlassian Jira Cloud",
                 "category": "Issue & Agile Tracking",
                 "export_status": "Implemented & Functional",
-                "live_sync_status": "Integration-Ready (Requires JIRA_API_TOKEN in .env)",
-                "supported_formats": ["Jira Standard JSON Import", "Jira CSV Import"],
-                "is_live_connected": False,
+                "live_sync_status": "Configured & Active" if is_cfg else "Configured in code (Set JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN in .env)",
+                "supported_formats": ["Jira Cloud REST API v3", "Jira Standard JSON Import", "Jira CSV Import"],
+                "is_live_connected": is_cfg,
+                "jira_config": jira_status,
             },
             "ms_project": {
                 "name": "Microsoft Project",

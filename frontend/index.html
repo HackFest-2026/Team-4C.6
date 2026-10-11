@@ -8,7 +8,8 @@
   <meta name="description"
     content="Professional, defensible, dataset-driven software product cost and effort estimation powered by supervised machine learning and empirical priors.">
   <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="icon" type="image/jpeg" href="/static/assets/logo_costpilot.jpeg">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 
 <body>
@@ -23,9 +24,7 @@
       <!-- Left Hero Banner -->
       <div class="auth-hero">
         <div class="auth-brand">
-          <div class="brand-logo-wrap" style="width:48px; height:48px;">
-            <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-          </div>
+          <div class="brand-icon">⚡</div>
           <div>
             <div style="display:flex; align-items:center; gap:0.5rem;">
               <span class="brand-title">CostPilot AI</span>
@@ -72,15 +71,6 @@
         <!-- SIGN IN FORM -->
         <div id="signin-box">
           <div class="auth-header">
-            <div class="auth-form-brand">
-              <div class="brand-logo-wrap" style="width:48px; height:48px;">
-                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-              </div>
-              <div>
-                <span class="brand-title" style="font-size:1.25rem;">CostPilot AI</span>
-                <div style="font-size:0.75rem; color:var(--text-dim);">Enterprise Cost Estimation</div>
-              </div>
-            </div>
             <h1 class="auth-heading">Sign In to CostPilot AI</h1>
             <p class="auth-subheading">Access your project estimates, dashboard KPIs, and ML models</p>
           </div>
@@ -127,15 +117,6 @@
         <!-- SIGN UP FORM -->
         <div id="signup-box" style="display:none;">
           <div class="auth-header">
-            <div class="auth-form-brand">
-              <div class="brand-logo-wrap" style="width:48px; height:48px;">
-                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-              </div>
-              <div>
-                <span class="brand-title" style="font-size:1.25rem;">CostPilot AI</span>
-                <div style="font-size:0.75rem; color:var(--text-dim);">Enterprise Cost Estimation</div>
-              </div>
-            </div>
             <h1 class="auth-heading">Create CostPilot Account</h1>
             <p class="auth-subheading">Start generating defensible project estimates</p>
           </div>
@@ -205,9 +186,7 @@
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-header">
         <div class="auth-brand">
-          <div class="brand-logo-wrap" style="width:36px; height:36px;">
-            <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-          </div>
+          <div class="brand-icon" style="width:36px; height:36px; font-size:1.2rem;">⚡</div>
           <span class="brand-title" style="font-size:1.15rem;">CostPilot AI</span>
         </div>
         <button class="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" title="Collapse Sidebar">◀</button>
@@ -263,12 +242,7 @@
       <header class="topbar">
         <div class="topbar-left">
           <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
-          <div class="topbar-brand">
-            <div class="brand-logo-wrap" style="width:28px; height:28px;">
-              <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-            </div>
-            <div class="breadcrumb-title" id="topbar-page-title">Dashboard</div>
-          </div>
+          <div class="breadcrumb-title" id="topbar-page-title">Dashboard</div>
         </div>
 
         <div class="topbar-right">
@@ -306,17 +280,12 @@
       <!-- ============================================================= -->
       <section id="page-dashboard" class="page-content active">
         <div class="welcome-hero">
-          <div class="welcome-hero-left">
-            <div class="brand-logo-wrap welcome-logo" style="width:64px; height:64px;">
-              <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-            </div>
-            <div>
-              <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
-              <p class="welcome-desc">
-                CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest
-                regression and historical priors from 2,500 projects.
-              </p>
-            </div>
+          <div>
+            <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
+            <p class="welcome-desc">
+              CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest
+              regression and historical priors from 2,500 projects.
+            </p>
           </div>
           <div>
             <button class="btn btn-primary btn-lg" onclick="navigateTo('new-estimate')">
@@ -1465,80 +1434,6 @@
               </div>
 
               <!-- ======================================================= -->
-              <!-- INTERACTIVE SCENARIO SENSITIVITY & WHAT-IF STUDIO       -->
-              <!-- ======================================================= -->
-              <div class="form-section" id="scenario-sensitivity-section" style="margin-top:2rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem;">
-                <div class="form-section-header">
-                  <div>
-                    <h3 class="form-section-title">⚡ Interactive Scenario Sensitivity & What-If Sandbox</h3>
-                    <p class="form-section-desc">Test real-time sensitivity by varying staffing headcount, contingency buffer, target deadline, and rate profile.</p>
-                  </div>
-                  <span class="badge badge-primary">Real-Time Engine Recalculation</span>
-                </div>
-
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
-                  <!-- Team Headcount Slider -->
-                  <div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
-                      <label class="form-label" style="font-size:0.85rem; margin-bottom:0;">Team Headcount:</label>
-                      <span id="sens-headcount-val" style="font-weight:700; color:var(--primary);">4 Engineers</span>
-                    </div>
-                    <input type="range" id="sens-headcount-slider" style="width:100%; accent-color:var(--primary);" min="2" max="16" value="4" oninput="handleSensitivityChange()">
-                  </div>
-
-                  <!-- Contingency Buffer Slider -->
-                  <div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
-                      <label class="form-label" style="font-size:0.85rem; margin-bottom:0;">Contingency Buffer:</label>
-                      <span id="sens-contingency-val" style="font-weight:700; color:var(--accent-amber);">15%</span>
-                    </div>
-                    <input type="range" id="sens-contingency-slider" style="width:100%; accent-color:var(--accent-amber);" min="5" max="35" value="15" oninput="handleSensitivityChange()">
-                  </div>
-
-                  <!-- Requested Deadline Days -->
-                  <div>
-                    <label class="form-label" style="font-size:0.85rem;">Requested Deadline (Days):</label>
-                    <input type="number" id="sens-deadline-input" class="form-input" min="14" max="365" value="60" onchange="handleSensitivityChange()">
-                  </div>
-
-                  <!-- Rate Profile -->
-                  <div>
-                    <label class="form-label" style="font-size:0.85rem;">Rate Profile Schedule:</label>
-                    <select id="sens-rate-profile" class="form-select" onchange="handleSensitivityChange()">
-                      <option value="benchmark" selected>CostPilot Benchmark Rates</option>
-                      <option value="tier1_metro">Tier-1 Metro Tech Hub (+25%)</option>
-                      <option value="offshore">Offshore Global Delivery (-35%)</option>
-                      <option value="enterprise_premium">Enterprise Mission-Critical (+50%)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Sensitivity Results Comparison Cards -->
-                <div class="kpi-grid" id="sensitivity-impact-grid" style="margin-bottom:0.5rem;">
-                  <div class="kpi-card">
-                    <div class="kpi-label">Recalculated Budget</div>
-                    <div class="kpi-value" id="sens-recalc-budget" style="color:var(--primary);">₹0</div>
-                    <div class="kpi-subtext" id="sens-delta-budget">Baseline Match</div>
-                  </div>
-                  <div class="kpi-card">
-                    <div class="kpi-label">Recalculated Duration</div>
-                    <div class="kpi-value" id="sens-recalc-duration">0 Days</div>
-                    <div class="kpi-subtext" id="sens-delta-duration">Baseline Match</div>
-                  </div>
-                  <div class="kpi-card">
-                    <div class="kpi-label">Brooks' Law Coordination Penalty</div>
-                    <div class="kpi-value" id="sens-brooks-penalty" style="color:var(--accent-cyan);">1.00x</div>
-                    <div class="kpi-subtext" id="sens-brooks-desc">Standard communication overhead</div>
-                  </div>
-                  <div class="kpi-card">
-                    <div class="kpi-label">Schedule Feasibility Status</div>
-                    <div class="kpi-value" id="sens-feasibility-status" style="color:var(--accent-emerald);">FEASIBLE</div>
-                    <div class="kpi-subtext" id="sens-feasibility-desc">Within critical path limits</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ======================================================= -->
               <!-- MONTE CARLO UNCERTAINTY SIMULATION SECTION              -->
               <!-- ======================================================= -->
               <div class="form-section" id="monte-carlo-results-section" style="margin-top:2rem;">
@@ -1668,6 +1563,9 @@
                   <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
                     <button type="button" class="btn btn-outline btn-sm" onclick="exportActiveEstimateJira()">
                       📥 Jira JSON Export
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="openJiraCloudModal()" id="btn-open-jira-sync" style="display:inline-flex; align-items:center; gap:0.35rem;">
+                      <span>☁️ Sync to Jira Cloud</span>
                     </button>
                     <button type="button" class="btn btn-outline btn-sm" onclick="exportActiveEstimateMsProject()">
                       📊 MS Project CSV
@@ -1834,177 +1732,30 @@
         <div class="form-section">
           <div class="form-section-header">
             <div>
-              <h1 class="form-section-title">Datasets & ML Model Studio</h1>
-              <p class="form-section-desc">Historical project dataset ingestion, schema validation, reproducible preprocessing, and candidate model retraining telemetry.</p>
+              <h1 class="form-section-title">Datasets & ML Model Lab</h1>
+              <p class="form-section-desc">Transparent model provenance, supervised metrics, and retraining telemetry
+              </p>
             </div>
-            <div style="display:flex; gap:0.5rem;">
-              <button class="btn btn-outline btn-sm" onclick="refreshDatasetStudio()">🔄 Refresh Studio</button>
-              <button class="btn btn-primary btn-sm" onclick="triggerCandidateTraining()">⚡ Retrain Candidate Model</button>
-            </div>
+            <button class="btn btn-primary btn-sm" onclick="openRetrainModal()">⚡ Retrain ML Models</button>
           </div>
 
-          <!-- 1. DATASET INGESTION & UPLOAD CARD -->
-          <div class="kpi-card" style="margin-bottom:1.5rem; background:var(--bg-card); border:1px solid var(--border-color);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
-              <div>
-                <div class="kpi-label" style="font-size:0.85rem; color:var(--primary); font-weight:700;">Data / Tooling Pipeline</div>
-                <h3 style="font-size:1.15rem; font-weight:700; margin-top:0.2rem;">Upload Historical Project Dataset</h3>
-              </div>
-              <span class="badge badge-medium">Supported Formats: .xlsx, .xls, .csv (Max 50MB)</span>
+          <!-- Dataset Provenance Card -->
+          <div class="kpi-card" style="margin-bottom:1.5rem;">
+            <div class="kpi-label">Active Training Dataset</div>
+            <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">CostPilot_AI_Training_Dataset.xlsx
             </div>
-
-            <form id="form-dataset-upload" onsubmit="handleDatasetUpload(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; align-items:flex-end;">
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" for="dataset-file-input">Select Dataset File *</label>
-                <input type="file" id="dataset-file-input" class="form-input" accept=".xlsx,.xls,.csv" required style="padding:0.4rem;">
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" for="dataset-name-input">Dataset Display Name</label>
-                <input type="text" id="dataset-name-input" class="form-input" placeholder="e.g. Enterprise Q3 Historical Projects">
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" for="dataset-provenance-select">Dataset Provenance *</label>
-                <select id="dataset-provenance-select" class="form-select">
-                  <option value="Organization-provided" selected>Organization-provided (Verified Historical)</option>
-                  <option value="Public Benchmark">Public Benchmark (COCOMO / ISBSG)</option>
-                  <option value="Synthetic">Synthetic / Simulated Training Set</option>
-                </select>
-              </div>
-              <div>
-                <button type="submit" class="btn btn-primary" id="btn-upload-dataset" style="width:100%; height:42px;">
-                  📤 Upload & Profile Dataset
-                </button>
-              </div>
-            </form>
-            <div id="upload-status-indicator" style="margin-top:0.75rem; font-size:0.85rem; display:none;"></div>
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+              <strong>Provenance:</strong> 2,500 projects • 44,301 feature records • 20 edge cases • 7 workbook sheets.
+              Preserved provenance: This simulated training set provides supervised benchmarks and empirical priors
+              without claiming to represent unverified external commercial contracts.
+            </p>
           </div>
 
-          <!-- 2. DATASET INVENTORY & ACTIVE SELECTION TOOLBAR -->
-          <div class="form-section" style="margin-bottom:1.5rem; background:rgba(255,255,255,0.02); padding:1rem 1.25rem; border-radius:8px; border:1px solid var(--border-color);">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-              <div style="display:flex; align-items:center; gap:0.75rem; flex:1; min-width:280px;">
-                <label for="select-active-dataset" style="font-weight:600; font-size:0.9rem; white-space:nowrap;">Active Ingested Dataset:</label>
-                <select id="select-active-dataset" class="form-select" onchange="loadSelectedDatasetDetails()" style="max-width:400px;">
-                  <option value="">Loading datasets inventory...</option>
-                </select>
-              </div>
-              <div style="display:flex; gap:0.5rem;">
-                <button type="button" class="btn btn-outline btn-sm" id="btn-clean-active-ds" onclick="cleanSelectedDataset()">
-                  🧹 Clean & Normalize Dataset
-                </button>
-                <button type="button" class="btn btn-primary btn-sm" id="btn-train-active-ds" onclick="trainOnSelectedDataset()">
-                  ⚡ Train Candidate Model
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. ACTIVE DATASET PROFILE & VALIDATION REPORT PANEL -->
-          <div id="dataset-profile-container" style="margin-bottom:1.5rem;">
-            <div class="kpi-grid" style="margin-bottom:1.25rem;">
-              <div class="kpi-card">
-                <div class="kpi-label">Total Ingested Records</div>
-                <div class="kpi-value" id="ds-profile-total-rows">0</div>
-                <div class="kpi-subtext" id="ds-profile-format">Format: N/A</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Valid Training Rows</div>
-                <div class="kpi-value" id="ds-profile-valid-rows" style="color:var(--accent-emerald);">0</div>
-                <div class="kpi-subtext" id="ds-profile-invalid-rows">0 Invalid rows flagged</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Duplicate Records</div>
-                <div class="kpi-value" id="ds-profile-duplicates">0</div>
-                <div class="kpi-subtext">Zero duplicate leakage</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Detected Targets</div>
-                <div class="kpi-value" id="ds-profile-targets" style="font-size:1.1rem; color:var(--primary);">None</div>
-                <div class="kpi-subtext" id="ds-profile-missing-total">0 Missing values</div>
-              </div>
-            </div>
-
-            <!-- Validation Report Card -->
-            <div class="form-section" style="margin-bottom:1.25rem;">
-              <div class="form-section-header">
-                <div>
-                  <h3 class="form-section-title" style="font-size:1rem;">Schema Validation & Data Quality Report</h3>
-                  <p class="form-section-desc">Automated profiling against standard candidate fields: effort, duration, cost, complexity, and tech stack.</p>
-                </div>
-                <span class="badge badge-medium" id="ds-profile-provenance-badge">Organization-provided</span>
-              </div>
-              <div id="ds-validation-warnings-box" style="padding:0.75rem 1rem; border-radius:6px; background:rgba(245,158,11,0.08); border-left:3px solid var(--accent-amber); font-size:0.85rem; margin-bottom:1rem;">
-                No schema validation warnings. Dataset structure is ready for preprocessing.
-              </div>
-
-              <!-- Column Schema & Candidate Mapping Table -->
-              <div class="table-container">
-                <table class="data-table" style="font-size:0.85rem;">
-                  <thead>
-                    <tr>
-                      <th>Uploaded Column Name</th>
-                      <th>Inferred Data Type</th>
-                      <th>Missing Count (%)</th>
-                      <th>Unique Values</th>
-                      <th>Mapped Candidate Field</th>
-                      <th>Sample Data Values</th>
-                    </tr>
-                  </thead>
-                  <tbody id="ds-columns-mapping-tbody">
-                    <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Select or upload a dataset to inspect schema mapping.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. MODEL RETRAINING & STAGING STUDIO (CANDIDATE vs CHAMPION) -->
-          <div class="form-section" id="model-staging-studio" style="margin-bottom:1.5rem;">
-            <div class="form-section-header">
-              <div>
-                <h3 class="form-section-title">Model Staging Studio — Champion vs. Candidate Comparison</h3>
-                <p class="form-section-desc">Evaluate newly trained candidate models on an independent 80/20 test split before promoting to production active inference.</p>
-              </div>
-              <span class="badge badge-primary" id="model-staging-status-badge">Ready for Training</span>
-            </div>
-
-            <!-- Candidate Evaluation Telemetry -->
-            <div id="candidate-training-telemetry" style="display:none; padding:1rem; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-color); margin-bottom:1.25rem;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
-                <div>
-                  <strong style="color:var(--text-main);">Candidate Model Run:</strong> <span id="cand-run-id">run_xxx</span>
-                  <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.5rem;" id="cand-run-timestamp">Timestamp</span>
-                </div>
-                <button type="button" class="btn btn-primary btn-sm" id="btn-promote-candidate" onclick="promoteCurrentCandidate()" style="background:#10b981; border-color:#10b981;">
-                  🚀 Promote to Active Production Model
-                </button>
-              </div>
-
-              <div class="table-container">
-                <table class="data-table" style="font-size:0.85rem;">
-                  <thead>
-                    <tr>
-                      <th>Target Variable</th>
-                      <th>Algorithm</th>
-                      <th>Train / Test Samples</th>
-                      <th>R² Score</th>
-                      <th>MAE</th>
-                      <th>MMRE</th>
-                      <th>MdMRE</th>
-                      <th>PRED(25)</th>
-                      <th>Acceptance Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="candidate-metrics-tbody">
-                    <!-- Populated dynamically -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Global Supervised Held-Out Benchmark (Champion Model) -->
-            <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:var(--text-main);">Active Production Model Performance (Champion)</h4>
-            <div class="kpi-grid" style="margin-bottom:1.5rem;">
+          <!-- Held-out Test Metrics -->
+          <div class="form-section" style="margin-bottom:1.5rem;">
+            <h3 class="form-section-title" style="margin-bottom:1rem;">Supervised Held-Out Test Evaluation Metrics (500
+              Test Records)</h3>
+            <div class="kpi-grid">
               <div class="kpi-card">
                 <div class="kpi-label">Cost Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-cost-r2">0.6229</div>
@@ -2013,53 +1764,25 @@
               <div class="kpi-card">
                 <div class="kpi-label">Effort Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-effort-r2">0.7182</div>
-                <div class="kpi-subtext" id="ml-lab-effort-subtext">MAE: 234.5 Hours • MMRE: 30.4% • PRED(25): 53.4%</div>
+                <div class="kpi-subtext" id="ml-lab-effort-subtext">MAE: 234.5 Hours • MMRE: 30.4% • PRED(25): 53.4%
+                </div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Duration Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-duration-r2">0.5328</div>
-                <div class="kpi-subtext" id="ml-lab-duration-subtext">MAE: 20.3 Days • MMRE: 44.5% • PRED(25): 40.6%</div>
+                <div class="kpi-subtext" id="ml-lab-duration-subtext">MAE: 20.3 Days • MMRE: 44.5% • PRED(25): 40.6%
+                </div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Target Leakage Audit</div>
                 <div class="kpi-value" style="color:var(--accent-emerald);">CLEAN</div>
-                <div class="kpi-subtext">Zero target leakage detected across active models</div>
+                <div class="kpi-subtext">Zero target leakage detected across 2,500 projects</div>
               </div>
             </div>
           </div>
 
-          <!-- 5. TRAINING RUN HISTORY AUDIT TRAIL -->
+          <!-- Cumulative Outcome Metrics from Completed Projects (Priority 1) -->
           <div class="form-section" style="margin-bottom:1.5rem;">
-            <div class="form-section-header">
-              <div>
-                <h3 class="form-section-title">Model Retraining Audit Trail</h3>
-                <p class="form-section-desc">Audit history of candidate training iterations, datasets used, and promotion events.</p>
-              </div>
-              <span class="badge badge-medium" id="training-runs-count-badge">0 Runs</span>
-            </div>
-            <div class="table-container">
-              <table class="data-table" style="font-size:0.85rem;">
-                <thead>
-                  <tr>
-                    <th>Run ID</th>
-                    <th>Dataset Source</th>
-                    <th>Model Version</th>
-                    <th>Algorithm</th>
-                    <th>Train / Test Samples</th>
-                    <th>Targets</th>
-                    <th>Status</th>
-                    <th>Timestamp</th>
-                  </tr>
-                </thead>
-                <tbody id="training-history-tbody">
-                  <tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No training runs recorded yet.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- 6. CUMULATIVE OUTCOME METRICS (VERIFIED ACTUALS) -->
-          <div class="form-section" style="margin-bottom:0;">
             <h3 class="form-section-title" style="margin-bottom:0.5rem;">Cumulative Outcome Metrics (Completed Projects with Verified Actuals)</h3>
             <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1rem;">
               Calculated dynamically from verified actual outcomes recorded upon project completion, distinguishing empirical actual performance from held-out model benchmarks.
@@ -2089,7 +1812,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -2223,14 +1945,9 @@
       <section id="page-about" class="page-content">
         <div class="form-section">
           <div class="form-section-header">
-            <div style="display:flex; align-items:center; gap:1rem;">
-              <div class="brand-logo-wrap" style="width:48px; height:48px;">
-                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
-              </div>
-              <div>
-                <h1 class="form-section-title">About CostPilot AI</h1>
-                <p class="form-section-desc">Authoritative estimation pipeline and methodology</p>
-              </div>
+            <div>
+              <h1 class="form-section-title">About CostPilot AI</h1>
+              <p class="form-section-desc">Authoritative estimation pipeline and methodology</p>
             </div>
           </div>
 
@@ -2316,8 +2033,11 @@
       <div class="modal-body" id="view-modal-body">
         <!-- Rendered dynamically -->
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeViewProjectModal()">Close</button>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="syncViewedProjectToJira()">
+          ☁️ Sync to Jira Cloud
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="closeViewProjectModal()">Close</button>
       </div>
     </div>
   </div>
@@ -2543,6 +2263,147 @@
               Variances</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================= -->
+  <!-- JIRA CLOUD REST API v3 SYNCHRONIZATION MODAL           -->
+  <!-- ======================================================= -->
+  <div id="modal-jira-sync" class="modal-overlay">
+    <div class="modal-dialog modal-dialog-lg" style="max-width:820px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" style="display:flex; align-items:center; gap:0.5rem; margin:0;">
+            <span>☁️</span> <span>Atlassian Jira Cloud Integration</span>
+          </h3>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">
+            Hierarchical WBS Sync (Epics → Stories → Sub-tasks) via Jira REST API v3
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeJiraModal()">×</button>
+      </div>
+
+      <div class="modal-body" style="padding:1.5rem; max-height:calc(85vh - 120px); overflow-y:auto;">
+        <!-- Status & Connection Card -->
+        <div style="background:var(--bg-tertiary, #1f293d); border:1px solid var(--border-color, #334155); border-radius:10px; padding:1.1rem; margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+                <span id="jira-connection-pill" class="badge" style="background:#475569; color:#f8fafc; font-size:0.75rem; padding:4px 8px; border-radius:20px;">
+                  Checking Status...
+                </span>
+                <span id="jira-site-url-text" style="font-weight:600; font-size:0.92rem; color:var(--text-main);">
+                  Jira Cloud REST API v3
+                </span>
+              </div>
+              <div id="jira-auth-details-text" style="font-size:0.8rem; color:var(--text-muted);">
+                Credentials managed backend-only via environment variables.
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-test-jira-conn" onclick="testJiraCloudConnection()">
+                ⚡ Test Connection
+              </button>
+            </div>
+          </div>
+          <!-- Feedback Alert for Test Connection -->
+          <div id="jira-test-alert" style="display:none; margin-top:0.85rem; padding:0.6rem 0.9rem; border-radius:6px; font-size:0.83rem; line-height:1.4;"></div>
+        </div>
+
+        <!-- Target Project Selection & Options -->
+        <div class="form-grid-2" style="margin-bottom:1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="jira-project-select">Target Jira Project</label>
+            <div style="display:flex; gap:0.5rem;">
+              <select id="jira-project-select" class="form-select" onchange="onJiraProjectSelected()">
+                <option value="">Loading accessible projects...</option>
+              </select>
+              <button type="button" class="btn btn-outline btn-sm" title="Refresh projects from Jira Cloud" onclick="loadJiraProjectsList()">
+                🔄
+              </button>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem; display:flex; align-items:center; gap:0.35rem;">
+              <span>Or manual key:</span>
+              <input type="text" id="jira-custom-project-key" placeholder="e.g. CP" style="width:80px; padding:3px 6px; font-size:0.75rem; background:var(--bg-secondary); border:1px solid var(--border-color); color:var(--text-main); border-radius:4px; text-transform:uppercase;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hierarchy Structure</label>
+            <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:6px; padding:0.6rem 0.8rem; font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              <div><strong style="color:#c084fc;">1. Modules</strong> ➔ Epics</div>
+              <div><strong style="color:#60a5fa;">2. Features</strong> ➔ Stories (Linked to parent Epic)</div>
+              <div><strong style="color:#34d399;">3. Technical Tasks</strong> ➔ Sub-tasks (Linked to Story)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hierarchy Scope Preview Card -->
+        <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:10px; padding:1rem; margin-bottom:1.5rem;">
+          <div style="font-weight:600; font-size:0.88rem; margin-bottom:0.6rem; color:var(--text-main);">
+            Items to Synchronize from Current Estimate WBS:
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.75rem;">
+            <div style="background:var(--bg-tertiary); padding:0.6rem; border-radius:6px; text-align:center;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Epics (Modules)</div>
+              <div id="jira-preview-epics" style="font-size:1.25rem; font-weight:700; color:#c084fc;">0</div>
+            </div>
+            <div style="background:var(--bg-tertiary); padding:0.6rem; border-radius:6px; text-align:center;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Stories (Features)</div>
+              <div id="jira-preview-stories" style="font-size:1.25rem; font-weight:700; color:#60a5fa;">0</div>
+            </div>
+            <div style="background:var(--bg-tertiary); padding:0.6rem; border-radius:6px; text-align:center;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Sub-tasks</div>
+              <div id="jira-preview-subtasks" style="font-size:1.25rem; font-weight:700; color:#34d399;">0</div>
+            </div>
+            <div style="background:var(--bg-tertiary); padding:0.6rem; border-radius:6px; text-align:center;">
+              <div style="font-size:0.75rem; color:var(--text-muted);">Total Effort</div>
+              <div id="jira-preview-hours" style="font-size:1.25rem; font-weight:700; color:#fbbf24;">0h</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Spinner Box -->
+        <div id="jira-sync-spinner-box" style="display:none; text-align:center; padding:1.5rem 0;">
+          <div class="spinner" style="margin:0 auto 1rem;"></div>
+          <div style="font-weight:600; font-size:0.95rem; color:var(--text-main);">
+            Creating Issues & Hierarchy in Jira Cloud...
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">
+            Formatting ADF descriptions, parent links, original estimates, and labels.
+          </div>
+        </div>
+
+        <!-- Results & Created Issues List Container -->
+        <div id="jira-sync-results-box" style="display:none;">
+          <div id="jira-sync-summary-banner" style="padding:0.75rem 1rem; border-radius:8px; margin-bottom:1rem; font-size:0.85rem; font-weight:600;"></div>
+          <div style="font-weight:600; font-size:0.85rem; margin-bottom:0.5rem;">Confirmed Jira Cloud Issues:</div>
+          <div style="max-height:220px; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px;">
+            <table class="data-table" style="font-size:0.8rem; margin:0;">
+              <thead>
+                <tr>
+                  <th style="padding:6px 10px;">Type</th>
+                  <th style="padding:6px 10px;">Key</th>
+                  <th style="padding:6px 10px;">Summary</th>
+                  <th style="padding:6px 10px;">Jira Link</th>
+                </tr>
+              </thead>
+              <tbody id="jira-created-issues-tbody">
+              </tbody>
+            </table>
+          </div>
+          <div id="jira-sync-errors-container" style="display:none; margin-top:0.75rem; font-size:0.8rem; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); border-radius:6px; padding:0.6rem;"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding:1rem 1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn btn-secondary" onclick="closeJiraModal()">Close</button>
+        <div style="display:flex; gap:0.6rem;">
+          <button type="button" class="btn btn-primary" id="btn-submit-jira-sync" onclick="submitJiraCloudSync()">
+            🚀 Create Issues in Jira
+          </button>
+        </div>
       </div>
     </div>
   </div>

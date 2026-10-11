@@ -144,4 +144,14 @@ class ProjectReconciliationRequest(BaseModel):
     notes: Optional[str] = ""
 
 
+class JiraSyncRequest(BaseModel):
+    target_project_key: Optional[str] = None
+
+
+class JiraDirectSyncRequest(BaseModel):
+    project_name: Optional[str] = "CostPilot Project"
+    target_project_key: Optional[str] = None
+    wbs: Dict[str, Any]
+
+
 
