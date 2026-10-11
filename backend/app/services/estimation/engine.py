@@ -15,6 +15,11 @@ from app.services.estimation.explanations import explanation_generator
 from app.services.ml.predictor import project_predictor
 from app.services.ml.model_registry import model_registry
 from app.services.estimation.historical_benchmarker import historical_benchmarker
+from app.services.estimation.wbs_generator import wbs_generator
+from app.services.estimation.resource_optimizer import resource_optimizer
+from app.services.estimation.monte_carlo import monte_carlo_simulator
+from app.services.estimation.parametric_model import parametric_cocomo_engine
+from app.services.estimation.integrations import integration_service
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +32,10 @@ class EstimationEngine:
 
     def __init__(self):
         self.version = "2.0.0"
+
+    def estimate(self, **kwargs) -> Dict[str, Any]:
+        """Convenience keyword wrapper delegating to estimate_project."""
+        return self.estimate_project(kwargs)
 
     def estimate_project(self, project_input: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -375,7 +384,68 @@ class EstimationEngine:
             except Exception as e:
                 logger.warning(f"Could not load model metrics report: {e}")
 
-        # Step 23: Return Authoritative Structured Estimate
+        # Step 23: Work Breakdown Structure (WBS)
+        wbs_data = wbs_generator.generate_wbs(
+            project_name=project_name,
+            project_type=project_type,
+            features=estimated_features,
+            overall_complexity=overall_complexity,
+            platform=platform_name,
+        )
+
+        # Step 24: Resource Optimization Scenarios (Budget, Balanced, Deadline)
+        resource_scenarios = resource_optimizer.optimize_scenarios(
+            total_effort_hours=total_effort_expected,
+            critical_path_hours=critical_path_hours,
+            project_type=project_type,
+            rate_profile=rate_profile,
+            custom_rates=custom_rates,
+            requested_deadline_days=requested_deadline_days,
+            one_time_infra_inr=one_time_infra_inr,
+            tooling_setup_inr=tooling_setup_inr,
+            other_direct_costs_inr=other_direct_costs_inr,
+            contingency_rate=contingency_rate,
+            currency=currency,
+            currency_exchange_rate=currency_exchange_rate,
+            working_hours_per_day=working_hours_per_day,
+            working_days_per_week=working_days_per_week,
+        )
+
+        # Step 25: Monte Carlo Uncertainty Simulation (1,000 iterations)
+        monte_carlo_data = monte_carlo_simulator.run_simulation(
+            features=estimated_features,
+            likely_effort_hours=total_effort_expected,
+            likely_duration_days=timeline_data.get("likely_calendar_days", 45),
+            likely_budget_inr=budget_data.get("final_build_budget_inr", 0.0),
+            blended_hourly_rate=budget_data.get("blended_hourly_rate_inr", 1200.0),
+            contingency_rate=contingency_rate,
+            currency=currency,
+            exchange_rate=currency_exchange_rate,
+            iterations=1000,
+            random_seed=42,
+        )
+
+        # Step 26: Analogy-Based Estimation (Top-5 comparable historical records)
+        analogies = historical_benchmarker.find_top_analogies(
+            project_type=project_type,
+            overall_complexity=overall_complexity,
+            feature_count=len(estimated_features),
+            frontend_stack=project_input.get("frontend_stack", "React"),
+            backend_stack=project_input.get("backend_stack", "Node.js_Express"),
+            currency=currency,
+            exchange_rate=currency_exchange_rate,
+            top_k=5,
+        )
+
+        # Step 27: Parametric Software Estimation (COCOMO II adapted)
+        parametric_cocomo = parametric_cocomo_engine.estimate(
+            features=estimated_features,
+            overall_complexity=overall_complexity,
+            platform=platform_name,
+            quality_requirement=str(project_input.get("quality_requirement", "Standard")),
+        )
+
+        # Step 28: Return Authoritative Structured Estimate
         return {
             "project_name": project_name,
             "project_type": project_type,
@@ -440,6 +510,12 @@ class EstimationEngine:
             "confidence": confidence_data,
             "explanations": explanations,
             "model_evaluation_metrics": model_evaluation_metrics,
+            "wbs": wbs_data,
+            "resource_scenarios": resource_scenarios,
+            "monte_carlo": monte_carlo_data,
+            "analogies": analogies,
+            "parametric_cocomo": parametric_cocomo,
+            "integrations_catalog": integration_service.get_integration_catalog(),
             "inputs_echo": {
                 "team_size": team_size,
                 "rate_profile": rate_profile,

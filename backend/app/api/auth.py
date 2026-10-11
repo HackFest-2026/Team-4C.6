@@ -135,7 +135,19 @@ def change_password(req: PasswordChange, current_user: Dict[str, Any] = Depends(
 
     cursor.execute("SELECT password_hash, salt FROM users WHERE id = ?", (current_user["id"],))
     row = cursor.fetchone()
-    if not row or not verify_password(req.current_password, row["password_hash"], row["salt"]):
+    if not row:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User account not found.",
+        )
+    if not row["password_hash"] or not row["salt"]:
+        conn.close()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account does not have a usable password hash. Please contact administrator.",
+        )
+    if not verify_password(req.current_password, row["password_hash"], row["salt"]):
         conn.close()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

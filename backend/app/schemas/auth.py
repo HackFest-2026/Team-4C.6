@@ -43,16 +43,24 @@ class UserProfileUpdate(BaseModel):
 
 
 class PasswordChange(BaseModel):
-    current_password: str = Field(..., min_length=1)
-    new_password: str = Field(..., min_length=8, max_length=128)
-    confirm_new_password: str = Field(..., min_length=8, max_length=128)
+    current_password: str = Field(..., min_length=1, description="Existing active password")
+    new_password: str = Field(..., min_length=8, max_length=128, description="New secure password")
+    confirm_new_password: Optional[str] = Field(default=None, min_length=8, max_length=128)
+    confirm_password: Optional[str] = Field(default=None, min_length=8, max_length=128)
 
-    @field_validator("confirm_new_password")
+    @field_validator("current_password", "new_password")
     @classmethod
-    def check_new_passwords_match(cls, v: str, info) -> str:
-        if "new_password" in info.data and v != info.data["new_password"]:
-            raise ValueError("New passwords do not match.")
+    def validate_password_not_empty(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Password cannot be empty or only whitespace.")
         return v
+
+    def model_post_init(self, __context) -> None:
+        effective_confirm = self.confirm_new_password or self.confirm_password
+        if not effective_confirm:
+            raise ValueError("Confirmation password is required.")
+        if self.new_password != effective_confirm:
+            raise ValueError("New passwords do not match.")
 
 
 class UserResponse(BaseModel):

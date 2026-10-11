@@ -19,6 +19,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from app.core.config import settings
 from app.services.ml.data_loader import DatasetLoader, DatasetValidationError
+from app.services.ml.metrics import calculate_relative_error_metrics, calculate_individual_accuracy
 
 logger = logging.getLogger(__name__)
 

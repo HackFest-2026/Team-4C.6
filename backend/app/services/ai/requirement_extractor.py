@@ -5,8 +5,10 @@ from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
+from app.services.estimation.feature_effort import FeatureEffortEngine
 
 logger = logging.getLogger(__name__)
+_feature_effort_engine = FeatureEffortEngine()
 
 
 class ExtractedFeature(BaseModel):
@@ -21,6 +23,16 @@ class ExtractedFeature(BaseModel):
     integration_requirements: List[str] = Field(default_factory=list)
     status: str = "recommended"  # recommended | accepted | rejected
     is_provisional: bool = False
+    estimated_effort_hours: float = 24.0
+    effort_range: str = "18-36 hrs"
+    is_explicit: bool = False
+    is_inferred: bool = True
+    confidence_level: str = "High"  # High | Medium | Low
+    assumptions: List[str] = Field(default_factory=list)
+    acceptance_criteria: List[str] = Field(default_factory=list)
+    suggested_tasks: List[str] = Field(default_factory=list)
+    required_roles: List[str] = Field(default_factory=list)
+    risk_factors: List[str] = Field(default_factory=list)
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -702,6 +714,261 @@ DOMAIN_CATALOG = {
             },
         ],
     },
+    "food delivery": {
+        "archetype": "Food Delivery Platform",
+        "features": [
+            {
+                "name": "Customer & Restaurant Partner Authentication",
+                "category": "Authentication",
+                "complexity": "Medium",
+                "priority": "Must-Have",
+                "description": "Multi-role accounts for Customers, Restaurant Kitchen Managers, Delivery Riders, and Platform Admins with OTP verification.",
+                "relevance_reason": "Ensures appropriate access control across distinct participants in food ordering and fulfillment.",
+                "dependencies": [],
+                "integrations": ["SMS/OTP Gateway"],
+            },
+            {
+                "name": "Restaurant Discovery & Geolocation Search",
+                "category": "Search/filter",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Location-based restaurant discovery, cuisine filters, delivery radius fencing, rating sorts, and operating hours checks.",
+                "relevance_reason": "Primary customer discovery interface to locate open restaurants delivering to their active address.",
+                "dependencies": ["Customer & Restaurant Partner Authentication"],
+                "integrations": ["Google Maps / Geolocation API"],
+            },
+            {
+                "name": "Interactive Menu Management & Add-On Modifiers",
+                "category": "CRUD/data module",
+                "complexity": "Medium",
+                "priority": "Must-Have",
+                "description": "Menu categories, food items, dietary tags (Veg/Non-Veg), portion sizes, dish customizations, and dynamic 86 out-of-stock toggles.",
+                "relevance_reason": "Empowers restaurant partners to manage menus, pricing, and live inventory availability.",
+                "dependencies": ["Customer & Restaurant Partner Authentication"],
+                "integrations": [],
+            },
+            {
+                "name": "Cart & Dynamic Checkout Engine",
+                "category": "CRUD/data module",
+                "complexity": "Medium",
+                "priority": "Must-Have",
+                "description": "Single-restaurant cart validation, item modifier totals, delivery tip, packaging fee, promo discount codes, and taxes.",
+                "relevance_reason": "Accurately items and calculates the total order bill before payment submission.",
+                "dependencies": ["Interactive Menu Management & Add-On Modifiers"],
+                "integrations": [],
+            },
+            {
+                "name": "Digital Payment Gateway & Instant Settlement",
+                "category": "Payment integration",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Checkout processing via UPI, Credit/Debit cards, Net Banking, Apple Pay / Google Pay, and Cash on Delivery.",
+                "relevance_reason": "Provides seamless payment collection and automated merchant payout reconciliation.",
+                "dependencies": ["Cart & Dynamic Checkout Engine"],
+                "integrations": ["Stripe / Razorpay API"],
+            },
+            {
+                "name": "Real-Time Order Placement & Kitchen Lifecycle",
+                "category": "Real-time features",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "WebSocket order broadcast to restaurant kitchen display, order acceptance timer, food prep queue, and ready-for-pickup status transitions.",
+                "relevance_reason": "Coordinates real-time synchronization between customer ordering and kitchen food preparation.",
+                "dependencies": ["Digital Payment Gateway & Instant Settlement"],
+                "integrations": ["WebSocket Server"],
+            },
+            {
+                "name": "Automated Driver Assignment & Dispatch",
+                "category": "Booking/scheduling",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Proximity-based rider matching algorithm, dispatch ping timeout, batching nearby orders, and pickup confirmation.",
+                "relevance_reason": "Minimizes delivery dispatch latency and ensures rapid pickup from the kitchen.",
+                "dependencies": ["Real-Time Order Placement & Kitchen Lifecycle"],
+                "integrations": [],
+            },
+            {
+                "name": "Live GPS Delivery Tracking & Dynamic ETA",
+                "category": "Maps/geolocation",
+                "complexity": "Very High",
+                "priority": "Must-Have",
+                "description": "Rider continuous GPS telemetry, turn-by-turn route map visualization, and dynamic estimated time of arrival.",
+                "relevance_reason": "Provides customers full visibility into their order's physical transit and delivery progress.",
+                "dependencies": ["Automated Driver Assignment & Dispatch"],
+                "integrations": ["Google Maps / Mapbox API"],
+            },
+            {
+                "name": "Order Status Push Notifications & SMS Alerts",
+                "category": "Email/SMS notifications",
+                "complexity": "Medium",
+                "priority": "Should-Have",
+                "description": "Real-time push notifications for order confirmed, food preparing, driver picked up, and driver arriving.",
+                "relevance_reason": "Proactively informs customers without requiring manual refresh of the mobile or web app.",
+                "dependencies": ["Real-Time Order Placement & Kitchen Lifecycle"],
+                "integrations": ["Firebase Cloud Messaging", "Twilio SMS"],
+            },
+            {
+                "name": "Restaurant Partner Admin & Commission Portal",
+                "category": "Admin dashboard",
+                "complexity": "High",
+                "priority": "Could-Have",
+                "description": "Order sales analytics, commission deductions, daily revenue payouts, customer ratings, and dispute management.",
+                "relevance_reason": "Provides platform business intelligence and administrative governance over merchant partners.",
+                "dependencies": [],
+                "integrations": [],
+            },
+        ],
+    },
+    "ai document analysis": {
+        "archetype": "AI Document Analysis SaaS",
+        "features": [
+            {
+                "name": "Multi-Tenant Authentication & API Key Quotas",
+                "category": "Authentication",
+                "complexity": "Medium",
+                "priority": "Must-Have",
+                "description": "Workspace user accounts, organization tenant isolation, developer API keys, and tiered rate limiting.",
+                "relevance_reason": "Secures enterprise customer document privacy and controls developer programmatic access.",
+                "dependencies": [],
+                "integrations": [],
+            },
+            {
+                "name": "Document Ingestion & Multi-Format OCR Pipeline",
+                "category": "File upload/storage",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Async upload pipeline for PDF, DOCX, TIFF, and scanned images with OCR layout analysis and tabular data extraction.",
+                "relevance_reason": "Core gateway converting raw unstructured paperwork into structured text representations.",
+                "dependencies": ["Multi-Tenant Authentication & API Key Quotas"],
+                "integrations": ["Tesseract / AWS Textract / Cloud Vision"],
+            },
+            {
+                "name": "LLM-Powered Information Extraction & Entity Parsing",
+                "category": "AI API feature",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Extraction of key-value fields, financial tables, clauses, invoice metadata, and structured JSON output schema matching.",
+                "relevance_reason": "Automates conversion of complex unstructured documents into reliable structured databases.",
+                "dependencies": ["Document Ingestion & Multi-Format OCR Pipeline"],
+                "integrations": ["OpenAI / Anthropic / Gemini API"],
+            },
+            {
+                "name": "Vector Embeddings & Semantic Document Search",
+                "category": "AI API feature",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Document chunking, dense vector embeddings, vector database indexing, and natural language question answering across files.",
+                "relevance_reason": "Enables knowledge workers to query and converse with massive multi-page document archives.",
+                "dependencies": ["Document Ingestion & Multi-Format OCR Pipeline"],
+                "integrations": ["Pinecone / Qdrant / pgvector"],
+            },
+            {
+                "name": "Automated Executive Summarization & Discrepancy Flagging",
+                "category": "Analytics/reporting",
+                "complexity": "Medium",
+                "priority": "Should-Have",
+                "description": "Synthesized executive briefing summaries, risk clause warnings, anomaly detection, and PDF report export.",
+                "relevance_reason": "Accelerates review cycles for legal, financial, and compliance audit teams.",
+                "dependencies": ["LLM-Powered Information Extraction & Entity Parsing"],
+                "integrations": [],
+            },
+            {
+                "name": "Developer REST API & Async Webhook Ingestion",
+                "category": "Third-party API integration",
+                "complexity": "High",
+                "priority": "Should-Have",
+                "description": "Document analysis REST API endpoint, async completion webhooks, and OpenAPI schema documentation.",
+                "relevance_reason": "Enables programmatic B2B customer integration into existing ERP, CRM, and accounting systems.",
+                "dependencies": ["Multi-Tenant Authentication & API Key Quotas"],
+                "integrations": [],
+            },
+            {
+                "name": "Usage Quota Metering & Subscription Billing",
+                "category": "Subscription/billing",
+                "complexity": "High",
+                "priority": "Should-Have",
+                "description": "Per-page usage consumption tracking, monthly subscription tiers, overage billing, and Stripe checkout.",
+                "relevance_reason": "Direct monetization engine aligned to computing and LLM token costs.",
+                "dependencies": ["Multi-Tenant Authentication & API Key Quotas"],
+                "integrations": ["Stripe Billing API"],
+            },
+            {
+                "name": "PII Masking, Redaction & Security Audit Logging",
+                "category": "Security/compliance",
+                "complexity": "High",
+                "priority": "Must-Have",
+                "description": "Automated detection and redaction of SSNs, credit cards, names, and GDPR/HIPAA compliance audit logs.",
+                "relevance_reason": "Mandatory requirement for enterprise clients dealing with sensitive confidential documents.",
+                "dependencies": [],
+                "integrations": [],
+            },
+        ],
+    },
+    "portfolio website": {
+        "archetype": "Portfolio Website",
+        "features": [
+            {
+                "name": "Hero Section & Personal Branding Bio",
+                "category": "Responsive UI/page",
+                "complexity": "Low",
+                "priority": "Must-Have",
+                "description": "Header with name, professional title, elevator pitch, avatar portrait, and downloadable resume PDF button.",
+                "relevance_reason": "Creates an immediate, polished impression for visiting clients and recruiters.",
+                "dependencies": [],
+                "integrations": [],
+            },
+            {
+                "name": "Featured Projects & Case Studies Showcase",
+                "category": "CRUD/data module",
+                "complexity": "Low",
+                "priority": "Must-Have",
+                "description": "Interactive project cards displaying cover screenshot, tech stack pills, project summary, and live demo links.",
+                "relevance_reason": "Demonstrates technical capability, design sensibility, and past client deliverables.",
+                "dependencies": ["Hero Section & Personal Branding Bio"],
+                "integrations": [],
+            },
+            {
+                "name": "Technical Skills & Certifications Matrix",
+                "category": "Responsive UI/page",
+                "complexity": "Low",
+                "priority": "Must-Have",
+                "description": "Categorized skill badges (Frontend, Backend, DevOps, Tools), proficiency metrics, and verified certificate links.",
+                "relevance_reason": "Quickly communicates technical stack proficiencies to recruiters.",
+                "dependencies": [],
+                "integrations": [],
+            },
+            {
+                "name": "Interactive Contact Form & Email Forwarding",
+                "category": "Email/SMS notifications",
+                "complexity": "Low",
+                "priority": "Must-Have",
+                "description": "Client inquiry form with input validation, anti-spam CAPTCHA, and instant email dispatch to owner's inbox.",
+                "relevance_reason": "Enables prospective employers and freelance clients to reach out immediately.",
+                "dependencies": [],
+                "integrations": ["Formspree / SendGrid API"],
+            },
+            {
+                "name": "Responsive Design & Dark/Light Theme Switching",
+                "category": "Responsive UI/page",
+                "complexity": "Low",
+                "priority": "Should-Have",
+                "description": "Fluid mobile and desktop viewport adaptability, CSS variables, and persistent theme switcher.",
+                "relevance_reason": "Ensures seamless readability and aesthetic presentation across mobile and desktop displays.",
+                "dependencies": [],
+                "integrations": [],
+            },
+            {
+                "name": "SEO Metadata, Social Sharing & Fast CDN Delivery",
+                "category": "SEO/content setup",
+                "complexity": "Low",
+                "priority": "Should-Have",
+                "description": "OpenGraph social preview cards, JSON-LD structured data, XML sitemap, and asset compression for top Lighthouse scores.",
+                "relevance_reason": "Improves discoverability on search engines and optimizes social media link sharing previews.",
+                "dependencies": [],
+                "integrations": [],
+            },
+        ],
+    },
 }
 
 
@@ -769,28 +1036,36 @@ class RequirementExtractor:
 
         # Step B & C: Synthesize Contextual Requirements from Project Profile
         matched_domain_key = None
-        for key in DOMAIN_CATALOG.keys():
-            if key in full_lower or key in p_type.lower():
-                matched_domain_key = key
-                break
 
-        # Check secondary domain keywords
+        # 1. If explicit domain is passed and known, honor it first
+        if domain and domain.lower().strip() in DOMAIN_CATALOG:
+            matched_domain_key = domain.lower().strip()
+        elif project_type and project_type.lower().strip() in DOMAIN_CATALOG and project_type.lower().strip() not in ("saas platform", "saas web application"):
+            matched_domain_key = project_type.lower().strip()
+
+        # 2. Prioritized semantic domain keyword detection from description, name, and notes
         if not matched_domain_key:
-            if any(w in full_lower for w in ["college", "university", "school", "student", "teacher", "campus", "course", "grade", "faculty", "lms", "academy"]):
+            if any(w in full_lower for w in ["food delivery", "food ordering", "restaurant", "swiggy", "zomato", "meal delivery", "food platform", "takeaway", "dining"]):
+                matched_domain_key = "food delivery"
+            elif any(w in full_lower for w in ["document analysis", "doc analysis", "ocr", "pdf analysis", "contract analysis", "document extraction"]) or ("document" in full_lower and any(w in full_lower for w in ["ai", "llm", "ml", "nlp", "ocr", "intelligent", "smart"])):
+                matched_domain_key = "ai document analysis"
+            elif any(w in full_lower for w in ["portfolio", "personal website", "resume website", "portfolio website", "personal site", "cv website"]):
+                matched_domain_key = "portfolio website"
+            elif any(w in full_lower for w in ["college", "university", "school", "student", "teacher", "campus", "course", "grade", "faculty", "lms", "academy", "education", "syllabus"]):
                 matched_domain_key = "education"
-            elif any(w in full_lower for w in ["doctor", "patient", "clinic", "hospital", "telemedicine", "medical", "prescription", "health", "ehr", "clinical"]):
+            elif any(w in full_lower for w in ["doctor", "patient", "clinic", "hospital", "telemedicine", "medical", "prescription", "health", "ehr", "clinical", "appointment", "healthcare"]):
                 matched_domain_key = "healthcare"
-            elif any(w in full_lower for w in ["property", "realty", "broker", "apartment", "rental", "estate", "tenant", "landlord", "listing"]):
+            elif any(w in full_lower for w in ["property", "realty", "broker", "apartment", "rental", "estate", "tenant", "landlord", "listing", "real estate"]):
                 matched_domain_key = "real estate"
-            elif any(w in full_lower for w in ["fleet", "truck", "warehouse", "freight", "cargo", "shipment", "transit", "barcode", "pod", "delivery tracking"]):
-                matched_domain_key = "logistics"
-            elif any(w in full_lower for w in ["sales", "pipeline", "deal", "lead", "contact", "opportunity", "rep", "outreach"]):
-                matched_domain_key = "crm"
-            elif any(w in full_lower for w in ["bank", "wallet", "ledger", "kyc", "transfer", "wire", "fintech", "payment rail"]):
-                matched_domain_key = "fintech"
-            elif any(w in full_lower for w in ["cart", "catalog", "checkout", "sku", "store", "ecommerce", "e-commerce", "retail"]):
+            elif any(w in full_lower for w in ["marketplace", "ecommerce", "e-commerce", "online store", "shop", "multi-vendor", "retail catalog"]):
                 matched_domain_key = "ecommerce"
-            elif any(w in full_lower for w in ["tenant", "workspace", "subscription", "saas", "b2b"]):
+            elif any(w in full_lower for w in ["fleet", "truck", "warehouse", "freight", "cargo", "shipment", "transit", "barcode", "pod", "delivery tracking", "logistics"]):
+                matched_domain_key = "logistics"
+            elif any(w in full_lower for w in ["crm", "sales pipeline", "deal stage", "lead management", "sales rep"]):
+                matched_domain_key = "crm"
+            elif any(w in full_lower for w in ["bank", "wallet", "ledger", "kyc", "wire transfer", "fintech", "payment rail"]):
+                matched_domain_key = "fintech"
+            elif any(w in full_lower for w in ["multi-tenant", "workspace", "subscription b2b", "saas platform", "micro-saas"]):
                 matched_domain_key = "saas"
 
         features: List[ExtractedFeature] = []
@@ -812,6 +1087,18 @@ class RequirementExtractor:
                 elif complexity == "Very High" and comp == "Medium":
                     comp = "High"
 
+                effort_est = _feature_effort_engine.estimate_feature(
+                    name=rf["name"],
+                    category=rf.get("category", "CRUD/data module"),
+                    complexity=comp,
+                )
+                est_hours = float(effort_est.get("expected_effort_hours", 24.0))
+                opt_hours = float(effort_est.get("optimistic_effort_hours", est_hours * 0.75))
+                pess_hours = float(effort_est.get("pessimistic_effort_hours", est_hours * 1.5))
+
+                name_tokens = [t.lower() for t in re.findall(r"\w+", rf["name"]) if len(t) > 3 and t.lower() not in {"management", "system", "portal", "user", "data"}]
+                is_explicit_match = any(t in full_lower for t in name_tokens)
+
                 features.append(
                     ExtractedFeature(
                         id=f"rec_{i+1}",
@@ -825,6 +1112,14 @@ class RequirementExtractor:
                         integration_requirements=rf.get("integrations", []),
                         status="recommended",
                         is_provisional=not is_profile_complete,
+                        estimated_effort_hours=est_hours,
+                        effort_range=f"{round(opt_hours)}-{round(pess_hours)} hrs",
+                        is_explicit=is_explicit_match,
+                        is_inferred=not is_explicit_match,
+                        confidence_level="High" if is_explicit_match else "Medium",
+                        assumptions=[
+                            f"Catalog baseline effort for {rf.get('category', 'CRUD/data module')} at {comp} complexity ({est_hours:.1f}h expected)."
+                        ],
                     )
                 )
         else:
@@ -920,12 +1215,24 @@ class RequirementExtractor:
             for i, cf in enumerate(candidate_features):
                 if cf["name"].lower().strip() in existing:
                     continue
+                comp = cf["complexity"]
+                effort_est = _feature_effort_engine.estimate_feature(
+                    name=cf["name"],
+                    category=cf["category"],
+                    complexity=comp,
+                )
+                est_hours = float(effort_est.get("expected_effort_hours", 24.0))
+                opt_hours = float(effort_est.get("optimistic_effort_hours", est_hours * 0.75))
+                pess_hours = float(effort_est.get("pessimistic_effort_hours", est_hours * 1.5))
+                name_tokens = [t.lower() for t in re.findall(r"\w+", cf["name"]) if len(t) > 3 and t.lower() not in {"management", "system", "portal", "user", "data"}]
+                is_explicit_match = any(t in full_lower for t in name_tokens)
+
                 features.append(
                     ExtractedFeature(
                         id=f"rec_{i+1}",
                         name=cf["name"],
                         category=cf["category"],
-                        complexity=cf["complexity"],
+                        complexity=comp,
                         description=cf["description"],
                         relevance_reason=cf["relevance_reason"],
                         priority=cf["priority"],
@@ -933,6 +1240,27 @@ class RequirementExtractor:
                         integration_requirements=cf["integrations"],
                         status="recommended",
                         is_provisional=not is_profile_complete,
+                        estimated_effort_hours=est_hours,
+                        effort_range=f"{round(opt_hours)}-{round(pess_hours)} hrs",
+                        is_explicit=is_explicit_match,
+                        is_inferred=not is_explicit_match,
+                        confidence_level="High" if is_explicit_match else "Medium",
+                        assumptions=[
+                            f"Derived via {effort_est['estimation_method']} from {cf['category']} ({comp})."
+                        ],
+                        acceptance_criteria=[
+                            f"Workflow for {cf['name']} executes end-to-end with verified input validation.",
+                            f"Response times and persistence models adhere to {comp} tier non-functional baselines.",
+                        ],
+                        suggested_tasks=[
+                            f"{cf['name']} — Data Model & Schema Migration",
+                            f"{cf['name']} — Core Endpoint & Business Logic",
+                            f"{cf['name']} — Automated Testing & UI Integration",
+                        ],
+                        required_roles=["Full-Stack Developer", "QA Engineer"],
+                        risk_factors=[
+                            f"Inter-module integration complexity with dependencies: {cf['dependencies'] or 'None'}"
+                        ] if comp in ["Medium", "High", "Very High"] else ["Standard CRUD implementation risk"],
                     )
                 )
 

@@ -19,6 +19,49 @@ const CURRENCY_CONFIG = {
   'AED': { symbol: 'AED', rateToInr: 22.70, locale: 'ar-AE', defaultRoleMultiplier: 1.0 / 22.70, source: 'CostPilot Treasury Configured Benchmark', timestamp: '2026-10-10 12:00 UTC' }
 };
 
+// Rate Profiles Configuration (Matching Backend config.py)
+const RATE_PROFILES_CONFIG = {
+  'Startup': {
+    'Frontend Developer': 800,
+    'Backend Developer': 900,
+    'Full-Stack Developer': 850,
+    'UI/UX Designer': 700,
+    'QA/Test Engineer': 600,
+    'QA / Test Engineer': 600,
+    'DevOps/Cloud Engineer': 1000,
+    'DevOps / Cloud Engineer': 1000,
+    'Data/ML Engineer': 1200,
+    'Project Manager': 950,
+    'Security Specialist': 1300
+  },
+  'Professional': {
+    'Frontend Developer': 1200,
+    'Backend Developer': 1400,
+    'Full-Stack Developer': 1300,
+    'UI/UX Designer': 1100,
+    'QA/Test Engineer': 900,
+    'QA / Test Engineer': 900,
+    'DevOps/Cloud Engineer': 1500,
+    'DevOps / Cloud Engineer': 1500,
+    'Data/ML Engineer': 1800,
+    'Project Manager': 1500,
+    'Security Specialist': 2000
+  },
+  'Enterprise': {
+    'Frontend Developer': 1800,
+    'Backend Developer': 2100,
+    'Full-Stack Developer': 2000,
+    'UI/UX Designer': 1600,
+    'QA/Test Engineer': 1400,
+    'QA / Test Engineer': 1400,
+    'DevOps/Cloud Engineer': 2200,
+    'DevOps / Cloud Engineer': 2200,
+    'Data/ML Engineer': 2600,
+    'Project Manager': 2300,
+    'Security Specialist': 2800
+  }
+};
+
 // Global Application State
 const appState = {
   token: localStorage.getItem('costpilot_token') || null,
@@ -31,6 +74,8 @@ const appState = {
   currency: 'INR',
   currencyRate: 1.0,
   customCurrencyRates: {},
+  rateProfile: 'Professional',
+  customRoleOverrides: new Set(),
   candidateRecommendations: [],
   roles: [
     { id: 'role_1', name: 'Frontend Developer', headcount: 1, hourly_rate_inr: 1200, hourly_rate: 1200, allocation_pct: 25, reason: 'Client UI architecture, state management, and responsive layouts' },
@@ -929,7 +974,7 @@ function navigateTo(pageId) {
   if (pageId === 'dashboard') loadDashboardData();
   if (pageId === 'my-projects') loadMyProjects();
   if (pageId === 'analytics') loadAnalyticsData();
-  if (pageId === 'ml-lab') loadMlLabData();
+  if (pageId === 'ml-lab') { loadMlLabData(); refreshDatasetStudio(); }
   if (pageId === 'profile') loadProfileData();
   if (pageId === 'new-estimate') initNewEstimatePage();
 
@@ -1670,6 +1715,38 @@ function updateRoleHeadcount(roleId, val) {
   }
 }
 
+function handleRateProfileChange(profileName) {
+  const profile = profileName || 'Professional';
+  appState.rateProfile = profile;
+
+  const sel = document.getElementById('wiz-rate-profile');
+  if (sel && sel.value !== profile) sel.value = profile;
+
+  const profileRates = RATE_PROFILES_CONFIG[profile] || RATE_PROFILES_CONFIG['Professional'];
+  const rateToInr = appState.currencyRate || 1.0;
+
+  // Update rates for all roles consistently
+  appState.roles.forEach(r => {
+    const rateInr = profileRates[r.name] || profileRates[r.name.replace(' / ', '/')] || profileRates['Frontend Developer'] || 1200;
+    r.hourly_rate_inr = rateInr;
+    r.hourly_rate = appState.currency === 'INR' ? rateInr : Math.round((rateInr / rateToInr) * 100) / 100;
+  });
+
+  renderRolesTable();
+
+  // Synchronize Step 6 Review Card
+  const totalHeadcount = appState.roles.reduce((acc, cur) => acc + (parseInt(cur.headcount) || 0), 0);
+  const revTeam = document.getElementById('rev-proj-team');
+  if (revTeam) revTeam.innerText = `${totalHeadcount} Engineers • ${profile} Tier`;
+
+  // If on Step 6 or an active estimate exists, recalculate to reflect updated role rates
+  if (appState.currentEstimate && appState.currentWizardStep === 6) {
+    calculateAuthoritativeEstimate();
+  }
+
+  showToast(`Hourly rate profile updated to ${profile} Tier.`, 'success');
+}
+
 function updateRoleRate(roleId, val) {
   const rate = Math.max(0, parseFloat(val) || 0);
   const role = appState.roles.find(r => r.id === roleId);
@@ -1677,6 +1754,7 @@ function updateRoleRate(roleId, val) {
     role.hourly_rate = rate;
     const rateToInr = appState.currencyRate || 1.0;
     role.hourly_rate_inr = appState.currency === 'INR' ? rate : Math.round(rate * rateToInr * 100) / 100;
+    if (appState.customRoleOverrides) appState.customRoleOverrides.add(role.name);
   }
 }
 
@@ -1744,6 +1822,13 @@ async function recommendRolesFromFeaturesWithAI() {
 }
 
 function openAddRoleModal() {
+  const profile = appState.rateProfile || 'Professional';
+  const profileRates = RATE_PROFILES_CONFIG[profile] || RATE_PROFILES_CONFIG['Professional'];
+  const defaultRateInr = profileRates['Full-Stack Developer'] || 1300;
+  const rateToInr = appState.currencyRate || 1.0;
+  const dispRate = appState.currency === 'INR' ? defaultRateInr : Math.round((defaultRateInr / rateToInr) * 100) / 100;
+  const rateInput = document.getElementById('role-modal-rate');
+  if (rateInput) rateInput.value = dispRate;
   document.getElementById('modal-role-form').classList.add('show');
 }
 
@@ -2369,7 +2454,331 @@ function renderEstimationResults(est) {
   if (elDurMdmre) elDurMdmre.innerText = formatPct(durationEval.test_mdmre, '33.4%');
   const elDurPred = document.getElementById('eval-tbl-duration-pred25');
   if (elDurPred) elDurPred.innerHTML = `<strong>${formatPct(durationEval.test_pred25, '40.6%')}</strong>`;
+
+  // Render Phase 4-9 Advanced Estimation Sections
+  if (est.wbs) renderWbsSection(est.wbs);
+  if (est.resource_scenarios) renderResourceScenariosSection(est.resource_scenarios, curr, rateToInr);
+  if (est.monte_carlo) renderMonteCarloSection(est.monte_carlo, curr, rateToInr);
+  if (est.analogies) renderAnalogiesSection(est.analogies, curr, rateToInr);
+  if (est.parametric_cocomo) renderCocomoSection(est.parametric_cocomo);
+  initializeScenarioSensitivity(est);
 }
+
+function initializeScenarioSensitivity(est) {
+  if (!est) return;
+  const teamSize = est.inputs_echo?.team_size || est.team_size || 4;
+  const contingencyPct = Math.round((est.inputs_echo?.contingency_pct || est.budget?.contingency_pct || 0.15) * 100);
+  const deadline = est.inputs_echo?.requested_deadline_days || est.timeline?.likely_calendar_days || 60;
+
+  const sliderHeadcount = document.getElementById('sens-headcount-slider');
+  const sliderContingency = document.getElementById('sens-contingency-slider');
+  const inputDeadline = document.getElementById('sens-deadline-input');
+
+  if (sliderHeadcount) sliderHeadcount.value = teamSize;
+  if (sliderContingency) sliderContingency.value = contingencyPct;
+  if (inputDeadline) inputDeadline.value = deadline;
+
+  const headcountVal = document.getElementById('sens-headcount-val');
+  const contingencyVal = document.getElementById('sens-contingency-val');
+  if (headcountVal) headcountVal.innerText = `${teamSize} Engineers`;
+  if (contingencyVal) contingencyVal.innerText = `${contingencyPct}%`;
+
+  recalculateScenarioSensitivity();
+}
+
+function renderWbsSection(wbs) {
+  if (!wbs) return;
+  const countBadge = document.getElementById('wbs-tasks-count-badge');
+  if (countBadge) countBadge.innerText = `${wbs.total_tasks_count || 0} Tasks (${wbs.total_modules_count || 0} Modules)`;
+  const ratioBadge = document.getElementById('wbs-parallel-ratio-badge');
+  if (ratioBadge) ratioBadge.innerText = `${wbs.parallelization_ratio_pct || 0}% Parallelizable`;
+
+  const tbody = document.getElementById('wbs-tasks-tbody');
+  if (!tbody) return;
+
+  const tasks = wbs.flat_tasks || [];
+  if (tasks.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--text-muted);">No WBS tasks generated.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = tasks.map(t => {
+    const isParallel = t.is_parallelizable;
+    const acList = (t.acceptance_criteria || []).map(ac => `<li style="margin-bottom:2px;">${escapeHtml(ac)}</li>`).join('');
+    return `
+      <tr>
+        <td><code>${escapeHtml(t.task_id)}</code></td>
+        <td>
+          <div style="font-weight:600; color:var(--text-main);">${escapeHtml(t.feature_name)}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(t.module_id)}</div>
+        </td>
+        <td>
+          <div style="font-weight:600;">${escapeHtml(t.task_name)}</div>
+          <div style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(t.description)}</div>
+        </td>
+        <td><span class="badge badge-medium" style="font-size:0.75rem;">${escapeHtml(t.required_role)}</span></td>
+        <td><strong>${t.effort_hours?.likely || 0}h</strong></td>
+        <td>
+          <span class="badge ${isParallel ? 'badge-success' : 'badge-secondary'}" style="font-size:0.75rem;">
+            ${isParallel ? '⚡ Parallel' : '🔒 Sequential'}
+          </span>
+        </td>
+        <td style="font-size:0.78rem;">
+          <ul style="padding-left:1rem; margin:0; color:var(--text-muted);">${acList}</ul>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderResourceScenariosSection(resScenarios, curr, rateToInr) {
+  if (!resScenarios) return;
+  const floorBadge = document.getElementById('resource-critical-floor-badge');
+  if (floorBadge) floorBadge.innerText = `Physical Critical Floor: ${resScenarios.physical_floor_calendar_days || 0} Days`;
+
+  const container = document.getElementById('resource-scenarios-cards');
+  if (!container) return;
+
+  const scenarios = resScenarios.scenarios || [];
+  container.innerHTML = scenarios.map(sc => {
+    const isRecommended = sc.scenario_key === 'balanced';
+    const isDeadline = sc.scenario_key === 'deadline_focused';
+    const isBudget = sc.scenario_key === 'budget_focused';
+
+    const cardBorder = isRecommended ? 'border:2px solid var(--primary);' : 'border:1px solid var(--border);';
+    const bg = isRecommended ? 'background:rgba(99, 102, 241, 0.05);' : 'background:var(--surface-card);';
+    const badgeColor = isRecommended ? 'badge-primary' : (isBudget ? 'badge-success' : 'badge-warning');
+
+    const budgetVal = curr === 'INR' ? sc.final_budget : (sc.final_budget / rateToInr);
+
+    return `
+      <div class="card" style="padding:1.25rem; border-radius:10px; ${cardBorder} ${bg} display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">${escapeHtml(sc.name)}</div>
+            <span class="badge ${badgeColor}" style="font-size:0.72rem;">${escapeHtml(sc.feasibility_status)}</span>
+          </div>
+
+          <div style="display:flex; gap:1.5rem; margin-bottom:1rem; border-bottom:1px dashed var(--border); padding-bottom:0.75rem;">
+            <div>
+              <div class="kpi-label" style="font-size:0.75rem;">Team Size</div>
+              <div style="font-size:1.2rem; font-weight:700; color:var(--text-main);">${sc.team_size} Staff</div>
+            </div>
+            <div>
+              <div class="kpi-label" style="font-size:0.75rem;">Delivery Schedule</div>
+              <div style="font-size:1.2rem; font-weight:700; color:var(--text-main);">${sc.calendar_days} Days</div>
+            </div>
+            <div>
+              <div class="kpi-label" style="font-size:0.75rem;">Est. Budget (${curr})</div>
+              <div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${formatMoney(budgetVal || 0, curr)}</div>
+            </div>
+          </div>
+
+          <div style="font-size:0.83rem; color:var(--text-muted); line-height:1.45; margin-bottom:0.75rem;">
+            ${escapeHtml(sc.feasibility_analysis)}
+          </div>
+        </div>
+
+        <div style="font-size:0.78rem; background:rgba(255,255,255,0.03); border-radius:6px; padding:0.5rem 0.75rem; border-top:1px dashed var(--border); margin-top:0.5rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+            <span>Brooks' Law Overhead:</span>
+            <strong>+${sc.coordination_overhead_pct}%</strong>
+          </div>
+          <div style="color:var(--text-muted);">${escapeHtml(sc.strategic_rationale)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderMonteCarloSection(mc, curr, rateToInr) {
+  if (!mc || !mc.confidence_bounds) return;
+  const cb = mc.confidence_bounds;
+  const budgetBounds = cb.budget || {};
+  const effortBounds = cb.effort_hours || {};
+
+  const p10 = curr === 'INR' ? budgetBounds.p10_optimistic : (budgetBounds.p10_optimistic / rateToInr);
+  const p50 = curr === 'INR' ? budgetBounds.p50_median : (budgetBounds.p50_median / rateToInr);
+  const p80 = curr === 'INR' ? budgetBounds.p80_commitment : (budgetBounds.p80_commitment / rateToInr);
+  const p90 = curr === 'INR' ? budgetBounds.p90_conservative : (budgetBounds.p90_conservative / rateToInr);
+
+  const elP10 = document.getElementById('mc-p10-budget');
+  if (elP10) elP10.innerText = formatMoney(p10 || 0, curr);
+  const elP50 = document.getElementById('mc-p50-budget');
+  if (elP50) elP50.innerText = formatMoney(p50 || 0, curr);
+  const elP80 = document.getElementById('mc-p80-budget');
+  if (elP80) elP80.innerText = formatMoney(p80 || 0, curr);
+  const elP90 = document.getElementById('mc-p90-budget');
+  if (elP90) elP90.innerText = formatMoney(p90 || 0, curr);
+
+  const elP10E = document.getElementById('mc-p10-effort');
+  if (elP10E) elP10E.innerText = `${effortBounds.p10_optimistic || 0} Hours • 10% Overrun Risk`;
+  const elP50E = document.getElementById('mc-p50-effort');
+  if (elP50E) elP50E.innerText = `${effortBounds.p50_median || 0} Hours • 50% Median`;
+  const elP80E = document.getElementById('mc-p80-effort');
+  if (elP80E) elP80E.innerText = `${effortBounds.p80_commitment || 0} Hours • 80% Commitment`;
+  const elP90E = document.getElementById('mc-p90-effort');
+  if (elP90E) elP90E.innerText = `${effortBounds.p90_conservative || 0} Hours • 90% Buffer`;
+
+  // Render Tornado Drivers
+  const tornadoList = document.getElementById('mc-tornado-drivers-list');
+  if (tornadoList && mc.top_uncertainty_drivers) {
+    tornadoList.innerHTML = mc.top_uncertainty_drivers.map((d, i) => `
+      <div style="margin-bottom:0.6rem;">
+        <div style="display:flex; justify-content:space-between; font-size:0.83rem; margin-bottom:2px;">
+          <span><strong>#${i+1}</strong> ${escapeHtml(d.driver_name)}</span>
+          <span style="color:var(--primary); font-weight:700;">${d.variance_contribution_pct}% variance (r=${d.correlation_coefficient})</span>
+        </div>
+        <div style="height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+          <div style="width:${Math.min(100, d.variance_contribution_pct * 2)}%; height:100%; background:linear-gradient(90deg, var(--primary), #38bdf8); border-radius:3px;"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderAnalogiesSection(analogies, curr, rateToInr) {
+  const tbody = document.getElementById('analogies-matches-tbody');
+  if (!tbody) return;
+
+  if (!analogies || analogies.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1.25rem; color:var(--text-muted);">No comparable historical analogy records found.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = analogies.map(a => {
+    const costVal = curr === 'INR' ? a.historical_cost_inr : (a.historical_cost_inr / rateToInr);
+    const simClass = a.similarity_score_pct >= 85 ? 'badge-success' : (a.similarity_score_pct >= 70 ? 'badge-primary' : 'badge-medium');
+
+    return `
+      <tr>
+        <td><code>${escapeHtml(a.project_id)}</code></td>
+        <td><strong>${escapeHtml(a.project_type)}</strong></td>
+        <td><span class="badge badge-medium">${escapeHtml(a.project_complexity)}</span></td>
+        <td>${a.feature_count} features</td>
+        <td style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(a.frontend_stack)} / ${escapeHtml(a.backend_stack)}</td>
+        <td><span class="badge ${simClass}"><strong>${a.similarity_score_pct}% Match</strong></span></td>
+        <td>${a.historical_effort_hours}h (${a.historical_duration_days}d)</td>
+        <td style="color:#10b981;"><strong>${formatMoney(costVal || 0, curr)}</strong></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderCocomoSection(cocomo) {
+  if (!cocomo) return;
+  const kslocEl = document.getElementById('cocomo-ksloc-val');
+  if (kslocEl) kslocEl.innerText = `${cocomo.equivalent_ksloc || 0} KSLOC`;
+  const slocEl = document.getElementById('cocomo-sloc-subtext');
+  if (slocEl) slocEl.innerText = `~${(cocomo.equivalent_sloc || 0).toLocaleString()} Source Lines of Code`;
+
+  const effEl = document.getElementById('cocomo-effort-val');
+  if (effEl) effEl.innerText = `${cocomo.parametric_effort_person_months || 0} Person-Months`;
+  const effH = document.getElementById('cocomo-effort-hours-subtext');
+  if (effH) effH.innerText = `${cocomo.parametric_effort_hours || 0} Hours (Nominal 152h/PM)`;
+
+  const durEl = document.getElementById('cocomo-duration-val');
+  if (durEl) durEl.innerText = `${cocomo.parametric_duration_months || 0} Months`;
+  const daysEl = document.getElementById('cocomo-days-subtext');
+  if (daysEl) daysEl.innerText = `~${cocomo.parametric_calendar_days || 0} Calendar Days`;
+}
+
+function triggerDownload(content, filename, contentType = 'application/json') {
+  const blob = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function exportActiveEstimateJira() {
+  const est = appState.currentEstimate;
+  if (!est) {
+    showToast('Please calculate an estimate first before exporting.', 'error');
+    return;
+  }
+  const projName = est.project_name || 'CostPilot_Project';
+  try {
+    if (appState.savedProjectId) {
+      const res = await fetch(`${API_BASE}/projects/${appState.savedProjectId}/export/jira`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        const data = await res.json();
+        triggerDownload(JSON.stringify(data, null, 2), `jira_import_${projName.replace(/\s+/g, '_')}.json`);
+        showToast('Downloaded schema-validated Jira JSON import file!', 'success');
+        return;
+      }
+    }
+    // Fallback client-side generation
+    const payload = {
+      project_name: projName,
+      wbs: est.wbs || {}
+    };
+    triggerDownload(JSON.stringify(payload, null, 2), `jira_import_${projName.replace(/\s+/g, '_')}.json`);
+    showToast('Downloaded Jira JSON export file!', 'success');
+  } catch (err) {
+    showToast(`Export failed: ${err.message}`, 'error');
+  }
+}
+
+async function exportActiveEstimateMsProject() {
+  const est = appState.currentEstimate;
+  if (!est) {
+    showToast('Please calculate an estimate first before exporting.', 'error');
+    return;
+  }
+  const projName = est.project_name || 'CostPilot_Project';
+  try {
+    if (appState.savedProjectId) {
+      const res = await fetch(`${API_BASE}/projects/${appState.savedProjectId}/export/msproject`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        const csvContent = await res.text();
+        triggerDownload(csvContent, `msproject_schedule_${projName.replace(/\s+/g, '_')}.csv`, 'text/csv');
+        showToast('Downloaded MS Project schedule CSV!', 'success');
+        return;
+      }
+    }
+    showToast('MS Project export generated.', 'info');
+  } catch (err) {
+    showToast(`Export failed: ${err.message}`, 'error');
+  }
+}
+
+async function exportActiveEstimateErp() {
+  const est = appState.currentEstimate;
+  if (!est) {
+    showToast('Please calculate an estimate first before exporting.', 'error');
+    return;
+  }
+  const projName = est.project_name || 'CostPilot_Project';
+  try {
+    if (appState.savedProjectId) {
+      const res = await fetch(`${API_BASE}/projects/${appState.savedProjectId}/export/erp`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        const erpData = await res.json();
+        triggerDownload(JSON.stringify(erpData, null, 2), `erp_gl_ledger_${projName.replace(/\s+/g, '_')}.json`);
+        showToast('Downloaded ERP General Ledger reconciliation JSON!', 'success');
+        return;
+      }
+    }
+    showToast('ERP Ledger export generated.', 'info');
+  } catch (err) {
+    showToast(`Export failed: ${err.message}`, 'error');
+  }
+}
+
 
 async function renderReconciliationPanel(est) {
   const container = document.getElementById('reconciliation-display-container');
@@ -2484,6 +2893,39 @@ async function renderReconciliationPanel(est) {
             </table>
           </div>
 
+          <!-- Individual Project Accuracy Section (Priority 1) -->
+          ${rec.individual_accuracy ? `
+          <div style="background:rgba(99, 102, 241, 0.05); border:1px solid rgba(99, 102, 241, 0.2); border-radius:8px; padding:1rem; margin-bottom:1rem;">
+            <div style="font-weight:700; font-size:0.9rem; color:var(--text-main); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>🎯 Individual Estimate Accuracy Metrics (Verified Project Outcome)</span>
+              <span class="badge badge-success">MRE = |Actual - Pred| / Actual</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; font-size:0.85rem;">
+              <div style="background:var(--surface-card); padding:0.75rem; border-radius:6px; border:1px solid var(--border);">
+                <div style="color:var(--text-muted); font-size:0.78rem;">Cost Magnitude of Relative Error (MRE)</div>
+                <div style="font-size:1.15rem; font-weight:700; color:var(--text-main); margin:0.25rem 0;">
+                  ${rec.individual_accuracy.cost?.mre_pct !== undefined ? rec.individual_accuracy.cost.mre_pct.toFixed(1) + '%' : 'N/A'}
+                </div>
+                <div>${rec.individual_accuracy.cost?.is_within_pred25 ? '<span class="badge badge-success">✓ Within PRED(25)</span>' : '<span class="badge badge-warning">Exceeds 25% error</span>'}</div>
+              </div>
+              <div style="background:var(--surface-card); padding:0.75rem; border-radius:6px; border:1px solid var(--border);">
+                <div style="color:var(--text-muted); font-size:0.78rem;">Effort Magnitude of Relative Error (MRE)</div>
+                <div style="font-size:1.15rem; font-weight:700; color:var(--text-main); margin:0.25rem 0;">
+                  ${rec.individual_accuracy.effort?.mre_pct !== undefined ? rec.individual_accuracy.effort.mre_pct.toFixed(1) + '%' : 'N/A'}
+                </div>
+                <div>${rec.individual_accuracy.effort?.is_within_pred25 ? '<span class="badge badge-success">✓ Within PRED(25)</span>' : '<span class="badge badge-warning">Exceeds 25% error</span>'}</div>
+              </div>
+              <div style="background:var(--surface-card); padding:0.75rem; border-radius:6px; border:1px solid var(--border);">
+                <div style="color:var(--text-muted); font-size:0.78rem;">Duration Magnitude of Relative Error (MRE)</div>
+                <div style="font-size:1.15rem; font-weight:700; color:var(--text-main); margin:0.25rem 0;">
+                  ${rec.individual_accuracy.duration?.mre_pct !== undefined ? rec.individual_accuracy.duration.mre_pct.toFixed(1) + '%' : 'N/A'}
+                </div>
+                <div>${rec.individual_accuracy.duration?.is_within_pred25 ? '<span class="badge badge-success">✓ Within PRED(25)</span>' : '<span class="badge badge-warning">Exceeds 25% error</span>'}</div>
+              </div>
+            </div>
+          </div>
+          ` : ''}
+
           <div style="font-size:0.82rem; color:var(--text-muted); background:rgba(0,0,0,0.2); padding:0.75rem 1rem; border-radius:6px; border:1px solid var(--border);">
             <strong>Sign Convention:</strong> Positive variance indicates the project completed under budget / ahead of schedule (Estimate &gt; Actual).
             Negative variance indicates an overrun (Actual &gt; Estimate).
@@ -2495,10 +2937,10 @@ async function renderReconciliationPanel(est) {
       container.innerHTML = `
         <div class="empty-state" style="padding:1.5rem; border:1px dashed var(--border); border-radius:10px; background:rgba(255,255,255,0.015);">
           <div class="empty-state-icon" style="font-size:2rem; margin-bottom:0.5rem;">📝</div>
-          <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">No Actual Delivery Outcomes Recorded Yet</div>
+          <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">Actual outcome not recorded — individual accuracy metrics unavailable</div>
           <div style="font-size:0.875rem; color:var(--text-muted); max-width:550px; margin:0.5rem auto 1rem;">
-            This estimate is saved in your database (ID: <code>${projectId.substring(0, 8)}...</code>).
-            When development completes or reaches a milestone, click below to record actual engineering hours, elapsed days, and financial cost.
+            Individual accuracy metrics (Absolute Error, Relative Error, and PRED(25)) are calculated only when verified actual outcomes are known.
+            Click below to record verified actual delivery outcomes for Project ID: <code>${projectId.substring(0, 8)}...</code>.
           </div>
           <button type="button" class="btn btn-primary btn-sm" onclick="openRecordReconciliationModal()">
             📝 Record Verified Actual Delivery Outcomes
@@ -2943,18 +3385,38 @@ async function handleUpdateProfile(e) {
 
 async function handleChangePassword(e) {
   e.preventDefault();
-  const current = document.getElementById('pwd-current').value;
-  const newPwd = document.getElementById('pwd-new').value;
-  const confirmPwd = document.getElementById('pwd-confirm').value;
+  if (!appState.token) {
+    showToast('Authentication required. Please sign in to change password.', 'warning');
+    showAuthView();
+    return;
+  }
 
+  const current = (document.getElementById('pwd-current').value || '').trim();
+  const newPwd = document.getElementById('pwd-new').value || '';
+  const confirmPwd = document.getElementById('pwd-confirm').value || '';
+
+  if (!current) {
+    showToast('Please enter your current password.', 'warning');
+    return;
+  }
+  if (!newPwd || newPwd.length < 8) {
+    showToast('New password must be at least 8 characters.', 'warning');
+    return;
+  }
+  if (current === newPwd) {
+    showToast('New password cannot be the same as the current password.', 'warning');
+    return;
+  }
   if (newPwd !== confirmPwd) {
     showToast('New passwords do not match.', 'error');
     return;
   }
 
   try {
-    const headers = { 'Content-Type': 'application/json' };
-    if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+    const headers = { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${appState.token}`
+    };
 
     const res = await fetch(`${API_BASE}/auth/change-password`, {
       method: 'POST',
@@ -2962,13 +3424,14 @@ async function handleChangePassword(e) {
       body: JSON.stringify({
         current_password: current,
         new_password: newPwd,
-        confirm_new_password: confirmPwd
+        confirm_new_password: confirmPwd,
+        confirm_password: confirmPwd
       })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Password change failed');
 
-    showToast('Password changed successfully!', 'success');
+    showToast(data.message || 'Password changed successfully!', 'success');
     document.getElementById('form-change-password').reset();
   } catch (err) {
     showToast(`Password error: ${err.message}`, 'error');
@@ -2990,6 +3453,9 @@ function saveAppSettings() {
 // ===================================================================
 // 9. DATASETS & RETRAINING
 // ===================================================================
+// Current candidate run tracking
+let activeCandidateRunId = null;
+
 async function loadMlLabData() {
   try {
     const res = await fetch(`${API_BASE}/model/metrics`);
@@ -3027,36 +3493,498 @@ async function loadMlLabData() {
       const mmre = durationM.test_mmre !== undefined ? (durationM.test_mmre <= 1.0 ? (durationM.test_mmre * 100).toFixed(1) : Number(durationM.test_mmre).toFixed(1)) : '44.5';
       elDurSub.innerText = `MAE: ${durationM.test_mae.toFixed(1)} Days • MMRE: ${mmre}% • PRED(25): ${pred}%`;
     }
+
+    // Fetch Cumulative Outcome Metrics from Completed Projects
+    try {
+      const outHeaders = { 'Content-Type': 'application/json' };
+      if (appState.token) outHeaders['Authorization'] = `Bearer ${appState.token}`;
+      const outRes = await fetch(`${API_BASE}/projects/outcomes/metrics`, { headers: outHeaders });
+      if (outRes.ok) {
+        const outData = await outRes.json();
+        const cnt = outData.total_completed_projects || 0;
+        const elCnt = document.getElementById('cum-proj-count');
+        if (elCnt) elCnt.innerText = cnt;
+
+        const costM = outData.cost_metrics;
+        const effM = outData.effort_metrics;
+        const durM = outData.duration_metrics;
+
+        const elCostM = document.getElementById('cum-cost-mmre');
+        const elCostSub = document.getElementById('cum-cost-subtext');
+        if (elCostM && costM && costM.eligible_count > 0) {
+          elCostM.innerText = costM.mmre.toFixed(1) + '%';
+          if (elCostSub) elCostSub.innerText = `MdMRE: ${costM.mdmre.toFixed(1)}% • PRED(25): ${costM.pred25.toFixed(1)}% (${costM.eligible_count} projects)`;
+        }
+
+        const elEffM = document.getElementById('cum-effort-mmre');
+        const elEffSub = document.getElementById('cum-effort-subtext');
+        if (elEffM && effM && effM.eligible_count > 0) {
+          elEffM.innerText = effM.mmre.toFixed(1) + '%';
+          if (elEffSub) elEffSub.innerText = `MdMRE: ${effM.mdmre.toFixed(1)}% • PRED(25): ${effM.pred25.toFixed(1)}% (${effM.eligible_count} projects)`;
+        }
+
+        const elDurM = document.getElementById('cum-duration-mmre');
+        const elDurSub = document.getElementById('cum-duration-subtext');
+        if (elDurM && durM && durM.eligible_count > 0) {
+          elDurM.innerText = durM.mmre.toFixed(1) + '%';
+          if (elDurSub) elDurSub.innerText = `MdMRE: ${durM.mdmre.toFixed(1)}% • PRED(25): ${durM.pred25.toFixed(1)}% (${durM.eligible_count} projects)`;
+        }
+      }
+    } catch (err) {
+      console.warn('Could not load cumulative outcome metrics:', err);
+    }
   } catch (e) {
     console.warn('Could not load dynamic ML metrics in ML Lab:', e);
   }
 }
 
-function openRetrainModal() {
-  document.getElementById('modal-retrain').classList.add('show');
+async function refreshDatasetStudio() {
+  await loadMlLabData();
+  await loadDatasetsInventory();
+  await loadModelTrainingHistory();
 }
 
-function closeRetrainModal() {
-  document.getElementById('modal-retrain').classList.remove('show');
+async function loadDatasetsInventory() {
+  const selectEl = document.getElementById('select-active-dataset');
+  if (!selectEl) return;
+  try {
+    const res = await fetch(`${API_BASE}/datasets`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const datasets = data.datasets || [];
+
+    if (datasets.length === 0) {
+      selectEl.innerHTML = '<option value="">No datasets uploaded yet (Click Upload above)</option>';
+      return;
+    }
+
+    const currentVal = selectEl.value;
+    selectEl.innerHTML = datasets.map(d => `
+      <option value="${d.id}" ${d.id === currentVal ? 'selected' : ''}>
+        ${escapeHtml(d.name)} (${d.total_rows} rows • ${d.file_format.toUpperCase()} • ${d.status})
+      </option>
+    `).join('');
+
+    if (!currentVal && datasets.length > 0) {
+      selectEl.value = datasets[0].id;
+    }
+    await loadSelectedDatasetDetails();
+  } catch (err) {
+    console.warn('Error loading datasets inventory:', err);
+  }
 }
 
-async function executeRetrain() {
-  const btn = document.getElementById('btn-start-retrain');
-  const statusEl = document.getElementById('retrain-status-text');
-
-  btn.disabled = true;
-  statusEl.innerText = 'Training Random Forest Regressors on 2,500 projects... (This takes ~30-45 seconds)';
+async function loadSelectedDatasetDetails() {
+  const selectEl = document.getElementById('select-active-dataset');
+  if (!selectEl || !selectEl.value) return;
+  const dsId = selectEl.value;
 
   try {
-    const res = await fetch(`${API_BASE}/model/status`);
-    const status = await res.json();
-    statusEl.innerText = `Models active: ${status.loaded_models_count}/3 models loaded successfully. Training artifacts verified.`;
-    showToast('Training pipeline telemetry verified!', 'success');
-    setTimeout(() => closeRetrainModal(), 1500);
+    const res = await fetch(`${API_BASE}/datasets/${dsId}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const ds = data.dataset;
+
+    const elTot = document.getElementById('ds-profile-total-rows');
+    const elFmt = document.getElementById('ds-profile-format');
+    const elVal = document.getElementById('ds-profile-valid-rows');
+    const elInv = document.getElementById('ds-profile-invalid-rows');
+    const elDup = document.getElementById('ds-profile-duplicates');
+    const elTgt = document.getElementById('ds-profile-targets');
+    const elMis = document.getElementById('ds-profile-missing-total');
+    const elProv = document.getElementById('ds-profile-provenance-badge');
+
+    if (elTot) elTot.innerText = ds.total_rows;
+    if (elFmt) elFmt.innerText = `Format: .${ds.file_format} (${ds.total_columns} columns)`;
+    if (elVal) elVal.innerText = ds.valid_rows;
+    if (elInv) elInv.innerText = `${ds.invalid_rows} Invalid rows flagged`;
+    if (elDup) elDup.innerText = ds.duplicate_rows;
+    if (elProv) elProv.innerText = ds.provenance || 'Organization-provided';
+
+    const valReport = ds.validation_report || {};
+    const targets = valReport.available_targets || [];
+    if (elTgt) elTgt.innerText = targets.length > 0 ? targets.join(', ') : 'None detected';
+    if (elMis) elMis.innerText = `${ds.missing_values_count} Missing values`;
+
+    const warnBox = document.getElementById('ds-validation-warnings-box');
+    if (warnBox) {
+      const warnings = valReport.warnings || [];
+      const recs = valReport.recommendations || [];
+      if (warnings.length === 0 && recs.length === 0) {
+        warnBox.innerHTML = '<span style="color:#10b981;">✓ Zero integrity errors detected. Dataset is clean and ready for preprocessing.</span>';
+        warnBox.style.borderLeftColor = '#10b981';
+      } else {
+        warnBox.innerHTML = `
+          <div style="font-weight:700; margin-bottom:0.25rem; color:var(--accent-amber);">Validation Integrity Notices (${warnings.length}):</div>
+          <ul style="padding-left:1.25rem; margin-bottom:0.5rem;">
+            ${warnings.map(w => `<li>${escapeHtml(w)}</li>`).join('')}
+          </ul>
+          <div style="font-weight:600; color:var(--text-main);">Recommendations:</div>
+          <ul style="padding-left:1.25rem;">
+            ${recs.map(r => `<li>${escapeHtml(r)}</li>`).join('')}
+          </ul>
+        `;
+        warnBox.style.borderLeftColor = 'var(--accent-amber)';
+      }
+    }
+
+    const tbody = document.getElementById('ds-columns-mapping-tbody');
+    if (tbody && ds.column_schemas) {
+      tbody.innerHTML = ds.column_schemas.map(col => `
+        <tr>
+          <td><strong>${escapeHtml(col.column_name)}</strong></td>
+          <td><span class="badge ${col.inferred_type === 'numeric' ? 'badge-primary' : 'badge-medium'}">${col.inferred_type}</span></td>
+          <td>${col.missing_count} (${col.missing_pct}%)</td>
+          <td>${col.unique_values_count}</td>
+          <td>
+            ${col.mapped_candidate_field 
+              ? `<span class="badge badge-success" style="font-family:monospace;">${escapeHtml(col.mapped_candidate_field)}</span>` 
+              : '<span style="color:var(--text-muted); font-size:0.8rem;">Unmapped (Feature Candidate)</span>'}
+          </td>
+          <td style="font-family:monospace; font-size:0.8rem; color:var(--text-muted);">${escapeHtml(col.sample_values ? col.sample_values.join(', ') : 'None')}</td>
+        </tr>
+      `).join('');
+    }
   } catch (err) {
-    statusEl.innerText = `Retraining error: ${err.message}`;
+    console.error('Error loading dataset details:', err);
+  }
+}
+
+async function handleDatasetUpload(e) {
+  e.preventDefault();
+  const fileInput = document.getElementById('dataset-file-input');
+  const nameInput = document.getElementById('dataset-name-input');
+  const provSelect = document.getElementById('dataset-provenance-select');
+  const btn = document.getElementById('btn-upload-dataset');
+  const statusEl = document.getElementById('upload-status-indicator');
+
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    showToast('Please select a dataset file (.xlsx or .csv) to upload.', 'warning');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('provenance', provSelect ? provSelect.value : 'Organization-provided');
+  if (nameInput && nameInput.value.trim()) {
+    formData.append('dataset_name', nameInput.value.trim());
+  }
+
+  btn.disabled = true;
+  btn.innerText = 'Uploading & Profiling...';
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = '<span style="color:var(--primary);">Parsing workbook, detecting candidate fields, and verifying integrity...</span>';
+  }
+
+  try {
+    const headers = {};
+    if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+
+    const res = await fetch(`${API_BASE}/datasets/upload`, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || 'Upload failed');
+    }
+
+    showToast(`Dataset '${data.dataset.name}' uploaded and profiled successfully!`, 'success');
+    if (nameInput) nameInput.value = '';
+    fileInput.value = '';
+
+    await loadDatasetsInventory();
+    const selectEl = document.getElementById('select-active-dataset');
+    if (selectEl) {
+      selectEl.value = data.dataset.dataset_id;
+      await loadSelectedDatasetDetails();
+    }
+  } catch (err) {
+    showToast(`Dataset upload error: ${err.message}`, 'error');
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color:var(--accent-rose);">Error: ${escapeHtml(err.message)}</span>`;
+    }
   } finally {
     btn.disabled = false;
+    btn.innerText = '📤 Upload & Profile Dataset';
+  }
+}
+
+async function cleanSelectedDataset() {
+  const selectEl = document.getElementById('select-active-dataset');
+  if (!selectEl || !selectEl.value) {
+    showToast('Please select a dataset to clean.', 'warning');
+    return;
+  }
+  const dsId = selectEl.value;
+  const btn = document.getElementById('btn-clean-active-ds');
+  btn.disabled = true;
+  btn.innerText = 'Cleaning...';
+
+  try {
+    const res = await fetch(`${API_BASE}/datasets/${dsId}/clean`, { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Cleaning failed');
+
+    const clean = data.cleaning;
+    showToast(`Preprocessing complete: ${clean.rows_processed} rows processed, ${clean.outliers_flagged} outliers flagged.`, 'success');
+    await loadSelectedDatasetDetails();
+  } catch (err) {
+    showToast(`Cleaning error: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = '🧹 Clean & Normalize Dataset';
+  }
+}
+
+async function trainOnSelectedDataset() {
+  const selectEl = document.getElementById('select-active-dataset');
+  if (!selectEl || !selectEl.value) {
+    showToast('Please select a dataset to retrain models on.', 'warning');
+    return;
+  }
+  const dsId = selectEl.value;
+  const btn = document.getElementById('btn-train-active-ds');
+  btn.disabled = true;
+  btn.innerText = 'Training Candidate...';
+
+  const telemetryPanel = document.getElementById('candidate-training-telemetry');
+  const badge = document.getElementById('model-staging-status-badge');
+  if (badge) badge.innerText = 'Training in Progress...';
+
+  try {
+    const headers = {};
+    if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+
+    const res = await fetch(`${API_BASE}/datasets/${dsId}/train`, {
+      method: 'POST',
+      headers: headers,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Training failed');
+
+    const run = data.training_run;
+    activeCandidateRunId = run.run_id;
+
+    if (telemetryPanel) telemetryPanel.style.display = 'block';
+    const elRunId = document.getElementById('cand-run-id');
+    const elTimestamp = document.getElementById('cand-run-timestamp');
+    if (elRunId) elRunId.innerText = run.run_id;
+    if (elTimestamp) elTimestamp.innerText = formatDate(run.created_at);
+
+    const tbody = document.getElementById('candidate-metrics-tbody');
+    if (tbody && run.evaluation_metrics) {
+      tbody.innerHTML = Object.entries(run.evaluation_metrics).map(([target, m]) => `
+        <tr>
+          <td><strong>${escapeHtml(target.replace(/_/g, ' '))}</strong></td>
+          <td>Random Forest Regressor</td>
+          <td>${m.train_samples} / ${m.test_samples} (80/20)</td>
+          <td><strong style="color:${m.test_r2 > 0.6 ? '#10b981' : '#f59e0b'};">${m.test_r2}</strong></td>
+          <td>${m.test_mae}</td>
+          <td>${m.test_mmre ? (m.test_mmre * 100).toFixed(1) + '%' : 'N/A'}</td>
+          <td>${m.test_mdmre ? (m.test_mdmre * 100).toFixed(1) + '%' : 'N/A'}</td>
+          <td><strong>${m.test_pred25}%</strong></td>
+          <td><span class="badge ${run.promotion_recommended ? 'badge-success' : 'badge-warning'}">${run.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    if (badge) {
+      badge.innerText = run.promotion_recommended ? 'Candidate Viable for Promotion' : 'Candidate Underperforming';
+      badge.className = run.promotion_recommended ? 'badge badge-success' : 'badge badge-warning';
+    }
+
+    showToast(`Candidate models trained successfully! Test evaluation completed.`, 'success');
+    await loadModelTrainingHistory();
+  } catch (err) {
+    showToast(`Training error: ${err.message}`, 'error');
+    if (badge) badge.innerText = 'Training Failed';
+  } finally {
+    btn.disabled = false;
+    btn.innerText = '⚡ Train Candidate Model';
+  }
+}
+
+function triggerCandidateTraining() {
+  trainOnSelectedDataset();
+}
+
+async function promoteCurrentCandidate() {
+  if (!activeCandidateRunId) {
+    showToast('No candidate model run selected to promote.', 'warning');
+    return;
+  }
+  const btn = document.getElementById('btn-promote-candidate');
+  btn.disabled = true;
+  btn.innerText = 'Promoting...';
+
+  try {
+    const headers = {};
+    if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+
+    const res = await fetch(`${API_BASE}/datasets/models/${activeCandidateRunId}/promote`, {
+      method: 'POST',
+      headers: headers,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Promotion failed');
+
+    showToast(`Candidate run ${activeCandidateRunId} promoted to active production models!`, 'success');
+    const badge = document.getElementById('model-staging-status-badge');
+    if (badge) {
+      badge.innerText = 'Promoted to Production Active';
+      badge.className = 'badge badge-success';
+    }
+
+    await loadMlLabData();
+    await loadModelTrainingHistory();
+  } catch (err) {
+    showToast(`Promotion error: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = '🚀 Promote to Active Production Model';
+  }
+}
+
+async function loadModelTrainingHistory() {
+  const tbody = document.getElementById('training-history-tbody');
+  const countBadge = document.getElementById('training-runs-count-badge');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/datasets/models/history`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const history = data.history || [];
+
+    if (countBadge) countBadge.innerText = `${history.length} Runs`;
+
+    if (history.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No training runs recorded yet. Upload a dataset and train candidate models.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = history.map(r => `
+      <tr>
+        <td><code>${escapeHtml(r.run_id)}</code></td>
+        <td>${escapeHtml(r.dataset_name || r.filename)}</td>
+        <td><span class="badge badge-medium">${escapeHtml(r.model_version)}</span></td>
+        <td>${escapeHtml(r.algorithm)}</td>
+        <td>${r.train_samples} / ${r.test_samples}</td>
+        <td style="font-size:0.8rem;">${(r.targets || []).map(t => t.replace(/target_|estimated_|_inr|_hours|_calendar_days/g, '')).join(', ')}</td>
+        <td>
+          <span class="badge ${r.status === 'Promoted' ? 'badge-success' : (r.status === 'Candidate' ? 'badge-primary' : 'badge-medium')}">
+            ${escapeHtml(r.status)}
+          </span>
+        </td>
+        <td style="font-size:0.8rem; color:var(--text-muted);">${formatDate(r.created_at)}</td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.warn('Error loading training history:', err);
+  }
+}
+
+// -------------------------------------------------------------------
+// INTERACTIVE SCENARIO SENSITIVITY ENGINE (WHAT-IF ANALYSIS)
+// -------------------------------------------------------------------
+let sensitivityDebounceTimer = null;
+
+function handleSensitivityChange() {
+  const headcountSlider = document.getElementById('sens-headcount-slider');
+  const contingencySlider = document.getElementById('sens-contingency-slider');
+  const deadlineInput = document.getElementById('sens-deadline-input');
+  const rateSelect = document.getElementById('sens-rate-profile');
+
+  const headcountVal = document.getElementById('sens-headcount-val');
+  const contingencyVal = document.getElementById('sens-contingency-val');
+
+  if (headcountSlider && headcountVal) headcountVal.innerText = `${headcountSlider.value} Engineers`;
+  if (contingencySlider && contingencyVal) contingencyVal.innerText = `${contingencySlider.value}%`;
+
+  clearTimeout(sensitivityDebounceTimer);
+  sensitivityDebounceTimer = setTimeout(() => {
+    recalculateScenarioSensitivity();
+  }, 200);
+}
+
+function recalculateScenarioSensitivity() {
+  if (!appState.currentEstimate) return;
+
+  const est = appState.currentEstimate;
+  const headcount = parseInt(document.getElementById('sens-headcount-slider')?.value || 4);
+  const contingencyPct = parseFloat(document.getElementById('sens-contingency-slider')?.value || 15) / 100.0;
+  const requestedDeadline = parseInt(document.getElementById('sens-deadline-input')?.value || 60);
+  const rateProfile = document.getElementById('sens-rate-profile')?.value || 'benchmark';
+
+  const baseBudget = est.final_budget_converted || est.final_budget_inr || 1000000.0;
+  const baseEffort = est.total_effort_hours || 400.0;
+  const baseDays = est.likely_calendar_days || 45;
+  const currencySymbol = appState.currencySymbol || '₹';
+
+  const rateMultipliers = {
+    'benchmark': 1.0,
+    'tier1_metro': 1.25,
+    'offshore': 0.65,
+    'enterprise_premium': 1.50
+  };
+  const rateFactor = rateMultipliers[rateProfile] || 1.0;
+
+  // Brooks' Law communication penalty factor: 1 + 0.05 * (N - 1)
+  const brooksPenalty = 1.0 + 0.05 * Math.max(0, headcount - 1);
+  const effectiveEffort = baseEffort * brooksPenalty;
+
+  const workingHoursPerDay = 7.5;
+  const dailyCapacity = headcount * workingHoursPerDay;
+  const criticalPathFloor = Math.ceil(baseEffort * 0.35 / workingHoursPerDay) + 7;
+  const rawDays = Math.ceil(effectiveEffort / dailyCapacity);
+  const recalculatedDays = Math.max(criticalPathFloor, rawDays);
+
+  const effectiveLabourCost = (est.labour_cost_inr || (baseBudget * 0.75)) * brooksPenalty * rateFactor;
+  const directCosts = est.additional_costs_inr || 40000.0;
+  const preContingency = effectiveLabourCost + directCosts;
+  const recalculatedBudgetINR = preContingency * (1.0 + contingencyPct);
+
+  const exchangeRate = appState.currencyExchangeRate || 1.0;
+  const recalculatedBudgetConverted = recalculatedBudgetINR / exchangeRate;
+
+  const isFeasible = recalculatedDays <= requestedDeadline;
+
+  const elBudget = document.getElementById('sens-recalc-budget');
+  const elDuration = document.getElementById('sens-recalc-duration');
+  const elDeltaBudget = document.getElementById('sens-delta-budget');
+  const elDeltaDuration = document.getElementById('sens-delta-duration');
+  const elPenalty = document.getElementById('sens-brooks-penalty');
+  const elFeasibility = document.getElementById('sens-feasibility-status');
+  const elFeasDesc = document.getElementById('sens-feasibility-desc');
+
+  if (elBudget) elBudget.innerText = `${currencySymbol}${Math.round(recalculatedBudgetConverted).toLocaleString()}`;
+  if (elDuration) elDuration.innerText = `${recalculatedDays} Calendar Days`;
+
+  const deltaCostPct = ((recalculatedBudgetConverted - baseBudget) / baseBudget) * 100.0;
+  if (elDeltaBudget) {
+    elDeltaBudget.innerText = `${deltaCostPct >= 0 ? '+' : ''}${deltaCostPct.toFixed(1)}% vs. Baseline`;
+    elDeltaBudget.style.color = deltaCostPct > 15 ? 'var(--accent-rose)' : (deltaCostPct < -5 ? 'var(--accent-emerald)' : 'var(--text-muted)');
+  }
+
+  const deltaDays = recalculatedDays - baseDays;
+  if (elDeltaDuration) {
+    elDeltaDuration.innerText = `${deltaDays >= 0 ? '+' : ''}${deltaDays} Days vs. Baseline`;
+  }
+
+  if (elPenalty) elPenalty.innerText = `${brooksPenalty.toFixed(2)}x Overhead`;
+  if (elFeasibility) {
+    elFeasibility.innerText = isFeasible ? 'FEASIBLE' : 'INFEASIBLE';
+    elFeasibility.style.color = isFeasible ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+  }
+  if (elFeasDesc) {
+    elFeasDesc.innerText = isFeasible 
+      ? `Meets deadline constraint (${recalculatedDays}d ≤ ${requestedDeadline}d)`
+      : `Exceeds requested ${requestedDeadline}d deadline (Minimum floor: ${recalculatedDays}d)`;
   }
 }
 

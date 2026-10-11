@@ -70,6 +70,19 @@ class ModelRegistry:
             logger.error(f"Error loading model from {model_path}: {e}")
             return None
 
+    def reload_all(self) -> None:
+        """Clears in-memory model cache and reloads models from disk artifacts."""
+        self._loaded_models.clear()
+        self._metadata = None
+        for target in ["target_estimated_cost_inr", "total_estimated_effort_hours", "estimated_duration_calendar_days"]:
+            self.load_model(target)
+
+    def load_models(self) -> None:
+        self.reload_all()
+
+    def is_loaded(self) -> bool:
+        return len(self._loaded_models) > 0
+
     def get_status(self) -> Dict[str, Any]:
         meta = self.get_metadata()
         models_status = {}
@@ -89,6 +102,7 @@ class ModelRegistry:
 
         return {
             "status": "ready" if any(s["available"] for s in models_status.values()) else "needs_training",
+            "loaded_models_count": len(self._loaded_models),
             "artifacts_dir": str(self.artifacts_dir),
             "models": models_status,
             "overall_provenance": "SIMULATED / SYNTHETIC DATASET. Real-world commercial actuals require future collection.",

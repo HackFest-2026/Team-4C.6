@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException, Depends, Header, Body, status
+from fastapi import APIRouter, HTTPException, Depends, Header, Body, status, UploadFile, File, Form
 
 from app.core.config import settings
 from app.core.security import get_current_user_optional
@@ -30,6 +30,15 @@ from app.services.ai.infra_recommender import infra_recommender
 from app.services.ml.model_registry import model_registry
 from app.db.session import get_db_connection
 from app.api.auth import router as auth_router
+from app.services.ml.metrics import calculate_relative_error_metrics, calculate_individual_accuracy
+from app.services.estimation.wbs_generator import wbs_generator
+from app.services.estimation.resource_optimizer import resource_optimizer
+from app.services.estimation.monte_carlo import monte_carlo_simulator
+from app.services.estimation.parametric_model import parametric_cocomo_engine
+from app.services.estimation.historical_benchmarker import historical_benchmarker
+from app.services.estimation.integrations import integration_service
+from app.services.ml.dataset_pipeline import dataset_pipeline
+from fastapi.responses import PlainTextResponse
 
 router = APIRouter()
 router.include_router(auth_router)
@@ -405,6 +414,11 @@ def get_project(project_id: str, authorization: Optional[str] = Header(None)):
     rate_source = e_row["exchange_rate_source"] if e_row and "exchange_rate_source" in e_row.keys() and e_row["exchange_rate_source"] is not None else "CostPilot Treasury Configured Benchmark"
     rate_ts = e_row["exchange_rate_timestamp"] if e_row and "exchange_rate_timestamp" in e_row.keys() and e_row["exchange_rate_timestamp"] is not None else "2026-10-10T12:00:00Z"
 
+    if full_estimate and isinstance(full_estimate, dict):
+        if "budget" in full_estimate and isinstance(full_estimate["budget"], dict):
+            full_estimate.setdefault("final_budget", full_estimate["budget"].get("final_budget", conv_budget))
+            full_estimate.setdefault("final_build_budget_inr", full_estimate["budget"].get("final_build_budget_inr", can_amt))
+
     return {
         "id": p_row["id"],
         "name": p_row["name"],
@@ -419,8 +433,10 @@ def get_project(project_id: str, authorization: Optional[str] = Header(None)):
         "exchange_rate_source": rate_source,
         "exchange_rate_timestamp": rate_ts,
         "final_budget_converted": conv_budget,
+        "rate_profile": p_row["rate_profile"] if "rate_profile" in p_row.keys() and p_row["rate_profile"] else (full_estimate.get("inputs_echo", {}).get("rate_profile", "Professional") if full_estimate else "Professional"),
         "created_at": p_row["created_at"],
         "estimate": full_estimate,
+        "latest_estimate": full_estimate,
     }
 
 
@@ -553,6 +569,10 @@ def get_project_reconciliation(project_id: str, authorization: Optional[str] = H
     duration_var = round(est_duration - actual_duration, 1)
     duration_var_pct = round(((est_duration - actual_duration) / actual_duration * 100.0), 1) if actual_duration > 0 else 0.0
 
+    cost_acc = calculate_individual_accuracy(actual=actual_cost, predicted=est_budget)
+    effort_acc = calculate_individual_accuracy(actual=actual_effort, predicted=est_effort)
+    duration_acc = calculate_individual_accuracy(actual=actual_duration, predicted=est_duration)
+
     return {
         "project_id": project_id,
         "project_name": p_row["name"],
@@ -575,6 +595,11 @@ def get_project_reconciliation(project_id: str, authorization: Optional[str] = H
         "effort_variance_pct": effort_var_pct,
         "duration_variance": duration_var,
         "duration_variance_pct": duration_var_pct,
+        "individual_accuracy": {
+            "cost": cost_acc,
+            "effort": effort_acc,
+            "duration": duration_acc,
+        },
         "sign_convention": "Positive variance indicates original estimate was higher than actual result (under-budget / under-time). Negative variance indicates cost or schedule overrun.",
         "estimated": {
             "budget": round(est_budget, 2),
@@ -595,6 +620,77 @@ def get_project_reconciliation(project_id: str, authorization: Optional[str] = H
             "duration_variance_pct": duration_var_pct,
             "sign_convention": "Positive variance indicates original estimate was higher than actual result (under-budget / under-time). Negative variance indicates cost or schedule overrun.",
         },
+    }
+
+
+@router.get("/projects/outcomes/metrics", tags=["Projects"])
+def get_cumulative_outcome_metrics(authorization: Optional[str] = Header(None)):
+    """
+    Priority 1 requirement: Cumulative outcome metrics calculated from saved projects
+    for which both predictions and verified actual outcomes are available.
+    """
+    current_user = get_current_user_optional(authorization)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT 
+        p.id, p.name,
+        r.actual_cost, r.actual_effort_hours, r.actual_duration_days, r.currency_code,
+        e.final_budget_inr, e.final_budget_converted, e.total_effort_hours, e.likely_calendar_days, e.currency_code as est_currency
+    FROM project_reconciliations r
+    JOIN projects p ON r.project_id = p.id
+    JOIN (
+        SELECT project_id, final_budget_inr, final_budget_converted, total_effort_hours, likely_calendar_days, currency_code,
+               ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY created_at DESC) as rn
+        FROM estimates
+    ) e ON p.id = e.project_id AND e.rn = 1
+    """
+    params = []
+    if current_user:
+        query += " WHERE (p.user_id = ? OR p.user_id IS NULL)"
+        params.append(current_user["id"])
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+
+    actual_costs = []
+    pred_costs = []
+    actual_efforts = []
+    pred_efforts = []
+    actual_durations = []
+    pred_durations = []
+
+    for row in rows:
+        act_c = row["actual_cost"]
+        est_c = row["final_budget_converted"] if row["final_budget_converted"] is not None else row["final_budget_inr"]
+        act_e = row["actual_effort_hours"]
+        est_e = row["total_effort_hours"]
+        act_d = row["actual_duration_days"]
+        est_d = row["likely_calendar_days"]
+
+        if act_c is not None and est_c is not None:
+            actual_costs.append(act_c)
+            pred_costs.append(est_c)
+        if act_e is not None and est_e is not None:
+            actual_efforts.append(act_e)
+            pred_efforts.append(est_e)
+        if act_d is not None and est_d is not None:
+            actual_durations.append(act_d)
+            pred_durations.append(est_d)
+
+    cost_metrics = calculate_relative_error_metrics(actual_costs, pred_costs)
+    effort_metrics = calculate_relative_error_metrics(actual_efforts, pred_efforts)
+    duration_metrics = calculate_relative_error_metrics(actual_durations, pred_durations)
+
+    return {
+        "status": "success",
+        "description": "Cumulative outcome metrics from saved projects with verified actual outcomes",
+        "total_completed_projects": len(rows),
+        "cost_metrics": cost_metrics,
+        "effort_metrics": effort_metrics,
+        "duration_metrics": duration_metrics,
     }
 
 
@@ -895,5 +991,287 @@ def get_system_settings():
         "risk_weights": settings.RISK_FACTOR_WEIGHTS,
         "productive_hours_per_day": settings.PRODUCTIVE_HOURS_PER_DAY,
     }
+
+
+# =====================================================================
+# PHASE 4-9: WBS, RESOURCE SCENARIOS, MONTE CARLO, ANALOGIES, INTEGRATIONS
+# =====================================================================
+
+@router.get("/integrations", tags=["Integrations"])
+def get_integrations_catalog():
+    """Returns the catalog of external project management and financial ERP integrations."""
+    return {
+        "status": "success",
+        "integrations": integration_service.get_integration_catalog(),
+    }
+
+
+def _get_project_and_estimate_for_feature(project_id: str, authorization: Optional[str] = None):
+    current_user = get_current_user_optional(authorization)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM projects WHERE id = ?", (project_id,))
+    p_row = cursor.fetchone()
+    if not p_row:
+        conn.close()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
+    if p_row["user_id"] and current_user and p_row["user_id"] != current_user["id"]:
+        conn.close()
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized")
+
+    cursor.execute("SELECT * FROM estimates WHERE project_id = ? ORDER BY created_at DESC LIMIT 1", (project_id,))
+    e_row = cursor.fetchone()
+    conn.close()
+
+    full_est = json.loads(e_row["full_estimate_json"]) if e_row else {}
+    return dict(p_row), full_est
+
+
+@router.get("/projects/{project_id}/wbs", tags=["WBS"])
+def get_project_wbs(project_id: str, authorization: Optional[str] = Header(None)):
+    """Retrieves or generates hierarchical Work Breakdown Structure (WBS) for a project."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    if est and "wbs" in est:
+        return {"status": "success", "project_id": project_id, "wbs": est["wbs"]}
+
+    # Generate on the fly
+    features = est.get("features", [])
+    if not features and p_dict.get("raw_features_json"):
+        features = json.loads(p_dict["raw_features_json"])
+
+    wbs = wbs_generator.generate_wbs(
+        project_name=p_dict["name"],
+        project_type=p_dict["project_type"],
+        features=features,
+        overall_complexity=p_dict["overall_complexity"],
+        platform=p_dict["platform"],
+    )
+    return {"status": "success", "project_id": project_id, "wbs": wbs}
+
+
+@router.get("/projects/{project_id}/resource-scenarios", tags=["Resource Planning"])
+def get_project_resource_scenarios(project_id: str, authorization: Optional[str] = Header(None)):
+    """Retrieves Budget-Focused, Balanced, and Deadline-Focused resource optimization scenarios."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    if est and "resource_scenarios" in est:
+        return {"status": "success", "project_id": project_id, "resource_scenarios": est["resource_scenarios"]}
+
+    # Generate on the fly
+    effort = est.get("effort", {}).get("total_expected_effort_hours", 200.0)
+    cp_hours = est.get("critical_path", {}).get("critical_path_hours", effort * 0.45)
+    scenarios = resource_optimizer.optimize_scenarios(
+        total_effort_hours=effort,
+        critical_path_hours=cp_hours,
+        project_type=p_dict["project_type"],
+        rate_profile=p_dict["rate_profile"],
+        requested_deadline_days=p_dict["requested_deadline_days"],
+        currency=p_dict.get("currency_code", "INR"),
+    )
+    return {"status": "success", "project_id": project_id, "resource_scenarios": scenarios}
+
+
+@router.get("/projects/{project_id}/monte-carlo", tags=["Monte Carlo"])
+def get_project_monte_carlo(project_id: str, authorization: Optional[str] = Header(None)):
+    """Retrieves 1,000-run Monte Carlo uncertainty distributions, P10-P95 percentiles, and tornado ranking."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    if est and "monte_carlo" in est:
+        return {"status": "success", "project_id": project_id, "monte_carlo": est["monte_carlo"]}
+
+    features = est.get("features", [])
+    budget = est.get("budget", {})
+    effort = est.get("effort", {}).get("total_expected_effort_hours", 200.0)
+    dur = est.get("timeline", {}).get("likely_calendar_days", 45)
+
+    mc = monte_carlo_simulator.run_simulation(
+        features=features,
+        likely_effort_hours=effort,
+        likely_duration_days=dur,
+        likely_budget_inr=budget.get("final_build_budget_inr", 300000.0),
+        blended_hourly_rate=budget.get("blended_hourly_rate_inr", 1200.0),
+        currency=p_dict.get("currency_code", "INR"),
+        iterations=1000,
+        random_seed=42,
+    )
+    return {"status": "success", "project_id": project_id, "monte_carlo": mc}
+
+
+@router.get("/projects/{project_id}/analogies", tags=["Analogy Estimation"])
+def get_project_analogies(project_id: str, authorization: Optional[str] = Header(None)):
+    """Retrieves Top-5 comparable historical projects from the 2,500 historical records."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    if est and "analogies" in est:
+        return {"status": "success", "project_id": project_id, "analogies": est["analogies"]}
+
+    analogies = historical_benchmarker.find_top_analogies(
+        project_type=p_dict["project_type"],
+        overall_complexity=p_dict["overall_complexity"],
+        feature_count=len(est.get("features", [])),
+        currency=p_dict.get("currency_code", "INR"),
+        top_k=5,
+    )
+    return {"status": "success", "project_id": project_id, "analogies": analogies}
+
+
+@router.get("/projects/{project_id}/parametric", tags=["Parametric COCOMO"])
+def get_project_parametric(project_id: str, authorization: Optional[str] = Header(None)):
+    """Retrieves COCOMO II parametric software estimation comparison."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    if est and "parametric_cocomo" in est:
+        return {"status": "success", "project_id": project_id, "parametric_cocomo": est["parametric_cocomo"]}
+
+    features = est.get("features", [])
+    cocomo = parametric_cocomo_engine.estimate(
+        features=features,
+        overall_complexity=p_dict["overall_complexity"],
+        platform=p_dict["platform"],
+    )
+    return {"status": "success", "project_id": project_id, "parametric_cocomo": cocomo}
+
+
+@router.post("/projects/{project_id}/export/jira", tags=["Integrations"])
+def export_project_jira(project_id: str, authorization: Optional[str] = Header(None)):
+    """Generates schema-validated Jira standard JSON import payload for the project WBS."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    wbs = est.get("wbs")
+    if not wbs:
+        features = est.get("features", [])
+        wbs = wbs_generator.generate_wbs(
+            project_name=p_dict["name"],
+            project_type=p_dict["project_type"],
+            features=features,
+            overall_complexity=p_dict["overall_complexity"],
+            platform=p_dict["platform"],
+        )
+    return integration_service.export_to_jira_json(p_dict, wbs)
+
+
+@router.post("/projects/{project_id}/export/msproject", tags=["Integrations"])
+def export_project_msproject(project_id: str, authorization: Optional[str] = Header(None)):
+    """Generates standard Microsoft Project compatible CSV schedule."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    wbs = est.get("wbs")
+    if not wbs:
+        features = est.get("features", [])
+        wbs = wbs_generator.generate_wbs(
+            project_name=p_dict["name"],
+            project_type=p_dict["project_type"],
+            features=features,
+            overall_complexity=p_dict["overall_complexity"],
+            platform=p_dict["platform"],
+        )
+    csv_content = integration_service.export_to_ms_project_csv(p_dict, wbs)
+    return PlainTextResponse(content=csv_content, media_type="text/csv")
+
+
+@router.post("/projects/{project_id}/export/erp", tags=["Integrations"])
+def export_project_erp(project_id: str, authorization: Optional[str] = Header(None)):
+    """Generates Enterprise General Ledger (GL) budget line-item reconciliation payload."""
+    p_dict, est = _get_project_and_estimate_for_feature(project_id, authorization)
+    budget = est.get("budget", {})
+    return integration_service.export_to_erp_ledger(p_dict, budget)
+
+
+# =====================================================================
+# DATASET MANAGEMENT & MODEL RETRAINING PIPELINE ENDPOINTS
+# =====================================================================
+
+@router.post("/datasets/upload", tags=["Datasets"])
+async def upload_dataset(
+    file: UploadFile = File(...),
+    provenance: str = Form("Organization-provided"),
+    dataset_name: Optional[str] = Form(None),
+    authorization: Optional[str] = Header(None),
+):
+    """
+    Uploads an Excel (.xlsx/.xls) or CSV (.csv) historical dataset.
+    Performs immediate schema profiling, type inference, missing value tallying,
+    duplicate detection, and candidate field validation.
+    """
+    current_user = get_current_user_optional(authorization)
+    user_id = current_user["id"] if current_user else None
+    try:
+        content = await file.read()
+        res = dataset_pipeline.upload_and_profile(
+            file_bytes=content,
+            filename=file.filename or "uploaded_dataset.csv",
+            provenance=provenance,
+            user_id=user_id,
+            dataset_name=dataset_name,
+        )
+        return {"status": "success", "dataset": res}
+    except Exception as e:
+        logger.error(f"Dataset upload failed: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/datasets", tags=["Datasets"])
+def list_datasets():
+    """Lists all uploaded datasets with record counts, validation status, and provenance."""
+    return {"status": "success", "datasets": dataset_pipeline.list_datasets()}
+
+
+@router.get("/datasets/{dataset_id}", tags=["Datasets"])
+def get_dataset_details(dataset_id: str):
+    """Retrieves full column profiling, detected field mappings, and validation report for a dataset."""
+    try:
+        details = dataset_pipeline.get_dataset_details(dataset_id)
+        return {"status": "success", "dataset": details}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.post("/datasets/{dataset_id}/clean", tags=["Datasets"])
+def clean_dataset(dataset_id: str, payload: Optional[Dict[str, Any]] = Body(None)):
+    """
+    Executes field-appropriate imputation, categorical normalization, and outlier detection.
+    Stores cleaned dataset separately from raw upload.
+    """
+    custom_mapping = payload.get("mapping") if payload else None
+    try:
+        res = dataset_pipeline.clean_and_preprocess(dataset_id=dataset_id, custom_mapping=custom_mapping)
+        return {"status": "success", "cleaning": res}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post("/datasets/{dataset_id}/train", tags=["Datasets"])
+def train_candidate_model(dataset_id: str, authorization: Optional[str] = Header(None)):
+    """
+    Trains candidate Random Forest regressors on cleaned dataset with held-out 80/20 test split.
+    Calculates test metrics (MAE, RMSE, R², MMRE, MdMRE, PRED(25)) without overwriting production models.
+    """
+    current_user = get_current_user_optional(authorization)
+    user_id = current_user["id"] if current_user else None
+    try:
+        run_res = dataset_pipeline.train_candidate_model(dataset_id=dataset_id, user_id=user_id)
+        return {"status": "success", "training_run": run_res}
+    except Exception as e:
+        logger.error(f"Candidate training failed: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post("/datasets/models/{run_id}/promote", tags=["Datasets"])
+def promote_candidate_model(run_id: str, authorization: Optional[str] = Header(None)):
+    """
+    Promotes an evaluated candidate model run to production active status.
+    Updates model metadata and reloads active models in memory.
+    """
+    current_user = get_current_user_optional(authorization)
+    user_id = current_user["id"] if current_user else None
+    try:
+        res = dataset_pipeline.promote_candidate_model(run_id=run_id, user_id=user_id)
+        return {"status": "success", "promotion": res}
+    except Exception as e:
+        logger.error(f"Model promotion failed: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/datasets/models/history", tags=["Datasets"])
+def get_model_training_history():
+    """Retrieves audit trail of all candidate and promoted model training runs."""
+    return {"status": "success", "history": dataset_pipeline.get_training_history()}
+
+
 
 

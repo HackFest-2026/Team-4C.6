@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import pandas as pd
 import numpy as np
 
@@ -144,5 +144,91 @@ class HistoricalBenchmarker:
             "assumptions": "Comparable historical records include all-inclusive lifecycle software budgets with 15% standard contingency.",
         }
 
+    def find_top_analogies(
+        self,
+        project_type: str,
+        overall_complexity: str,
+        feature_count: int,
+        frontend_stack: str = "React",
+        backend_stack: str = "Node.js_Express",
+        currency: str = "INR",
+        exchange_rate: float = 1.0,
+        top_k: int = 5,
+    ) -> List[Dict[str, Any]]:
+        """
+        Performs multi-attribute analogy search across 2,500 historical projects.
+        Ranks comparable records by similarity score (0-100%).
+        """
+        df = self._ensure_data_loaded()
+        if df is None or len(df) == 0:
+            return []
+
+        archetype = settings.DOMAIN_ARCHETYPE_MAPPING.get(project_type, project_type).lower()
+        target_p_type = project_type.lower()
+        target_comp = overall_complexity.lower()
+        target_features = max(1, int(feature_count))
+        rate = max(1e-4, float(exchange_rate or 1.0))
+
+        complexity_weights = {"low": 1, "medium": 2, "high": 3, "very high": 4}
+        target_comp_val = complexity_weights.get(target_comp, 2)
+
+        candidates = []
+        for _, row in df.iterrows():
+            row_type = str(row.get("project_type", "")).lower()
+            row_comp = str(row.get("project_complexity", "")).lower()
+            row_feats = int(row.get("feature_count", 10))
+            row_front = str(row.get("frontend_stack", ""))
+            row_back = str(row.get("backend_stack", ""))
+
+            # 1. Domain / Archetype Score (max 40 pts)
+            if row_type == target_p_type or row_type == archetype:
+                domain_score = 40.0
+            elif any(w in row_type for w in target_p_type.split()):
+                domain_score = 25.0
+            else:
+                domain_score = 10.0
+
+            # 2. Complexity Score (max 30 pts)
+            row_comp_val = complexity_weights.get(row_comp, 2)
+            comp_diff = abs(target_comp_val - row_comp_val)
+            comp_score = 30.0 if comp_diff == 0 else (15.0 if comp_diff == 1 else 5.0)
+
+            # 3. Feature Count Proximity (max 20 pts)
+            feat_diff_ratio = abs(target_features - row_feats) / max(target_features, row_feats, 1)
+            feat_score = round(20.0 * max(0.0, 1.0 - feat_diff_ratio), 1)
+
+            # 4. Tech Stack Overlap (max 10 pts)
+            stack_score = 0.0
+            if frontend_stack.lower() in row_front.lower():
+                stack_score += 5.0
+            if backend_stack.lower() in row_back.lower():
+                stack_score += 5.0
+
+            total_similarity = round(domain_score + comp_score + feat_score + stack_score, 1)
+
+            cost_inr = float(row.get("target_estimated_cost_inr", 0.0))
+            cost_converted = round(cost_inr / rate, 2)
+
+            candidates.append({
+                "project_id": str(row.get("project_id", "")),
+                "project_type": str(row.get("project_type", "")),
+                "project_complexity": str(row.get("project_complexity", "")),
+                "feature_count": row_feats,
+                "frontend_stack": row_front,
+                "backend_stack": row_back,
+                "similarity_score_pct": total_similarity,
+                "historical_effort_hours": round(float(row.get("total_estimated_effort_hours", 0.0)), 1),
+                "historical_duration_days": int(row.get("estimated_duration_calendar_days", 0)),
+                "historical_cost_inr": cost_inr,
+                "historical_cost_converted": cost_converted,
+                "currency_code": currency.upper(),
+                "matching_notes": f"Historical project with {row_feats} features and {row_comp} complexity in {row_type}.",
+                "provenance": "CostPilot_AI_Training_Dataset.xlsx (Projects_Training sheet)",
+            })
+
+        candidates.sort(key=lambda x: x["similarity_score_pct"], reverse=True)
+        return candidates[:top_k]
+
 
 historical_benchmarker = HistoricalBenchmarker()
+

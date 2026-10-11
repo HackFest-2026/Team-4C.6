@@ -70,23 +70,44 @@ class CurrencyConverter:
                 raise CurrencyConversionError(
                     f"Invalid exchange rate {c_rate}. Exchange rate must be strictly positive (> 0)."
                 )
-            info["rate_to_inr"] = c_rate
-            info["source"] = f"Custom Manually Configured Rate (1 {code} = {c_rate} INR)"
+            if code != self.BASE_CURRENCY and c_rate < 1.0:
+                # Specified as units of target currency per 1 unit of base INR (e.g. 0.01 USD per INR)
+                rate_target_per_inr = c_rate
+                rate_to_inr = round(1.0 / c_rate, 6)
+                info["rate_to_inr"] = rate_to_inr
+                info["rate_target_per_inr"] = rate_target_per_inr
+                info["exchange_rate"] = c_rate
+                info["exchange_rate_target_per_source"] = c_rate
+                info["reciprocal_rate"] = rate_to_inr
+                info["source"] = f"Custom Configured Rate ({c_rate} {code} per 1 INR; 1 {code} = {rate_to_inr} INR)"
+            else:
+                # Specified as base INR per 1 unit of target currency (e.g. 83.50 INR per 1 USD)
+                rate_to_inr = c_rate
+                rate_target_per_inr = round(1.0 / c_rate, 6) if c_rate > 0 else 1.0
+                info["rate_to_inr"] = rate_to_inr
+                info["rate_target_per_inr"] = rate_target_per_inr
+                info["exchange_rate"] = c_rate
+                info["exchange_rate_target_per_source"] = rate_target_per_inr
+                info["reciprocal_rate"] = rate_target_per_inr
+                info["source"] = f"Custom Configured Rate (1 {code} = {c_rate} INR)"
             info["timestamp"] = datetime.now(timezone.utc).isoformat()
             info["is_manually_configured"] = True
         else:
-            info["rate_to_inr"] = float(info.get("rate_to_inr", 1.0))
-            if info["rate_to_inr"] <= 0:
+            rate_to_inr = float(info.get("rate_to_inr", 1.0))
+            if rate_to_inr <= 0:
                 raise CurrencyConversionError(
                     f"Configured exchange rate for '{code}' must be strictly positive."
                 )
+            rate_target_per_inr = round(1.0 / rate_to_inr, 6) if rate_to_inr > 0 else 1.0
+            info["rate_to_inr"] = rate_to_inr
+            info["rate_target_per_inr"] = rate_target_per_inr
+            info["exchange_rate"] = rate_to_inr
+            info["exchange_rate_target_per_source"] = rate_target_per_inr
+            info["reciprocal_rate"] = rate_target_per_inr
             info["source"] = info.get("source", "CostPilot Treasury Configured Benchmark")
             info["timestamp"] = info.get("timestamp", "2026-10-10T12:00:00Z")
             info["is_manually_configured"] = False
 
-        rate = info["rate_to_inr"]
-        info["exchange_rate"] = rate
-        info["reciprocal_rate"] = round(1.0 / rate, 6) if rate > 0 else 1.0
         return info
 
     def convert_amount(
@@ -98,6 +119,8 @@ class CurrencyConverter:
         """
         Converts a canonical INR amount into target currency.
         Always starts from the canonical amount to prevent cumulative drift.
+        Uses convention: converted_amount = round(canonical_inr / rate_to_inr, 2)
+        or converted_amount = round(canonical_inr * rate_target_per_inr, 2).
         """
         if amount_inr is None:
             amount_inr = 0.0
@@ -108,18 +131,19 @@ class CurrencyConverter:
 
         target = (target_currency or self.BASE_CURRENCY).upper().strip()
         info = self.get_currency_info(target, custom_rate=custom_rate)
-        rate = info["exchange_rate"]
+        rate_to_inr = info["rate_to_inr"]
+        rate_target_per_inr = info.get("rate_target_per_inr", 1.0 / rate_to_inr)
 
-        if target == self.BASE_CURRENCY and rate == 1.0:
+        if target == self.BASE_CURRENCY:
             converted_val = round(val_inr, 2)
             reversed_inr = converted_val
             diff = 0.0
         else:
-            converted_val = round(val_inr / rate, 2)
-            reversed_inr = round(converted_val * rate, 2)
+            converted_val = round(val_inr / rate_to_inr, 2)
+            reversed_inr = round(converted_val * rate_to_inr, 2)
             diff = round(abs(val_inr - reversed_inr), 2)
 
-        diff_target = round(diff / rate, 4) if rate > 0 else diff
+        diff_target = round(diff / rate_to_inr, 4) if rate_to_inr > 0 else diff
 
         return {
             "canonical_amount_inr": val_inr,
@@ -129,7 +153,9 @@ class CurrencyConverter:
             "currency_code": target,
             "currency_symbol": info["symbol"],
             "currency_name": info["name"],
-            "exchange_rate": rate,
+            "exchange_rate": info["exchange_rate"],
+            "rate_to_inr": rate_to_inr,
+            "rate_target_per_inr": rate_target_per_inr,
             "reciprocal_rate": info["reciprocal_rate"],
             "exchange_rate_source": info["source"],
             "exchange_rate_timestamp": info["timestamp"],
@@ -143,6 +169,34 @@ class CurrencyConverter:
             "roundtrip_discrepancy_target": diff_target,
             "is_reversible": diff_target <= 0.05,
         }
+
+    def reverse_convert_to_inr(
+        self,
+        target_amount: float,
+        target_currency: str = "INR",
+        custom_rate: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """
+        Converts a target currency amount back to base INR using the inverse exchange rate.
+        Uses convention: base_inr = round(target_amount * rate_to_inr, 2).
+        """
+        if target_amount is None:
+            target_amount = 0.0
+        val = float(target_amount)
+        target = (target_currency or self.BASE_CURRENCY).upper().strip()
+        info = self.get_currency_info(target, custom_rate=custom_rate)
+        rate_to_inr = info["rate_to_inr"]
+        base_inr = round(val * rate_to_inr, 2)
+        return {
+            "target_amount": val,
+            "target_currency": target,
+            "rate_to_inr": rate_to_inr,
+            "rate_target_per_inr": info.get("rate_target_per_inr", 1.0 / rate_to_inr if rate_to_inr > 0 else 1.0),
+            "reversed_inr": base_inr,
+            "base_inr": base_inr,
+            "exchange_rate": info["exchange_rate"],
+        }
+
 
     def convert_budget_components(
         self,
@@ -158,31 +212,32 @@ class CurrencyConverter:
         """
         target = (target_currency or self.BASE_CURRENCY).upper().strip()
         info = self.get_currency_info(target, custom_rate=custom_rate)
+        rate_to_inr = info["rate_to_inr"]
         rate = info["exchange_rate"]
 
         # 1. Canonical INR Ground Truth
-        base_budget = budget.get("final_build_budget_inr")
+        base_budget = budget.get("final_build_budget_inr") or budget.get("final_budget") or budget.get("final_budget_inr")
         if base_budget is None:
             # Fallback if only converted budget was supplied
-            conv_b = budget.get("final_build_budget_converted", 0.0)
-            existing_rate = budget.get("exchange_rate", 1.0)
+            conv_b = budget.get("final_build_budget_converted", budget.get("final_budget", 0.0))
+            existing_rate = budget.get("rate_to_inr", budget.get("exchange_rate", 1.0))
             base_budget = conv_b * existing_rate
-        base_budget = round(float(base_budget), 2)
+        base_budget = round(float(base_budget or 0.0), 2)
 
-        base_labour = round(float(budget.get("labour_cost_inr", 0.0)), 2)
-        base_infra = round(float(budget.get("one_time_infrastructure_setup_inr", 0.0)), 2)
-        base_tooling = round(float(budget.get("software_tooling_setup_inr", 0.0)), 2)
-        base_other = round(float(budget.get("other_direct_costs_inr", 0.0)), 2)
+        base_labour = round(float(budget.get("labour_cost_inr", budget.get("total_labour_cost", budget.get("labour_cost", 0.0)))), 2)
+        base_infra = round(float(budget.get("one_time_infrastructure_setup_inr", budget.get("total_infrastructure_cost", budget.get("infra_cost", 0.0)))), 2)
+        base_tooling = round(float(budget.get("software_tooling_setup_inr", budget.get("tooling_cost", 0.0))), 2)
+        base_other = round(float(budget.get("other_direct_costs_inr", budget.get("other_direct_costs", 0.0))), 2)
         base_additional = round(float(budget.get("total_additional_costs_inr", base_infra + base_tooling + base_other)), 2)
-        base_pre_contingency = round(float(budget.get("pre_contingency_cost_inr", base_labour + base_additional)), 2)
-        base_contingency = round(float(budget.get("contingency_amount_inr", 0.0)), 2)
+        base_pre_contingency = round(float(budget.get("pre_contingency_cost_inr", budget.get("pre_contingency_subtotal", base_labour + base_additional))), 2)
+        base_contingency = round(float(budget.get("contingency_amount_inr", budget.get("contingency_cost", 0.0))), 2)
 
         range_obj = budget.get("budget_range", {})
-        base_low = round(float(range_obj.get("low_inr", base_budget * 0.85)), 2)
-        base_high = round(float(range_obj.get("high_inr", base_budget * 1.20)), 2)
+        base_low = round(float(range_obj.get("low_inr", budget.get("lower_bound_pessimistic_cost", base_budget * 0.85))), 2)
+        base_high = round(float(range_obj.get("high_inr", budget.get("upper_bound_optimistic_cost", base_budget * 1.20))), 2)
 
         # 2. Converted Presentation Values (Single-step conversion from canonical INR)
-        if target == self.BASE_CURRENCY and rate == 1.0:
+        if target == self.BASE_CURRENCY:
             conv_budget = base_budget
             conv_labour = base_labour
             conv_infra = base_infra
@@ -194,16 +249,16 @@ class CurrencyConverter:
             conv_low = base_low
             conv_high = base_high
         else:
-            conv_budget = round(base_budget / rate, 2)
-            conv_labour = round(base_labour / rate, 2)
-            conv_infra = round(base_infra / rate, 2)
-            conv_tooling = round(base_tooling / rate, 2)
-            conv_other = round(base_other / rate, 2)
-            conv_additional = round(base_additional / rate, 2)
-            conv_pre_contingency = round(base_pre_contingency / rate, 2)
-            conv_contingency = round(base_contingency / rate, 2)
-            conv_low = round(base_low / rate, 2)
-            conv_high = round(base_high / rate, 2)
+            conv_budget = round(base_budget / rate_to_inr, 2)
+            conv_labour = round(base_labour / rate_to_inr, 2)
+            conv_infra = round(base_infra / rate_to_inr, 2)
+            conv_tooling = round(base_tooling / rate_to_inr, 2)
+            conv_other = round(base_other / rate_to_inr, 2)
+            conv_additional = round(base_additional / rate_to_inr, 2)
+            conv_pre_contingency = round(base_pre_contingency / rate_to_inr, 2)
+            conv_contingency = round(base_contingency / rate_to_inr, 2)
+            conv_low = round(base_low / rate_to_inr, 2)
+            conv_high = round(base_high / rate_to_inr, 2)
 
         # 3. Role breakdown conversion
         role_breakdown = {}
@@ -214,8 +269,8 @@ class CurrencyConverter:
                 rate_inr = float(r_data.get("hourly_rate_inr", 1200.0))
                 cost_inr = round(float(r_data.get("role_cost_inr", hours * rate_inr)), 2)
                 
-                hourly_conv = round(rate_inr / rate, 2) if rate > 0 else rate_inr
-                role_cost_conv = round(cost_inr / rate, 2) if rate > 0 else cost_inr
+                hourly_conv = round(rate_inr / rate_to_inr, 2) if rate_to_inr > 0 else rate_inr
+                role_cost_conv = round(cost_inr / rate_to_inr, 2) if rate_to_inr > 0 else cost_inr
                 
                 role_breakdown[r_name] = {
                     "allocated_hours": hours,
@@ -267,6 +322,15 @@ class CurrencyConverter:
             "total_additional_costs_converted": conv_additional,
             "pre_contingency_cost_converted": conv_pre_contingency,
             "contingency_amount_converted": conv_contingency,
+            "final_budget": conv_budget,
+            "total_labour_cost": conv_labour,
+            "total_infrastructure_cost": conv_infra,
+            "tooling_cost": conv_tooling,
+            "other_direct_costs": conv_other,
+            "pre_contingency_subtotal": conv_pre_contingency,
+            "contingency_cost": conv_contingency,
+            "lower_bound_pessimistic_cost": conv_low,
+            "upper_bound_optimistic_cost": conv_high,
             
             "budget_range": {
                 "low_inr": base_low,
@@ -277,6 +341,7 @@ class CurrencyConverter:
                 "high_converted": conv_high,
             },
             "role_costs": role_breakdown,
+            "role_breakdown": role_breakdown,
             "role_costs_list": [
                 {
                     "role": r_name,

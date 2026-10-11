@@ -12,6 +12,7 @@ Group 8: Complete End-to-End Estimation & CRUD Workflow
 """
 
 import pytest
+import uuid
 import numpy as np
 from fastapi.testclient import TestClient
 from app.main import app
@@ -26,7 +27,7 @@ client = TestClient(app)
 # =====================================================================
 def test_group_1_user_account_isolation():
     # Register User A
-    user_a_email = f"user_a_{np.random.randint(10000, 99999)}@test.com"
+    user_a_email = f"user_a_{uuid.uuid4().hex[:8]}@test.com"
     resp_a = client.post("/api/v1/auth/register", json={
         "full_name": "Alice Developer",
         "email": user_a_email,
@@ -39,7 +40,7 @@ def test_group_1_user_account_isolation():
     user_a_id = resp_a.json()["user"]["id"]
 
     # Register User B
-    user_b_email = f"user_b_{np.random.randint(10000, 99999)}@test.com"
+    user_b_email = f"user_b_{uuid.uuid4().hex[:8]}@test.com"
     resp_b = client.post("/api/v1/auth/register", json={
         "full_name": "Bob Architect",
         "email": user_b_email,
@@ -360,7 +361,7 @@ def test_group_7_model_evaluation_metrics_statistical_formulas():
 # =====================================================================
 def test_group_8_full_end_to_end_regression():
     # 1. Register user
-    email = f"e2e_user_{np.random.randint(10000, 99999)}@test.com"
+    email = f"e2e_user_{uuid.uuid4().hex[:8]}@test.com"
     auth_resp = client.post("/api/v1/auth/register", json={
         "full_name": "End To End User",
         "email": email,

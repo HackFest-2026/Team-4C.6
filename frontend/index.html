@@ -1281,18 +1281,21 @@
                 <div class="model-eval-header">
                   <div>
                     <div class="model-eval-title">
-                      <span>📊 Supervised Model Evaluation Benchmarks</span>
-                      <span class="badge badge-medium">Hackfest 4C Standard</span>
+                      <span>📊 Model Validation Metrics — Held-Out Test Set</span>
+                      <span class="badge badge-medium">Global Benchmark</span>
                     </div>
                     <div class="model-eval-provenance">
-                      <span>✓ Calculated from 500 held-out historical test projects (20% test split from 2,500
-                        projects)</span>
-                      <span>• Algorithm: Random Forest Regressor (n_estimators=100)</span>
+                      <span>✓ Calculated from 500 held-out historical test projects (20% test partition from 2,500 projects)</span>
+                      <span>• Algorithm: Multi-Target Random Forest Regressors</span>
                     </div>
                   </div>
                   <div>
                     <span class="badge badge-primary" id="model-eval-badge-ver">Random Forest v2.0</span>
                   </div>
+                </div>
+
+                <div style="font-size:0.8rem; color:var(--text-muted); background:rgba(99, 102, 241, 0.08); border-left:3px solid var(--primary); padding:0.5rem 0.75rem; border-radius:4px; margin-bottom:1rem;">
+                  ℹ️ <strong>Global Model Benchmark:</strong> These figures evaluate the supervised machine learning models globally across 500 held-out test projects. They measure overall model performance, not the individual error of the active estimate. Individual accuracy is calculated only after verified actual outcomes are recorded upon project completion.
                 </div>
 
                 <!-- Primary KPI Cards for Cost Target -->
@@ -1375,6 +1378,273 @@
                   PRED(25) is the percentage of test cases within 25% error.
                   The project budget range above represents PERT / Empirical Bayes parameter uncertainty, not model
                   generalization error.
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- ADVANCED WORK BREAKDOWN STRUCTURE (WBS) SECTION         -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="wbs-results-section" style="margin-top:2rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Hierarchical Work Breakdown Structure (WBS)</h3>
+                    <p class="form-section-desc">Decomposed technical tasks mapped to modules, features, acceptance criteria, and technical roles.</p>
+                  </div>
+                  <div style="display:flex; gap:0.5rem; align-items:center;">
+                    <span class="badge badge-primary" id="wbs-tasks-count-badge">0 Tasks</span>
+                    <span class="badge badge-medium" id="wbs-parallel-ratio-badge">0% Parallelizable</span>
+                  </div>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table" style="font-size:0.86rem;">
+                    <thead>
+                      <tr>
+                        <th style="width:110px;">WBS ID</th>
+                        <th>Module / Feature</th>
+                        <th>Task Name & Deliverable</th>
+                        <th>Assigned Role</th>
+                        <th>Effort</th>
+                        <th>Concurrency</th>
+                        <th>Acceptance Criteria</th>
+                      </tr>
+                    </thead>
+                    <tbody id="wbs-tasks-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- RESOURCE OPTIMIZATION SCENARIOS SECTION                 -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="resource-scenarios-section" style="margin-top:2rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Resource Planning & Staffing Scenarios</h3>
+                    <p class="form-section-desc">Contrasting Budget-Focused, Balanced, and Deadline-Focused plans modeling Brooks' Law coordination overhead.</p>
+                  </div>
+                  <span class="badge badge-medium" id="resource-critical-floor-badge">Critical Path Floor</span>
+                </div>
+
+                <div class="form-grid-3" id="resource-scenarios-cards">
+                  <!-- Rendered dynamically: 3 scenario cards -->
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- INTERACTIVE SCENARIO SENSITIVITY & WHAT-IF STUDIO       -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="scenario-sensitivity-section" style="margin-top:2rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">⚡ Interactive Scenario Sensitivity & What-If Sandbox</h3>
+                    <p class="form-section-desc">Test real-time sensitivity by varying staffing headcount, contingency buffer, target deadline, and rate profile.</p>
+                  </div>
+                  <span class="badge badge-primary">Real-Time Engine Recalculation</span>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                  <!-- Team Headcount Slider -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                      <label class="form-label" style="font-size:0.85rem; margin-bottom:0;">Team Headcount:</label>
+                      <span id="sens-headcount-val" style="font-weight:700; color:var(--primary);">4 Engineers</span>
+                    </div>
+                    <input type="range" id="sens-headcount-slider" style="width:100%; accent-color:var(--primary);" min="2" max="16" value="4" oninput="handleSensitivityChange()">
+                  </div>
+
+                  <!-- Contingency Buffer Slider -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+                      <label class="form-label" style="font-size:0.85rem; margin-bottom:0;">Contingency Buffer:</label>
+                      <span id="sens-contingency-val" style="font-weight:700; color:var(--accent-amber);">15%</span>
+                    </div>
+                    <input type="range" id="sens-contingency-slider" style="width:100%; accent-color:var(--accent-amber);" min="5" max="35" value="15" oninput="handleSensitivityChange()">
+                  </div>
+
+                  <!-- Requested Deadline Days -->
+                  <div>
+                    <label class="form-label" style="font-size:0.85rem;">Requested Deadline (Days):</label>
+                    <input type="number" id="sens-deadline-input" class="form-input" min="14" max="365" value="60" onchange="handleSensitivityChange()">
+                  </div>
+
+                  <!-- Rate Profile -->
+                  <div>
+                    <label class="form-label" style="font-size:0.85rem;">Rate Profile Schedule:</label>
+                    <select id="sens-rate-profile" class="form-select" onchange="handleSensitivityChange()">
+                      <option value="benchmark" selected>CostPilot Benchmark Rates</option>
+                      <option value="tier1_metro">Tier-1 Metro Tech Hub (+25%)</option>
+                      <option value="offshore">Offshore Global Delivery (-35%)</option>
+                      <option value="enterprise_premium">Enterprise Mission-Critical (+50%)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Sensitivity Results Comparison Cards -->
+                <div class="kpi-grid" id="sensitivity-impact-grid" style="margin-bottom:0.5rem;">
+                  <div class="kpi-card">
+                    <div class="kpi-label">Recalculated Budget</div>
+                    <div class="kpi-value" id="sens-recalc-budget" style="color:var(--primary);">₹0</div>
+                    <div class="kpi-subtext" id="sens-delta-budget">Baseline Match</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Recalculated Duration</div>
+                    <div class="kpi-value" id="sens-recalc-duration">0 Days</div>
+                    <div class="kpi-subtext" id="sens-delta-duration">Baseline Match</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Brooks' Law Coordination Penalty</div>
+                    <div class="kpi-value" id="sens-brooks-penalty" style="color:var(--accent-cyan);">1.00x</div>
+                    <div class="kpi-subtext" id="sens-brooks-desc">Standard communication overhead</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Schedule Feasibility Status</div>
+                    <div class="kpi-value" id="sens-feasibility-status" style="color:var(--accent-emerald);">FEASIBLE</div>
+                    <div class="kpi-subtext" id="sens-feasibility-desc">Within critical path limits</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- MONTE CARLO UNCERTAINTY SIMULATION SECTION              -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="monte-carlo-results-section" style="margin-top:2rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Monte Carlo Uncertainty Simulation (1,000 Iterations)</h3>
+                    <p class="form-section-desc">Stochastic distribution percentiles, confidence intervals, and sensitivity tornado ranking.</p>
+                  </div>
+                  <span class="badge badge-success">1,000 Stochastic Runs (Beta-PERT)</span>
+                </div>
+
+                <!-- Percentile Cards Grid -->
+                <div class="kpi-grid" style="margin-bottom:1.25rem;">
+                  <div class="kpi-card">
+                    <div class="kpi-label">P10 (Optimistic Target)</div>
+                    <div class="kpi-value" id="mc-p10-budget" style="color:#10b981;">₹0</div>
+                    <div class="kpi-subtext" id="mc-p10-effort">0 Hours • 10% Risk of Overrun</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">P50 (Median Most Likely)</div>
+                    <div class="kpi-value" id="mc-p50-budget" style="color:var(--primary);">₹0</div>
+                    <div class="kpi-subtext" id="mc-p50-effort">0 Hours • 50% Confidence</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">P80 (Engineering Commitment)</div>
+                    <div class="kpi-value" id="mc-p80-budget" style="color:#f59e0b;">₹0</div>
+                    <div class="kpi-subtext" id="mc-p80-effort">0 Hours • 80% Confidence</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">P90 (Conservative Reserve)</div>
+                    <div class="kpi-value" id="mc-p90-budget" style="color:#ef4444;">₹0</div>
+                    <div class="kpi-subtext" id="mc-p90-effort">0 Hours • 90% Executive Buffer</div>
+                  </div>
+                </div>
+
+                <!-- Tornado Sensitivity Ranking -->
+                <div style="background:var(--surface-card); border:1px solid var(--border); border-radius:8px; padding:1.25rem; margin-bottom:1.25rem;">
+                  <div style="font-weight:700; font-size:0.95rem; margin-bottom:0.75rem; color:var(--text-main);">
+                    🌪️ Tornado Sensitivity Ranking — Top Variance Drivers
+                  </div>
+                  <div id="mc-tornado-drivers-list">
+                    <!-- Rendered dynamically -->
+                  </div>
+                </div>
+
+                <!-- Calibration Disclosure -->
+                <div style="font-size:0.8rem; color:var(--text-muted); background:rgba(16, 185, 129, 0.08); border-left:3px solid #10b981; padding:0.5rem 0.75rem; border-radius:4px;">
+                  ℹ️ <strong>Statistical Calibration:</strong> Simulated using 1,000 runs with correlated systemic architecture factors. Does not replace project management control.
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- ANALOGY-BASED ESTIMATION & HISTORICAL MATCHES           -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="analogy-matches-section" style="margin-top:2rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Analogy-Based Estimation — Comparable Historical Projects</h3>
+                    <p class="form-section-desc">Nearest-neighbor similarity search across 2,500 historical project records.</p>
+                  </div>
+                  <span class="badge badge-medium">Top-5 Analogy Matches</span>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table" style="font-size:0.86rem;">
+                    <thead>
+                      <tr>
+                        <th>Project ID</th>
+                        <th>Historical Domain</th>
+                        <th>Complexity</th>
+                        <th>Features</th>
+                        <th>Tech Stack</th>
+                        <th>Similarity</th>
+                        <th>Actual Effort</th>
+                        <th>Actual Cost (<span class="currency-symbol-label">₹</span>)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="analogies-matches-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- PARAMETRIC COCOMO II MODEL COMPARISON                   -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="cocomo-comparison-section" style="margin-top:2rem;">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Parametric Estimation — COCOMO II Early Design Model</h3>
+                    <p class="form-section-desc">Parametric comparison using calibrated function-point equivalent KSLOC and cost drivers.</p>
+                  </div>
+                  <span class="badge badge-primary">Parametric Cross-Validation</span>
+                </div>
+
+                <div class="form-grid-3" id="cocomo-kpi-cards">
+                  <div class="kpi-card">
+                    <div class="kpi-label">Equivalent Code Size</div>
+                    <div class="kpi-value" id="cocomo-ksloc-val">0 KSLOC</div>
+                    <div class="kpi-subtext" id="cocomo-sloc-subtext">~0 Source Lines of Code</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Parametric Effort</div>
+                    <div class="kpi-value" id="cocomo-effort-val">0 Person-Months</div>
+                    <div class="kpi-subtext" id="cocomo-effort-hours-subtext">0 Hours (152h/PM)</div>
+                  </div>
+                  <div class="kpi-card">
+                    <div class="kpi-label">Nominal Schedule</div>
+                    <div class="kpi-value" id="cocomo-duration-val">0 Months</div>
+                    <div class="kpi-subtext" id="cocomo-days-subtext">~0 Calendar Days</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ======================================================= -->
+              <!-- ENTERPRISE INTEGRATIONS & EXPORT ACTIONS TOOLBAR        -->
+              <!-- ======================================================= -->
+              <div class="form-section" id="enterprise-integrations-toolbar" style="margin-top:2rem; background:var(--surface-card); border:1px solid var(--border); border-radius:10px; padding:1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                  <div>
+                    <div style="font-weight:700; font-size:1rem; color:var(--text-main);">Enterprise Integrations & Export Interfaces</div>
+                    <div style="font-size:0.83rem; color:var(--text-muted); margin-top:0.25rem;">
+                      Export validated WBS and budget structures directly into your project tracking and financial systems.
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="exportActiveEstimateJira()">
+                      📥 Jira JSON Export
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="exportActiveEstimateMsProject()">
+                      📊 MS Project CSV
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="exportActiveEstimateErp()">
+                      💼 ERP Ledger Export
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1533,30 +1803,177 @@
         <div class="form-section">
           <div class="form-section-header">
             <div>
-              <h1 class="form-section-title">Datasets & ML Model Lab</h1>
-              <p class="form-section-desc">Transparent model provenance, supervised metrics, and retraining telemetry
-              </p>
+              <h1 class="form-section-title">Datasets & ML Model Studio</h1>
+              <p class="form-section-desc">Historical project dataset ingestion, schema validation, reproducible preprocessing, and candidate model retraining telemetry.</p>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="openRetrainModal()">⚡ Retrain ML Models</button>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline btn-sm" onclick="refreshDatasetStudio()">🔄 Refresh Studio</button>
+              <button class="btn btn-primary btn-sm" onclick="triggerCandidateTraining()">⚡ Retrain Candidate Model</button>
+            </div>
           </div>
 
-          <!-- Dataset Provenance Card -->
-          <div class="kpi-card" style="margin-bottom:1.5rem;">
-            <div class="kpi-label">Active Training Dataset</div>
-            <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">CostPilot_AI_Training_Dataset.xlsx
+          <!-- 1. DATASET INGESTION & UPLOAD CARD -->
+          <div class="kpi-card" style="margin-bottom:1.5rem; background:var(--bg-card); border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <div class="kpi-label" style="font-size:0.85rem; color:var(--primary); font-weight:700;">Data / Tooling Pipeline</div>
+                <h3 style="font-size:1.15rem; font-weight:700; margin-top:0.2rem;">Upload Historical Project Dataset</h3>
+              </div>
+              <span class="badge badge-medium">Supported Formats: .xlsx, .xls, .csv (Max 50MB)</span>
             </div>
-            <p style="color:var(--text-muted); font-size:0.9rem;">
-              <strong>Provenance:</strong> 2,500 projects • 44,301 feature records • 20 edge cases • 7 workbook sheets.
-              Preserved provenance: This simulated training set provides supervised benchmarks and empirical priors
-              without claiming to represent unverified external commercial contracts.
-            </p>
+
+            <form id="form-dataset-upload" onsubmit="handleDatasetUpload(event)" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; align-items:flex-end;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="dataset-file-input">Select Dataset File *</label>
+                <input type="file" id="dataset-file-input" class="form-input" accept=".xlsx,.xls,.csv" required style="padding:0.4rem;">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="dataset-name-input">Dataset Display Name</label>
+                <input type="text" id="dataset-name-input" class="form-input" placeholder="e.g. Enterprise Q3 Historical Projects">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="dataset-provenance-select">Dataset Provenance *</label>
+                <select id="dataset-provenance-select" class="form-select">
+                  <option value="Organization-provided" selected>Organization-provided (Verified Historical)</option>
+                  <option value="Public Benchmark">Public Benchmark (COCOMO / ISBSG)</option>
+                  <option value="Synthetic">Synthetic / Simulated Training Set</option>
+                </select>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary" id="btn-upload-dataset" style="width:100%; height:42px;">
+                  📤 Upload & Profile Dataset
+                </button>
+              </div>
+            </form>
+            <div id="upload-status-indicator" style="margin-top:0.75rem; font-size:0.85rem; display:none;"></div>
           </div>
 
-          <!-- Held-out Test Metrics -->
-          <div class="form-section" style="margin-bottom:1.5rem;">
-            <h3 class="form-section-title" style="margin-bottom:1rem;">Supervised Held-Out Test Evaluation Metrics (500
-              Test Records)</h3>
-            <div class="kpi-grid">
+          <!-- 2. DATASET INVENTORY & ACTIVE SELECTION TOOLBAR -->
+          <div class="form-section" style="margin-bottom:1.5rem; background:rgba(255,255,255,0.02); padding:1rem 1.25rem; border-radius:8px; border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+              <div style="display:flex; align-items:center; gap:0.75rem; flex:1; min-width:280px;">
+                <label for="select-active-dataset" style="font-weight:600; font-size:0.9rem; white-space:nowrap;">Active Ingested Dataset:</label>
+                <select id="select-active-dataset" class="form-select" onchange="loadSelectedDatasetDetails()" style="max-width:400px;">
+                  <option value="">Loading datasets inventory...</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:0.5rem;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-clean-active-ds" onclick="cleanSelectedDataset()">
+                  🧹 Clean & Normalize Dataset
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-train-active-ds" onclick="trainOnSelectedDataset()">
+                  ⚡ Train Candidate Model
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. ACTIVE DATASET PROFILE & VALIDATION REPORT PANEL -->
+          <div id="dataset-profile-container" style="margin-bottom:1.5rem;">
+            <div class="kpi-grid" style="margin-bottom:1.25rem;">
+              <div class="kpi-card">
+                <div class="kpi-label">Total Ingested Records</div>
+                <div class="kpi-value" id="ds-profile-total-rows">0</div>
+                <div class="kpi-subtext" id="ds-profile-format">Format: N/A</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Valid Training Rows</div>
+                <div class="kpi-value" id="ds-profile-valid-rows" style="color:var(--accent-emerald);">0</div>
+                <div class="kpi-subtext" id="ds-profile-invalid-rows">0 Invalid rows flagged</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Duplicate Records</div>
+                <div class="kpi-value" id="ds-profile-duplicates">0</div>
+                <div class="kpi-subtext">Zero duplicate leakage</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Detected Targets</div>
+                <div class="kpi-value" id="ds-profile-targets" style="font-size:1.1rem; color:var(--primary);">None</div>
+                <div class="kpi-subtext" id="ds-profile-missing-total">0 Missing values</div>
+              </div>
+            </div>
+
+            <!-- Validation Report Card -->
+            <div class="form-section" style="margin-bottom:1.25rem;">
+              <div class="form-section-header">
+                <div>
+                  <h3 class="form-section-title" style="font-size:1rem;">Schema Validation & Data Quality Report</h3>
+                  <p class="form-section-desc">Automated profiling against standard candidate fields: effort, duration, cost, complexity, and tech stack.</p>
+                </div>
+                <span class="badge badge-medium" id="ds-profile-provenance-badge">Organization-provided</span>
+              </div>
+              <div id="ds-validation-warnings-box" style="padding:0.75rem 1rem; border-radius:6px; background:rgba(245,158,11,0.08); border-left:3px solid var(--accent-amber); font-size:0.85rem; margin-bottom:1rem;">
+                No schema validation warnings. Dataset structure is ready for preprocessing.
+              </div>
+
+              <!-- Column Schema & Candidate Mapping Table -->
+              <div class="table-container">
+                <table class="data-table" style="font-size:0.85rem;">
+                  <thead>
+                    <tr>
+                      <th>Uploaded Column Name</th>
+                      <th>Inferred Data Type</th>
+                      <th>Missing Count (%)</th>
+                      <th>Unique Values</th>
+                      <th>Mapped Candidate Field</th>
+                      <th>Sample Data Values</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ds-columns-mapping-tbody">
+                    <tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Select or upload a dataset to inspect schema mapping.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. MODEL RETRAINING & STAGING STUDIO (CANDIDATE vs CHAMPION) -->
+          <div class="form-section" id="model-staging-studio" style="margin-bottom:1.5rem;">
+            <div class="form-section-header">
+              <div>
+                <h3 class="form-section-title">Model Staging Studio — Champion vs. Candidate Comparison</h3>
+                <p class="form-section-desc">Evaluate newly trained candidate models on an independent 80/20 test split before promoting to production active inference.</p>
+              </div>
+              <span class="badge badge-primary" id="model-staging-status-badge">Ready for Training</span>
+            </div>
+
+            <!-- Candidate Evaluation Telemetry -->
+            <div id="candidate-training-telemetry" style="display:none; padding:1rem; border-radius:8px; background:var(--bg-card); border:1px solid var(--border-color); margin-bottom:1.25rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                  <strong style="color:var(--text-main);">Candidate Model Run:</strong> <span id="cand-run-id">run_xxx</span>
+                  <span style="font-size:0.8rem; color:var(--text-muted); margin-left:0.5rem;" id="cand-run-timestamp">Timestamp</span>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-promote-candidate" onclick="promoteCurrentCandidate()" style="background:#10b981; border-color:#10b981;">
+                  🚀 Promote to Active Production Model
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table class="data-table" style="font-size:0.85rem;">
+                  <thead>
+                    <tr>
+                      <th>Target Variable</th>
+                      <th>Algorithm</th>
+                      <th>Train / Test Samples</th>
+                      <th>R² Score</th>
+                      <th>MAE</th>
+                      <th>MMRE</th>
+                      <th>MdMRE</th>
+                      <th>PRED(25)</th>
+                      <th>Acceptance Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidate-metrics-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Global Supervised Held-Out Benchmark (Champion Model) -->
+            <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; color:var(--text-main);">Active Production Model Performance (Champion)</h4>
+            <div class="kpi-grid" style="margin-bottom:1.5rem;">
               <div class="kpi-card">
                 <div class="kpi-label">Cost Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-cost-r2">0.6229</div>
@@ -1565,22 +1982,83 @@
               <div class="kpi-card">
                 <div class="kpi-label">Effort Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-effort-r2">0.7182</div>
-                <div class="kpi-subtext" id="ml-lab-effort-subtext">MAE: 234.5 Hours • MMRE: 30.4% • PRED(25): 53.4%
-                </div>
+                <div class="kpi-subtext" id="ml-lab-effort-subtext">MAE: 234.5 Hours • MMRE: 30.4% • PRED(25): 53.4%</div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Duration Model R² Score</div>
                 <div class="kpi-value" id="ml-lab-duration-r2">0.5328</div>
-                <div class="kpi-subtext" id="ml-lab-duration-subtext">MAE: 20.3 Days • MMRE: 44.5% • PRED(25): 40.6%
-                </div>
+                <div class="kpi-subtext" id="ml-lab-duration-subtext">MAE: 20.3 Days • MMRE: 44.5% • PRED(25): 40.6%</div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Target Leakage Audit</div>
                 <div class="kpi-value" style="color:var(--accent-emerald);">CLEAN</div>
-                <div class="kpi-subtext">Zero target leakage detected across 2,500 projects</div>
+                <div class="kpi-subtext">Zero target leakage detected across active models</div>
               </div>
             </div>
           </div>
+
+          <!-- 5. TRAINING RUN HISTORY AUDIT TRAIL -->
+          <div class="form-section" style="margin-bottom:1.5rem;">
+            <div class="form-section-header">
+              <div>
+                <h3 class="form-section-title">Model Retraining Audit Trail</h3>
+                <p class="form-section-desc">Audit history of candidate training iterations, datasets used, and promotion events.</p>
+              </div>
+              <span class="badge badge-medium" id="training-runs-count-badge">0 Runs</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table" style="font-size:0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Run ID</th>
+                    <th>Dataset Source</th>
+                    <th>Model Version</th>
+                    <th>Algorithm</th>
+                    <th>Train / Test Samples</th>
+                    <th>Targets</th>
+                    <th>Status</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="training-history-tbody">
+                  <tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No training runs recorded yet.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 6. CUMULATIVE OUTCOME METRICS (VERIFIED ACTUALS) -->
+          <div class="form-section" style="margin-bottom:0;">
+            <h3 class="form-section-title" style="margin-bottom:0.5rem;">Cumulative Outcome Metrics (Completed Projects with Verified Actuals)</h3>
+            <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1rem;">
+              Calculated dynamically from verified actual outcomes recorded upon project completion, distinguishing empirical actual performance from held-out model benchmarks.
+            </p>
+            <div id="ml-lab-outcomes-container">
+              <div class="kpi-grid">
+                <div class="kpi-card">
+                  <div class="kpi-label">Cumulative Cost MMRE</div>
+                  <div class="kpi-value" id="cum-cost-mmre">--%</div>
+                  <div class="kpi-subtext" id="cum-cost-subtext">No reconciled projects yet</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">Cumulative Effort MMRE</div>
+                  <div class="kpi-value" id="cum-effort-mmre">--%</div>
+                  <div class="kpi-subtext" id="cum-effort-subtext">No reconciled projects yet</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">Cumulative Duration MMRE</div>
+                  <div class="kpi-value" id="cum-duration-mmre">--%</div>
+                  <div class="kpi-subtext" id="cum-duration-subtext">No reconciled projects yet</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-label">Reconciled Projects</div>
+                  <div class="kpi-value" id="cum-proj-count">0</div>
+                  <div class="kpi-subtext">Verified post-delivery outcomes</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
