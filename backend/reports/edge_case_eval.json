@@ -1,6 +1,6 @@
 {
   "status": "completed",
-  "evaluated_at": "2026-10-09T21:26:24.565334+00:00",
+  "evaluated_at": "2026-10-10T14:56:42.170178+00:00",
   "edge_case_count": 20,
   "results": [
     {
@@ -9,7 +9,7 @@
       "why_this_case_matters": "Low feature complexity but unusually high page count; content entry may dominate.",
       "predictions": {
         "target_estimated_cost_inr": 1093333.54,
-        "total_estimated_effort_hours": 1015.8,
+        "total_estimated_effort_hours": 1010.64,
         "estimated_duration_calendar_days": 55.03
       },
       "illustrative_target_cost_inr": 45000
@@ -20,7 +20,7 @@
       "why_this_case_matters": "Feature count is low but payment, refunds, webhooks and reconciliation are complex.",
       "predictions": {
         "target_estimated_cost_inr": 146415.28,
-        "total_estimated_effort_hours": 103.72,
+        "total_estimated_effort_hours": 103.53,
         "estimated_duration_calendar_days": 10.49
       },
       "illustrative_target_cost_inr": 350000
@@ -31,7 +31,7 @@
       "why_this_case_matters": "Many features reuse a mature CMS/plugin ecosystem; reuse must be confirmed.",
       "predictions": {
         "target_estimated_cost_inr": 1542573.32,
-        "total_estimated_effort_hours": 1320.78,
+        "total_estimated_effort_hours": 1325.63,
         "estimated_duration_calendar_days": 71.94
       },
       "illustrative_target_cost_inr": 180000
@@ -42,7 +42,7 @@
       "why_this_case_matters": "High availability, load testing, caching and observability increase cost.",
       "predictions": {
         "target_estimated_cost_inr": 1230620.68,
-        "total_estimated_effort_hours": 1211.94,
+        "total_estimated_effort_hours": 1223.54,
         "estimated_duration_calendar_days": 61.45
       },
       "illustrative_target_cost_inr": 1200000
@@ -53,7 +53,7 @@
       "why_this_case_matters": "Security, access control, audit logs and compliance review require specialist validation.",
       "predictions": {
         "target_estimated_cost_inr": 2069722.51,
-        "total_estimated_effort_hours": 1468.76,
+        "total_estimated_effort_hours": 1481.35,
         "estimated_duration_calendar_days": 81.59
       },
       "illustrative_target_cost_inr": 1800000
@@ -64,7 +64,7 @@
       "why_this_case_matters": "Data cleansing, mapping, reconciliation and rollback planning are significant.",
       "predictions": {
         "target_estimated_cost_inr": 764212.51,
-        "total_estimated_effort_hours": 650.46,
+        "total_estimated_effort_hours": 651.58,
         "estimated_duration_calendar_days": 42.73
       },
       "illustrative_target_cost_inr": 750000
@@ -75,7 +75,7 @@
       "why_this_case_matters": "Calling a hosted model API differs greatly from training and operating a custom ML pipeline.",
       "predictions": {
         "target_estimated_cost_inr": 333745.11,
-        "total_estimated_effort_hours": 255.89,
+        "total_estimated_effort_hours": 257.26,
         "estimated_duration_calendar_days": 16.23
       },
       "illustrative_target_cost_inr": 250000
@@ -86,7 +86,7 @@
       "why_this_case_matters": "Data acquisition, labeling, training, evaluation, serving and monitoring required.",
       "predictions": {
         "target_estimated_cost_inr": 1178166.72,
-        "total_estimated_effort_hours": 1237.63,
+        "total_estimated_effort_hours": 1240.13,
         "estimated_duration_calendar_days": 82.69
       },
       "illustrative_target_cost_inr": 2200000
@@ -97,7 +97,7 @@
       "why_this_case_matters": "Translation, right-to-left layout, locale formats and QA across languages.",
       "predictions": {
         "target_estimated_cost_inr": 592425.17,
-        "total_estimated_effort_hours": 608.05,
+        "total_estimated_effort_hours": 609.56,
         "estimated_duration_calendar_days": 30.43
       },
       "illustrative_target_cost_inr": 420000
@@ -108,7 +108,7 @@
       "why_this_case_matters": "Accessibility audits, keyboard support, screen reader and remediation work.",
       "predictions": {
         "target_estimated_cost_inr": 724610.02,
-        "total_estimated_effort_hours": 678.11,
+        "total_estimated_effort_hours": 673.87,
         "estimated_duration_calendar_days": 36.55
       },
       "illustrative_target_cost_inr": 500000
@@ -119,7 +119,7 @@
       "why_this_case_matters": "Retries, idempotency, monitoring and fallbacks increase effort.",
       "predictions": {
         "target_estimated_cost_inr": 693307.34,
-        "total_estimated_effort_hours": 723.03,
+        "total_estimated_effort_hours": 723.71,
         "estimated_duration_calendar_days": 34.72
       },
       "illustrative_target_cost_inr": 680000
@@ -130,7 +130,7 @@
       "why_this_case_matters": "Sync conflict resolution and intermittent connectivity are major complexities.",
       "predictions": {
         "target_estimated_cost_inr": 1037932.67,
-        "total_estimated_effort_hours": 892.13,
+        "total_estimated_effort_hours": 883.87,
         "estimated_duration_calendar_days": 61.05
       },
       "illustrative_target_cost_inr": 1250000
@@ -141,7 +141,7 @@
       "why_this_case_matters": "Threat modeling, penetration testing and remediation should be scoped separately.",
       "predictions": {
         "target_estimated_cost_inr": 855763.54,
-        "total_estimated_effort_hours": 831.38,
+        "total_estimated_effort_hours": 832.32,
         "estimated_duration_calendar_days": 50.66
       },
       "illustrative_target_cost_inr": 2500000
@@ -152,7 +152,7 @@
       "why_this_case_matters": "Parallelization is limited; deadline may require scope reduction or extra staffing.",
       "predictions": {
         "target_estimated_cost_inr": 1616683.22,
-        "total_estimated_effort_hours": 1611.65,
+        "total_estimated_effort_hours": 1579.51,
         "estimated_duration_calendar_days": 87.1
       },
       "illustrative_target_cost_inr": 950000
@@ -163,7 +163,7 @@
       "why_this_case_matters": "Platform configuration can lower build effort but may impose future constraints.",
       "predictions": {
         "target_estimated_cost_inr": 497910.75,
-        "total_estimated_effort_hours": 394.62,
+        "total_estimated_effort_hours": 403.03,
         "estimated_duration_calendar_days": 21.83
       },
       "illustrative_target_cost_inr": 65000
@@ -174,7 +174,7 @@
       "why_this_case_matters": "Tenant isolation, permission tests and data-leak prevention are critical.",
       "predictions": {
         "target_estimated_cost_inr": 533489.33,
-        "total_estimated_effort_hours": 385.59,
+        "total_estimated_effort_hours": 391.25,
         "estimated_duration_calendar_days": 23.86
       },
       "illustrative_target_cost_inr": 1600000
@@ -185,7 +185,7 @@
       "why_this_case_matters": "Payouts, refunds, disputes, webhooks and reconciliation beyond basic checkout.",
       "predictions": {
         "target_estimated_cost_inr": 268095.79,
-        "total_estimated_effort_hours": 235.65,
+        "total_estimated_effort_hours": 235.09,
         "estimated_duration_calendar_days": 13.7
       },
       "illustrative_target_cost_inr": 900000
@@ -196,7 +196,7 @@
       "why_this_case_matters": "Flag budget/scope mismatch; do not force estimate to match client budget.",
       "predictions": {
         "target_estimated_cost_inr": 1830626.72,
-        "total_estimated_effort_hours": 1539.0,
+        "total_estimated_effort_hours": 1527.51,
         "estimated_duration_calendar_days": 87.72
       },
       "illustrative_target_cost_inr": 100000
@@ -207,7 +207,7 @@
       "why_this_case_matters": "Bug fixing and small updates should not be estimated like a greenfield build.",
       "predictions": {
         "target_estimated_cost_inr": 220713.13,
-        "total_estimated_effort_hours": 126.9,
+        "total_estimated_effort_hours": 125.69,
         "estimated_duration_calendar_days": 12.58
       },
       "illustrative_target_cost_inr": 30000
@@ -218,7 +218,7 @@
       "why_this_case_matters": "Low requirements clarity should widen uncertainty and may require a paid discovery phase.",
       "predictions": {
         "target_estimated_cost_inr": 1281742.81,
-        "total_estimated_effort_hours": 1177.12,
+        "total_estimated_effort_hours": 1183.45,
         "estimated_duration_calendar_days": 58.34
       },
       "illustrative_target_cost_inr": 800000

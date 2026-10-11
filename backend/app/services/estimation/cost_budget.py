@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Optional, Tuple
 from app.core.config import settings
+from app.services.estimation.currency_converter import currency_converter
 
 
 class FinancialInvariantViolation(Exception):
@@ -26,16 +27,26 @@ class CostBudgetEngine:
         return base
 
     def calculate_labour_cost(
-        self, role_allocations: Dict[str, Dict[str, Any]], role_rates: Dict[str, float]
+        self,
+        role_allocations: Dict[str, Dict[str, Any]],
+        role_rates: Dict[str, float],
+        role_headcounts: Optional[Dict[str, int]] = None,
     ) -> Tuple[float, Dict[str, Dict[str, Any]]]:
         """
         Calculates role-by-role cost and enforces the Mandatory Financial Invariant.
+        Filters out zero-headcount or unallocated roles.
         """
         role_breakdown = {}
         total_labour = 0.0
 
         for role, data in role_allocations.items():
             hours = float(data.get("allocated_hours", 0.0))
+            # Omit inactive / zero-headcount roles
+            if role_headcounts is not None and role_headcounts.get(role, 1) <= 0:
+                continue
+            if hours <= 0:
+                continue
+
             rate = float(role_rates.get(role, 1200.0))
             cost = round(hours * rate, 2)
             role_breakdown[role] = {
@@ -67,14 +78,18 @@ class CostBudgetEngine:
         tooling_setup_inr: float = 15000.0,
         other_direct_costs_inr: float = 0.0,
         contingency_rate: float = 0.15,
+        currency: str = "INR",
+        currency_exchange_rate: Optional[float] = None,
+        role_headcounts: Optional[Dict[str, int]] = None,
     ) -> Dict[str, Any]:
         """
         Calculates the complete defensible financial budget and uncertainty bounds.
+        Supports multi-currency conversion while preserving INR ground-truth invariants.
         """
         contingency_pct = max(0.0, min(0.50, float(contingency_rate)))
 
-        # 1. Likely Labour Cost
-        likely_labour, role_breakdown = self.calculate_labour_cost(role_allocations, role_rates)
+        # 1. Likely Labour Cost (strictly in canonical INR)
+        likely_labour, role_breakdown = self.calculate_labour_cost(role_allocations, role_rates, role_headcounts)
 
         # Blended rate for consistent range scaling
         blended_hourly_rate = likely_labour / max(1.0, total_effort_hours)
@@ -101,50 +116,62 @@ class CostBudgetEngine:
         pre_contingency_low = round(opt_labour + total_additional_costs, 2)
         pre_contingency_high = round(pess_labour + total_additional_costs, 2)
 
-        contingency_low = round(pre_contingency_low * (contingency_pct * 0.7), 2)  # lower risk on best case
-        contingency_high = round(pre_contingency_high * (contingency_pct * 1.3), 2)  # higher contingency on worst case
+        contingency_low = round(pre_contingency_low * (contingency_pct * 0.7), 2)
+        contingency_high = round(pre_contingency_high * (contingency_pct * 1.3), 2)
 
         final_budget_low = round(pre_contingency_low + contingency_low, 2)
         final_budget_high = round(pre_contingency_high + contingency_high, 2)
 
-        return {
-            "currency": "INR",
-            "blended_hourly_rate_inr": round(blended_hourly_rate, 2),
+        # 7. Convert every budget component using centralized authoritative CurrencyConverter
+        raw_budget = {
+            "final_build_budget_inr": final_budget_likely,
             "labour_cost_inr": likely_labour,
             "one_time_infrastructure_setup_inr": infra_setup,
             "software_tooling_setup_inr": tooling_setup,
             "other_direct_costs_inr": direct_costs,
             "total_additional_costs_inr": total_additional_costs,
             "pre_contingency_cost_inr": pre_contingency_likely,
-            "contingency_pct": round(contingency_pct * 100.0, 1),
             "contingency_amount_inr": contingency_amount_likely,
-            "final_build_budget_inr": final_budget_likely,
+            "contingency_pct": round(contingency_pct * 100.0, 1),
             "budget_range": {
                 "low_inr": final_budget_low,
                 "likely_inr": final_budget_likely,
                 "high_inr": final_budget_high,
             },
-            "effort_range": {
-                "optimistic_hours": round(optimistic_hours, 1),
-                "expected_hours": round(total_effort_hours, 1),
-                "pessimistic_hours": round(pessimistic_hours, 1),
-            },
             "role_costs": role_breakdown,
-            "role_costs_list": [
-                {
-                    "role": role,
-                    "allocated_hours": data["allocated_hours"],
-                    "hourly_rate_inr": data["hourly_rate_inr"],
-                    "total_cost_inr": data["role_cost_inr"],
-                }
-                for role, data in role_breakdown.items()
-            ],
-            "financial_invariants": {
-                "labour_reconciled": True,
-                "contingency_applied_once": True,
-                "additional_costs_isolated": True,
-            },
         }
+
+        converted = currency_converter.convert_budget_components(
+            raw_budget,
+            target_currency=currency,
+            custom_rate=currency_exchange_rate,
+        )
+
+        # Attach auxiliary metrics while preserving all converted and canonical fields
+        rate = converted["exchange_rate"]
+        converted["canonical_amount_inr"] = final_budget_likely
+        converted["blended_hourly_rate_inr"] = round(blended_hourly_rate, 2)
+        converted["blended_hourly_rate_converted"] = round(blended_hourly_rate / rate, 2) if rate > 0 else round(blended_hourly_rate, 2)
+        converted["effort_range"] = {
+            "optimistic_hours": round(optimistic_hours, 1),
+            "expected_hours": round(total_effort_hours, 1),
+            "pessimistic_hours": round(pessimistic_hours, 1),
+        }
+        converted["role_costs_list"] = [
+            {
+                "role": role,
+                "allocated_hours": data["allocated_hours"],
+                "hourly_rate_inr": data["hourly_rate_inr"],
+                "total_cost_inr": data["role_cost_inr"],
+                "hourly_rate_converted": data["hourly_rate_converted"],
+                "total_cost_converted": data["role_cost_converted"],
+                "currency_code": converted["currency_code"],
+                "currency_symbol": converted["currency_symbol"],
+            }
+            for role, data in converted["role_costs"].items()
+        ]
+
+        return converted
 
 
 cost_budget_engine = CostBudgetEngine()

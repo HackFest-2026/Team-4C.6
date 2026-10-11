@@ -1233,3 +1233,377 @@ body {
     transition: none !important;
   }
 }
+
+/* ===================================================================
+   MULTI-SELECT COMPONENT (ISSUE 2)
+   =================================================================== */
+.ms-container {
+  position: relative;
+  width: 100%;
+}
+
+.ms-control {
+  min-height: 44px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ms-control:hover {
+  border-color: var(--border-focus);
+}
+
+.ms-container.open .ms-control {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.ms-chip {
+  background: rgba(59, 130, 246, 0.16);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: var(--text-main);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.ms-chip-remove {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.ms-chip-remove:hover {
+  color: var(--accent-rose);
+  background: rgba(244, 63, 94, 0.2);
+}
+
+.ms-placeholder {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  user-select: none;
+}
+
+.ms-arrow {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.ms-container.open .ms-arrow {
+  transform: rotate(180deg);
+}
+
+.ms-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  max-height: 280px;
+  overflow: hidden;
+}
+
+.ms-container.open .ms-dropdown {
+  display: flex;
+}
+
+.ms-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ms-search {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 0.84rem;
+}
+
+.ms-search:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.ms-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+}
+
+.ms-action-link {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.ms-action-link:hover {
+  text-decoration: underline;
+}
+
+.ms-options {
+  overflow-y: auto;
+  max-height: 200px;
+  padding: 4px 0;
+}
+
+.ms-option {
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.86rem;
+  color: var(--text-main);
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.ms-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ms-option.selected {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.ms-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+/* ===================================================================
+   AI RECOMMENDATION BANNER & RATIONALE CARDS (ISSUES 3, 4, 7)
+   =================================================================== */
+.ai-recommend-bar {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.ai-recommend-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ai-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px var(--primary-glow);
+  flex-shrink: 0;
+}
+
+.ai-recommend-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.ai-recommend-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.ai-rationale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.ai-rationale-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.84rem;
+}
+
+.ai-rationale-component {
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ai-rationale-reason {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* ===================================================================
+   ROLE ROW INACTIVE / ZERO HEADCOUNT STYLING (ISSUE 4 & 8)
+   =================================================================== */
+tr.role-inactive {
+  opacity: 0.45;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+tr.role-inactive td {
+  text-decoration: line-through;
+}
+
+tr.role-inactive input {
+  text-decoration: none;
+}
+
+.team-size-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  color: var(--accent-emerald);
+  background: rgba(16, 185, 129, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* ===================================================================
+   MODEL EVALUATION METRICS PANEL (ISSUE 9)
+   =================================================================== */
+.model-eval-panel {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-top: var(--space-6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.model-eval-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.model-eval-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.model-eval-provenance {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eval-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.eval-metric-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.eval-metric-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.eval-metric-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.eval-metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: var(--space-1) 0;
+  letter-spacing: -0.5px;
+}
+
+.eval-metric-target {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+.eval-explanation-box {
+  background: rgba(59, 130, 246, 0.06);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}

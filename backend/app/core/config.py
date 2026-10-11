@@ -243,8 +243,20 @@ class Settings(BaseSettings):
         "Custom / Other": "SaaS Web Application",
     }
 
+    SUPPORTED_CURRENCIES: Dict[str, Dict[str, Any]] = {
+        "INR": {"name": "Indian Rupee", "symbol": "₹", "rate_to_inr": 1.0, "locale": "en-IN", "source": "Base Currency (Institutional Ground Truth)", "timestamp": "2026-10-10T12:00:00Z"},
+        "USD": {"name": "US Dollar", "symbol": "$", "rate_to_inr": 83.50, "locale": "en-US", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "EUR": {"name": "Euro", "symbol": "€", "rate_to_inr": 91.00, "locale": "de-DE", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "GBP": {"name": "British Pound", "symbol": "£", "rate_to_inr": 105.00, "locale": "en-GB", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "AUD": {"name": "Australian Dollar", "symbol": "A$", "rate_to_inr": 55.50, "locale": "en-AU", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "CAD": {"name": "Canadian Dollar", "symbol": "C$", "rate_to_inr": 61.50, "locale": "en-CA", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "SGD": {"name": "Singapore Dollar", "symbol": "S$", "rate_to_inr": 62.00, "locale": "en-SG", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+        "AED": {"name": "UAE Dirham", "symbol": "AED", "rate_to_inr": 22.70, "locale": "en-AE", "source": "CostPilot Treasury Configured Benchmark", "timestamp": "2026-10-10T12:00:00Z"},
+    }
+
     class Config:
         env_file = ".env"
         extra = "allow"
 
 settings = Settings()
+SUPPORTED_CURRENCIES = settings.SUPPORTED_CURRENCIES

@@ -61,12 +61,18 @@ def init_db() -> None:
     );
     """)
 
-    # Migration: Ensure user_id column exists on projects
+    # Migration: Ensure columns exist on projects
     cursor.execute("PRAGMA table_info(projects);")
     columns = [col["name"] for col in cursor.fetchall()]
     if "user_id" not in columns:
         cursor.execute("ALTER TABLE projects ADD COLUMN user_id TEXT;")
         logger.info("Migrated projects table: added user_id column.")
+    if "currency_code" not in columns:
+        cursor.execute("ALTER TABLE projects ADD COLUMN currency_code TEXT DEFAULT 'INR';")
+    if "working_hours_per_day" not in columns:
+        cursor.execute("ALTER TABLE projects ADD COLUMN working_hours_per_day REAL DEFAULT 8.0;")
+    if "working_days_per_week" not in columns:
+        cursor.execute("ALTER TABLE projects ADD COLUMN working_days_per_week INTEGER DEFAULT 5;")
 
     # 3. Estimates table
     cursor.execute("""
@@ -97,6 +103,28 @@ def init_db() -> None:
     );
     """)
 
+    # Migration: Ensure columns exist on estimates
+    cursor.execute("PRAGMA table_info(estimates);")
+    est_columns = [col["name"] for col in cursor.fetchall()]
+    if "currency_code" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN currency_code TEXT DEFAULT 'INR';")
+    if "exchange_rate" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN exchange_rate REAL DEFAULT 1.0;")
+    if "final_budget_converted" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN final_budget_converted REAL;")
+    if "working_hours_per_day" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN working_hours_per_day REAL DEFAULT 8.0;")
+    if "working_days_per_week" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN working_days_per_week INTEGER DEFAULT 5;")
+    if "canonical_currency" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN canonical_currency TEXT DEFAULT 'INR';")
+    if "canonical_amount_inr" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN canonical_amount_inr REAL;")
+    if "exchange_rate_source" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN exchange_rate_source TEXT DEFAULT 'CostPilot Treasury Configured Benchmark';")
+    if "exchange_rate_timestamp" not in est_columns:
+        cursor.execute("ALTER TABLE estimates ADD COLUMN exchange_rate_timestamp TEXT DEFAULT '2026-10-10T12:00:00Z';")
+
     # 4. What-if scenarios table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS whatif_scenarios (
@@ -109,6 +137,26 @@ def init_db() -> None:
         delta_days INTEGER NOT NULL,
         scenario_estimate_json TEXT NOT NULL,
         created_at TEXT NOT NULL,
+        FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
+    );
+    """)
+
+    # 5. Project reconciliations table (Actual vs Estimated Outcomes)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS project_reconciliations (
+        id TEXT PRIMARY KEY,
+        project_id TEXT NOT NULL UNIQUE,
+        user_id TEXT,
+        actual_effort_hours REAL NOT NULL,
+        actual_duration_days REAL NOT NULL,
+        actual_cost REAL NOT NULL,
+        currency_code TEXT DEFAULT 'INR',
+        project_status TEXT DEFAULT 'Completed',
+        notes TEXT,
+        reconciliation_date TEXT NOT NULL,
+        data_provenance TEXT DEFAULT 'User-recorded verified outcome',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
         FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
     );
     """)

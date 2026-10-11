@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CostPilot AI — Machine Learning Software Cost Estimation</title>
-  <meta name="description" content="Professional, defensible, dataset-driven software product cost and effort estimation powered by supervised machine learning and empirical priors.">
+  <meta name="description"
+    content="Professional, defensible, dataset-driven software product cost and effort estimation powered by supervised machine learning and empirical priors.">
   <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
+
 <body>
   <div class="ambient-glow"></div>
 
@@ -16,7 +20,7 @@
   <!-- ================================================================= -->
   <section id="auth-view" class="auth-view">
     <div class="auth-container">
-      
+
       <!-- Left Hero Banner -->
       <div class="auth-hero">
         <div class="auth-brand">
@@ -32,7 +36,8 @@
         <div class="auth-hero-content">
           <h2 class="auth-hero-title">Defensible Software Cost Estimation</h2>
           <p class="auth-hero-desc">
-            Stop relying on fabricated arbitrary numbers. CostPilot AI pairs empirical feature-level priors with supervised machine learning benchmarks to produce mathematically explainable software project budgets.
+            Stop relying on fabricated arbitrary numbers. CostPilot AI pairs empirical feature-level priors with
+            supervised machine learning benchmarks to produce mathematically explainable software project budgets.
           </p>
 
           <div class="auth-features-list">
@@ -62,7 +67,7 @@
 
       <!-- Right Card (Sign In / Sign Up Forms) -->
       <div class="auth-card">
-        
+
         <!-- SIGN IN FORM -->
         <div id="signin-box">
           <div class="auth-header">
@@ -73,14 +78,17 @@
           <form id="form-signin" class="auth-form" onsubmit="handleSignIn(event)">
             <div class="form-group">
               <label class="form-label" for="signin-email">Email Address</label>
-              <input type="email" id="signin-email" class="form-input" placeholder="name@company.com" required value="demo@costpilot.ai">
+              <input type="email" id="signin-email" class="form-input" placeholder="name@company.com" required
+                value="demo@costpilot.ai">
             </div>
 
             <div class="form-group">
               <label class="form-label" for="signin-password">Password</label>
               <div class="input-with-action">
-                <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required value="Password@123">
-                <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signin-password', this)">👁️</button>
+                <input type="password" id="signin-password" class="form-input" placeholder="Enter your password"
+                  required value="Password@123">
+                <button type="button" class="input-action-btn"
+                  onclick="togglePasswordVisibility('signin-password', this)">👁️</button>
               </div>
             </div>
 
@@ -89,16 +97,19 @@
                 <input type="checkbox" id="signin-remember" checked>
                 <span>Remember me</span>
               </label>
-              <a href="#" onclick="openForgotPasswordModal(event)" style="color:var(--primary); text-decoration:none;">Forgot password?</a>
+              <a href="#" onclick="openForgotPasswordModal(event)"
+                style="color:var(--primary); text-decoration:none;">Forgot password?</a>
             </div>
 
-            <button type="submit" id="btn-signin-submit" class="btn btn-primary btn-block btn-lg" style="margin-top:0.5rem;">
+            <button type="submit" id="btn-signin-submit" class="btn btn-primary btn-block btn-lg"
+              style="margin-top:0.5rem;">
               Sign In to Dashboard
             </button>
 
             <div style="text-align:center; margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
-              Don't have an account? 
-              <a href="#" onclick="showSignUpBox(event)" style="color:var(--primary); font-weight:600; text-decoration:none;">Create an Account</a>
+              Don't have an account?
+              <a href="#" onclick="showSignUpBox(event)"
+                style="color:var(--primary); font-weight:600; text-decoration:none;">Create an Account</a>
             </div>
           </form>
         </div>
@@ -122,7 +133,8 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="signup-phone">Phone Number <span class="form-hint">(Optional)</span></label>
+              <label class="form-label" for="signup-phone">Phone Number <span
+                  class="form-hint">(Optional)</span></label>
               <input type="tel" id="signup-phone" class="form-input" placeholder="+1 (555) 234-5678">
             </div>
 
@@ -130,27 +142,33 @@
               <div class="form-group">
                 <label class="form-label" for="signup-password">Password</label>
                 <div class="input-with-action">
-                  <input type="password" id="signup-password" class="form-input" placeholder="Min. 8 characters" required minlength="8">
-                  <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signup-password', this)">👁️</button>
+                  <input type="password" id="signup-password" class="form-input" placeholder="Min. 8 characters"
+                    required minlength="8">
+                  <button type="button" class="input-action-btn"
+                    onclick="togglePasswordVisibility('signup-password', this)">👁️</button>
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="signup-confirm-password">Confirm Password</label>
                 <div class="input-with-action">
-                  <input type="password" id="signup-confirm-password" class="form-input" placeholder="Repeat password" required minlength="8">
-                  <button type="button" class="input-action-btn" onclick="togglePasswordVisibility('signup-confirm-password', this)">👁️</button>
+                  <input type="password" id="signup-confirm-password" class="form-input" placeholder="Repeat password"
+                    required minlength="8">
+                  <button type="button" class="input-action-btn"
+                    onclick="togglePasswordVisibility('signup-confirm-password', this)">👁️</button>
                 </div>
               </div>
             </div>
 
-            <button type="submit" id="btn-signup-submit" class="btn btn-primary btn-block btn-lg" style="margin-top:0.5rem;">
+            <button type="submit" id="btn-signup-submit" class="btn btn-primary btn-block btn-lg"
+              style="margin-top:0.5rem;">
               Create Account
             </button>
 
             <div style="text-align:center; margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
-              Already have an account? 
-              <a href="#" onclick="showSignInBox(event)" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign In</a>
+              Already have an account?
+              <a href="#" onclick="showSignInBox(event)"
+                style="color:var(--primary); font-weight:600; text-decoration:none;">Sign In</a>
             </div>
           </form>
         </div>
@@ -163,7 +181,7 @@
   <!-- 2. AUTHENTICATED APPLICATION SHELL                                -->
   <!-- ================================================================= -->
   <div id="app-shell" class="app-shell" style="display:none;">
-    
+
     <!-- LEFT SIDEBAR -->
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-header">
@@ -219,7 +237,7 @@
 
     <!-- MAIN CONTENT WRAPPER -->
     <div class="main-wrapper">
-      
+
       <!-- TOP NAVIGATION BAR -->
       <header class="topbar">
         <div class="topbar-left">
@@ -230,10 +248,12 @@
         <div class="topbar-right">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" id="global-search-input" placeholder="Search saved projects..." oninput="handleGlobalSearch(this.value)">
+            <input type="text" class="search-input" id="global-search-input" placeholder="Search saved projects..."
+              oninput="handleGlobalSearch(this.value)">
           </div>
 
-          <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme" onclick="toggleTheme()">🌙</button>
+          <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme"
+            onclick="toggleTheme()">🌙</button>
 
           <!-- User Menu Dropdown -->
           <div class="user-menu-wrapper">
@@ -248,7 +268,8 @@
               <a class="dropdown-item" onclick="navigateTo('settings'); closeUserDropdown();">⚙️ Account Settings</a>
               <a class="dropdown-item" onclick="navigateTo('profile'); closeUserDropdown();">🔑 Change Password</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" onclick="handleLogout(); closeUserDropdown();" style="color:var(--accent-rose);">🚪 Logout</a>
+              <a class="dropdown-item" onclick="handleLogout(); closeUserDropdown();"
+                style="color:var(--accent-rose);">🚪 Logout</a>
             </div>
           </div>
         </div>
@@ -262,7 +283,8 @@
           <div>
             <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
             <p class="welcome-desc">
-              CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest regression and historical priors from 2,500 projects.
+              CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest
+              regression and historical priors from 2,500 projects.
             </p>
           </div>
           <div>
@@ -333,7 +355,7 @@
       <!-- PAGE 2: SEPARATE NEW ESTIMATE PAGE (6-STEP WIZARD)            -->
       <!-- ============================================================= -->
       <section id="page-new-estimate" class="page-content">
-        
+
         <!-- Wizard Progress Stepper -->
         <div class="wizard-stepper">
           <div class="step-item active" id="wizard-step-indicator-1" onclick="jumpToWizardStep(1)">
@@ -368,14 +390,16 @@
             <div class="form-section-header">
               <div>
                 <h2 class="form-section-title">Step 1 — Project Information</h2>
-                <p class="form-section-desc">Define your project identity, industry domain, platform, and overall difficulty</p>
+                <p class="form-section-desc">Define your project identity, industry domain, platform, and overall
+                  difficulty</p>
               </div>
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
                 <label class="form-label" for="wiz-proj-name">Project Name</label>
-                <input type="text" id="wiz-proj-name" class="form-input" value="SaaS Customer Portal" placeholder="e.g. HealthTrack Telemedicine Mobile App">
+                <input type="text" id="wiz-proj-name" class="form-input" value="SaaS Customer Portal"
+                  placeholder="e.g. HealthTrack Telemedicine Mobile App">
               </div>
 
               <div class="form-group">
@@ -437,26 +461,9 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-proj-platform">Target Platform (17 Options)</label>
-                <select id="wiz-proj-platform" class="form-select">
-                  <option value="Web Application" selected>Web Application</option>
-                  <option value="Responsive Website">Responsive Website</option>
-                  <option value="Progressive Web App (PWA)">Progressive Web App (PWA)</option>
-                  <option value="Android Application">Android Application</option>
-                  <option value="iOS Application">iOS Application</option>
-                  <option value="Cross-Platform Mobile Application">Cross-Platform Mobile Application</option>
-                  <option value="Desktop Application">Desktop Application</option>
-                  <option value="Web + Mobile">Web + Mobile (Cross-platform)</option>
-                  <option value="Web + Mobile + Desktop">Web + Mobile + Desktop</option>
-                  <option value="API / Backend Service">API / Backend Service</option>
-                  <option value="SaaS / Cloud Platform">SaaS / Cloud Platform</option>
-                  <option value="AI/ML Platform">AI/ML Platform</option>
-                  <option value="Data Engineering Platform">Data Engineering Platform</option>
-                  <option value="IoT / Embedded Software">IoT / Embedded Software</option>
-                  <option value="Browser Extension">Browser Extension</option>
-                  <option value="Chatbot / Conversational Application">Chatbot / Conversational Application</option>
-                  <option value="Custom Platform">Custom Platform</option>
-                </select>
+                <label class="form-label" for="wiz-proj-platforms-container">Target Platforms (Multi-Select)</label>
+                <div id="wiz-proj-platforms-container" class="ms-container"></div>
+                <input type="hidden" id="wiz-proj-platform" value="Web Application">
               </div>
 
               <div class="form-group">
@@ -493,7 +500,8 @@
 
             <div class="form-group" style="margin-top:1.5rem;">
               <label class="form-label" for="wiz-proj-desc">Project Description & Scope Overview</label>
-              <textarea id="wiz-proj-desc" class="form-textarea" placeholder="Describe the business objectives, key target users, and key operational requirements..."></textarea>
+              <textarea id="wiz-proj-desc" class="form-textarea"
+                placeholder="Describe the business objectives, key target users, and key operational requirements..."></textarea>
             </div>
           </div>
 
@@ -505,11 +513,52 @@
 
         <!-- STEP 2: TECHNICAL REQUIREMENTS -->
         <div id="wizard-step-2" class="wizard-step-pane">
+          <!-- AI Tech Stack Recommendation Banner (Issue 3) -->
+          <div class="ai-recommend-bar">
+            <div class="ai-recommend-info">
+              <div class="ai-icon-badge">⚡</div>
+              <div>
+                <div class="ai-recommend-title">Auto-Recommend Technical Stack with AI</div>
+                <div class="ai-recommend-desc">Analyzes Step 1 project domain, complexity, platforms, and expected user
+                  scale to recommend tailored tech specifications with justifications.</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-ai-recommend-tech"
+              onclick="recommendTechStackWithAI()">
+              ⚡ Auto-Recommend Technical Stack with AI
+            </button>
+          </div>
+
+          <!-- Step 1 Outdated Warning Banner -->
+          <div id="tech-outdated-warning"
+            style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); color:#f59e0b; font-size:0.875rem; align-items:center; justify-content:space-between; gap:1rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <span>⚠️</span>
+              <span><strong>Step 1 inputs modified:</strong> Project parameters have changed since last recommendation.
+                Click 'Regenerate' to refresh AI tech stack recommendations.</span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="recommendTechStackWithAI()"
+              style="border-color:#f59e0b; color:#f59e0b; white-space:nowrap;">Regenerate Now</button>
+          </div>
+
+          <!-- AI Rationale Container -->
+          <div id="tech-recommendations-rationale" style="display:none; margin-bottom: 1.5rem;">
+            <div class="form-section-header" style="border:none; margin-bottom:0.5rem; padding:0;">
+              <span style="font-weight:700; font-size:0.95rem; color:var(--primary);">💡 AI Architecture Rationale &
+                Justifications</span>
+              <span class="badge badge-medium" id="tech-rec-source-badge">AI Architecture Model</span>
+            </div>
+            <div class="ai-rationale-grid" id="tech-rationale-cards">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
           <div class="form-section">
             <div class="form-section-header">
               <div>
                 <h2 class="form-section-title">Step 2 — Technical Specifications</h2>
-                <p class="form-section-desc">Choose architecture components. If unsure, select 'Auto / Recommended'.</p>
+                <p class="form-section-desc">Select or review architecture components. You can freely edit or override
+                  any AI recommendations below.</p>
               </div>
             </div>
 
@@ -606,6 +655,12 @@
                   <option value="MissionCritical">Mission Critical (90%+ Coverage + Pentest)</option>
                 </select>
               </div>
+
+              <div class="form-group" style="grid-column: span 3;">
+                <label class="form-label" for="tech-integrations-multiselect">External Integrations & Third-Party APIs
+                  (Multi-Select)</label>
+                <div id="tech-integrations-multiselect" class="ms-container"></div>
+              </div>
             </div>
           </div>
 
@@ -617,26 +672,93 @@
 
         <!-- STEP 3: FEATURE BUILDER -->
         <div id="wizard-step-3" class="wizard-step-pane">
-          
-          <!-- AI Scope Assistant Card -->
-          <div class="form-section">
+
+          <!-- AI Scope & Requirements Assistant Card (Profile-Based) -->
+          <div class="form-section" id="ai-scope-assistant-card">
             <div class="form-section-header">
               <div>
                 <h2 class="form-section-title">🤖 AI Scope & Requirements Assistant</h2>
-                <p class="form-section-desc">Paste your scope text to automatically extract features using historical catalog priors</p>
+                <p class="form-section-desc">Context-aware scope extraction using your project's domain profile, target platforms, scale, and technical specifications</p>
+              </div>
+              <span class="badge badge-primary" id="scope-assistant-model-badge">Profile-Driven Engine</span>
+            </div>
+
+            <!-- Active Project Profile Context Panel -->
+            <div id="scope-active-profile-banner" style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.25rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+                <div style="font-weight:700; font-size:0.95rem; color:var(--text-main); display:flex; align-items:center; gap:0.5rem;">
+                  <span>📋 Active Project Profile Context</span>
+                  <span class="badge badge-success" id="scope-profile-status-badge">✓ Active Profile</span>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="jumpToWizardStep(1)" style="font-size:0.8rem; padding:0.25rem 0.6rem;">✏️ Edit Step 1 Parameters</button>
+              </div>
+              <div class="form-grid-3" style="font-size:0.85rem; row-gap:0.5rem; margin-bottom:0.5rem;">
+                <div><span style="color:var(--text-muted);">Project Name:</span> <strong id="scope-ctx-name">SaaS Customer Portal</strong></div>
+                <div><span style="color:var(--text-muted);">Domain:</span> <strong id="scope-ctx-domain">SaaS Platform</strong></div>
+                <div><span style="color:var(--text-muted);">Complexity:</span> <strong id="scope-ctx-complexity">Medium</strong></div>
+                <div><span style="color:var(--text-muted);">Platforms:</span> <strong id="scope-ctx-platforms">Web Application</strong></div>
+                <div><span style="color:var(--text-muted);">Expected Scale:</span> <strong id="scope-ctx-scale">1k-10k</strong></div>
+                <div><span style="color:var(--text-muted);">Target Market:</span> <strong id="scope-ctx-region">India</strong></div>
+              </div>
+              <div style="font-size:0.82rem; color:var(--text-muted); border-top:1px dashed var(--border); padding-top:0.5rem; margin-top:0.5rem;">
+                <span>Scope Overview: </span><span id="scope-ctx-desc" style="font-style:italic;">No description provided yet</span>
               </div>
             </div>
 
+            <!-- Optional Additional Custom Scope Notes Input -->
             <div class="form-group">
-              <label class="form-label" for="scope-description-input">Scope of Work Text</label>
-              <textarea id="scope-description-input" class="form-textarea" placeholder="Paste requirements here... e.g. Customer authentication, catalog browsing, cart checkout, Stripe payments, live GPS order tracking, merchant dashboard..."></textarea>
+              <label class="form-label" for="scope-description-input">Additional Custom Scope Notes / Specific Requirements <span style="color:var(--text-muted); font-weight:normal;">(Optional — supplements Steps 1 & 2 profile)</span></label>
+              <textarea id="scope-description-input" class="form-textarea" style="min-height:75px;"
+                placeholder="Optionally add specific custom workflows or modules (e.g., student attendance tracking, multi-campus scheduling, parent portal)..."></textarea>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
-              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('food-delivery')">Load Food Delivery Preset</button>
-              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('fintech')">Load FinTech Preset</button>
-              <button class="btn btn-secondary btn-sm" onclick="loadSampleScope('saas')">Load SaaS CRM Preset</button>
-              <button class="btn btn-primary btn-sm" onclick="analyzeScopeRequirements()">✨ Extract Features</button>
+            <!-- Action Controls -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-top:1rem;">
+              <div id="scope-analysis-status-text" style="font-size:0.85rem; color:var(--text-muted);">
+                Ready to analyze current project profile.
+              </div>
+              <div style="display:flex; gap:0.75rem;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-regenerate-scope" onclick="regenerateScopeRecommendations()" style="display:none;">🔄 Regenerate Recommendations</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-analyze-scope" onclick="analyzeScopeRequirements()">✨ Analyze Project & Recommend Scope</button>
+              </div>
+            </div>
+
+            <!-- Clarification Questions / Provisional Notice (Shown when profile is incomplete) -->
+            <div id="scope-clarifications-notice" style="display:none; margin-top:1.25rem; padding:1rem 1.25rem; border-radius:10px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); color:#f59e0b; font-size:0.875rem;">
+              <div style="font-weight:700; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <span>⚠️</span>
+                <span>Profile Clarifications & Provisional Recommendations</span>
+              </div>
+              <p style="margin-bottom:0.5rem; font-size:0.85rem; color:var(--text-muted);">
+                The assistant analyzed your available profile parameters. To eliminate estimation uncertainty, consider clarifying these missing specifications:
+              </p>
+              <ul id="scope-clarifications-list" style="margin-left:1.25rem; font-size:0.85rem; line-height:1.5;">
+                <!-- Rendered dynamically -->
+              </ul>
+            </div>
+
+            <!-- Generated Recommendations Deck -->
+            <div id="scope-recommendations-deck" style="display:none; margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1.25rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">
+                <div>
+                  <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-bottom:0.25rem;">
+                    💡 Candidate Scope Recommendations
+                  </h3>
+                  <div style="font-size:0.82rem; color:var(--text-muted);" id="scope-deck-subtitle">
+                    Generated from your project profile. Review, accept, or edit features to add them to your Project Catalog.
+                  </div>
+                </div>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="acceptAllScopeRecommendations(true)">✓ Accept Must-Have Only</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="acceptAllScopeRecommendations(false)">✓ Accept All Recommendations</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="dismissAllScopeRecommendations()">✕ Dismiss All</button>
+                </div>
+              </div>
+
+              <!-- Recommendation Cards Grid -->
+              <div id="scope-recommendations-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1rem;">
+                <!-- Rendered dynamically -->
+              </div>
             </div>
           </div>
 
@@ -669,10 +791,12 @@
               </table>
             </div>
 
-            <div id="features-summary-banner" style="margin-top:1.5rem; padding:1rem; background:rgba(59,130,246,0.08); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+            <div id="features-summary-banner"
+              style="margin-top:1.5rem; padding:1rem; background:rgba(59,130,246,0.08); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
               <div>
-                <span style="font-weight:700;">Features Count: </span><span id="feat-count-badge">4</span> | 
-                <span style="font-weight:700;">Subtotal Feature Effort: </span><span id="feat-hours-badge">~120 Hours</span>
+                <span style="font-weight:700;">Features Count: </span><span id="feat-count-badge">4</span> |
+                <span style="font-weight:700;">Subtotal Feature Effort: </span><span id="feat-hours-badge">~120
+                  Hours</span>
               </div>
               <span class="badge badge-medium">PERT Three-Point Distribution</span>
             </div>
@@ -686,34 +810,63 @@
 
         <!-- STEP 4: TEAM AND RATES -->
         <div id="wizard-step-4" class="wizard-step-pane">
+          <!-- AI Role Recommendation Banner (Issue 4) -->
+          <div class="ai-recommend-bar">
+            <div class="ai-recommend-info">
+              <div class="ai-icon-badge">👥</div>
+              <div>
+                <div class="ai-recommend-title">Recommend Team Roles & Headcount with AI</div>
+                <div class="ai-recommend-desc">Analyzes Step 3 features, complexity, and dependencies to recommend
+                  tailored role designations, headcounts, hourly rates, and effort allocations.</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-ai-recommend-roles"
+              onclick="recommendRolesFromFeaturesWithAI()">
+              🤖 Recommend Team Roles with AI
+            </button>
+          </div>
+
           <div class="form-section">
             <div class="form-section-header">
               <div>
                 <h2 class="form-section-title">Step 4 — Team Allocation & Hourly Rates</h2>
-                <p class="form-section-desc">Adjust engineering headcount and billable rates. Rates strictly satisfy Total Labour = ∑(Hours × Rate).</p>
+                <p class="form-section-desc">Adjust engineering headcount and billable rates. Rates strictly satisfy
+                  Total Labour = ∑(Hours × Rate).</p>
               </div>
+              <button type="button" class="btn btn-outline btn-sm" onclick="openAddRoleModal()">+ Add Custom
+                Role</button>
             </div>
 
             <div class="form-grid-3" style="margin-bottom:1.5rem;">
               <div class="form-group">
-                <label class="form-label" for="wiz-team-size">Total Team Size (Headcount)</label>
-                <input type="number" id="wiz-team-size" class="form-input" min="1" max="30" value="4">
+                <label class="form-label" for="wiz-team-size">
+                  <span>Total Team Size</span>
+                  <span class="team-size-sync-badge" id="team-size-sync-badge">✓ Synced: Sum of Headcounts</span>
+                </label>
+                <input type="number" id="wiz-team-size" class="form-input" min="1" max="50" value="4" readonly
+                  style="background:rgba(0,0,0,0.25); font-weight:700; color:var(--primary);">
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="wiz-rate-profile">Hourly Rate Profile</label>
                 <select id="wiz-rate-profile" class="form-select" onchange="handleRateProfileChange(this.value)">
-                  <option value="Startup">Startup Tier (₹600 - ₹1200 / hr)</option>
-                  <option value="Professional" selected>Professional Tier (₹900 - ₹1800 / hr)</option>
-                  <option value="Enterprise">Enterprise Tier (₹1400 - ₹2600 / hr)</option>
+                  <option value="Startup">Startup Tier (Economical)</option>
+                  <option value="Professional" selected>Professional Tier (Standard)</option>
+                  <option value="Enterprise">Enterprise Tier (Specialized)</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-currency">Billing Currency</label>
-                <select id="wiz-currency" class="form-select">
+                <label class="form-label" for="wiz-currency">Billing Currency (8 Markets)</label>
+                <select id="wiz-currency" class="form-select" onchange="handleCurrencyChange(this.value)">
                   <option value="INR" selected>Indian Rupee (INR ₹)</option>
                   <option value="USD">US Dollar (USD $)</option>
+                  <option value="EUR">Euro (EUR €)</option>
+                  <option value="GBP">British Pound (GBP £)</option>
+                  <option value="AUD">Australian Dollar (AUD A$)</option>
+                  <option value="CAD">Canadian Dollar (CAD C$)</option>
+                  <option value="SGD">Singapore Dollar (SGD S$)</option>
+                  <option value="AED">UAE Dirham (AED د.إ)</option>
                 </select>
               </div>
             </div>
@@ -725,49 +878,27 @@
                   <tr>
                     <th>Role Designation</th>
                     <th>Headcount</th>
-                    <th>Hourly Rate (₹ / hr)</th>
-                    <th>Typical Allocation</th>
+                    <th>Hourly Rate (<span id="role-table-currency-symbol">₹</span> / hr)</th>
+                    <th>Effort Allocation</th>
+                    <th>Responsibilities & Rationale</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="role-rates-tbody">
-                  <tr>
-                    <td><strong>Frontend Developer</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="10"></td>
-                    <td><input type="number" class="form-input" id="rate-frontend" style="width:120px;" value="1200"></td>
-                    <td>25% of build hours</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Backend Developer</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="10"></td>
-                    <td><input type="number" class="form-input" id="rate-backend" style="width:120px;" value="1400"></td>
-                    <td>30% of build hours</td>
-                  </tr>
-                  <tr>
-                    <td><strong>UI/UX Designer</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
-                    <td><input type="number" class="form-input" id="rate-designer" style="width:120px;" value="1100"></td>
-                    <td>12% of build hours</td>
-                  </tr>
-                  <tr>
-                    <td><strong>QA / Test Engineer</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
-                    <td><input type="number" class="form-input" id="rate-qa" style="width:120px;" value="900"></td>
-                    <td>15% of build hours</td>
-                  </tr>
-                  <tr>
-                    <td><strong>DevOps / Cloud Engineer</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="0" min="0" max="5"></td>
-                    <td><input type="number" class="form-input" id="rate-devops" style="width:120px;" value="1500"></td>
-                    <td>8% of build hours</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Project Manager</strong></td>
-                    <td><input type="number" class="form-input" style="width:70px;" value="1" min="0" max="5"></td>
-                    <td><input type="number" class="form-input" id="rate-pm" style="width:120px;" value="1500"></td>
-                    <td>10% of build hours</td>
-                  </tr>
+                  <!-- Rendered dynamically -->
                 </tbody>
               </table>
+            </div>
+
+            <div id="roles-summary-banner"
+              style="margin-top:1.25rem; padding:0.85rem 1.25rem; background:rgba(59,130,246,0.08); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; font-size:0.88rem;">
+              <div>
+                <span style="font-weight:700;">Active Roles: </span><span id="active-roles-count-badge">4 Roles</span> |
+                <span style="font-weight:700;">Active Headcount: </span><span id="active-headcount-badge">4
+                  Engineers</span>
+              </div>
+              <span style="color:var(--text-muted); font-size:0.8rem;">* Roles with 0 headcount contribute 0h and ₹0
+                labour cost</span>
             </div>
           </div>
 
@@ -779,11 +910,27 @@
 
         <!-- STEP 5: TIMELINE AND CONSTRAINTS -->
         <div id="wizard-step-5" class="wizard-step-pane">
+          <!-- AI Infra Recommendation Banner (Issue 7) -->
+          <div class="ai-recommend-bar">
+            <div class="ai-recommend-info">
+              <div class="ai-icon-badge">☁️</div>
+              <div>
+                <div class="ai-recommend-title">Recommend Infrastructure & Tooling with AI</div>
+                <div class="ai-recommend-desc">Synthesizes Steps 1 (Domain & Scale), 2 (Tech Stack), and 3 (Features) to
+                  recommend an itemized cloud infrastructure, hosting, database, and tooling setup.</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-ai-recommend-infra" onclick="recommendInfraWithAI()">
+              ⚡ Recommend Infrastructure & Tooling with AI
+            </button>
+          </div>
+
           <div class="form-section">
             <div class="form-section-header">
               <div>
-                <h2 class="form-section-title">Step 5 — Timeline, Capacity & Budget Targets</h2>
-                <p class="form-section-desc">Specify calendar targets and contingency rate. Values are normalized into calendar days.</p>
+                <h2 class="form-section-title">Step 5 — Timeline, Calendar & Capacity Targets</h2>
+                <p class="form-section-desc">Specify calendar targets, daily working hours, and weekly workdays.
+                  Calendar duration directly incorporates working capacity.</p>
               </div>
             </div>
 
@@ -792,7 +939,8 @@
                 <label class="form-label" for="wiz-timeline-value">Target Completion Time</label>
                 <div style="display:flex; gap:0.5rem;">
                   <input type="number" id="wiz-timeline-value" class="form-input" value="60" min="1">
-                  <select id="wiz-timeline-unit" class="form-select" style="width:130px;" onchange="convertTimelineToDays()">
+                  <select id="wiz-timeline-unit" class="form-select" style="width:130px;"
+                    onchange="convertTimelineToDays()">
                     <option value="days" selected>Days</option>
                     <option value="weeks">Weeks</option>
                     <option value="months">Months</option>
@@ -811,24 +959,70 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-target-budget">Target Budget Constraint <span class="form-hint">(Optional ₹)</span></label>
+                <label class="form-label" for="wiz-target-budget">Target Budget Constraint <span
+                    class="form-hint">(Optional)</span></label>
                 <input type="number" id="wiz-target-budget" class="form-input" placeholder="e.g. 500000">
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-work-hours">Working Hours per Day</label>
-                <input type="number" id="wiz-work-hours" class="form-input" value="8" min="4" max="12">
+                <label class="form-label" for="wiz-work-hours">Working Hours per Day (Issue 6)</label>
+                <input type="number" id="wiz-work-hours" class="form-input" value="8" min="4" max="12"
+                  oninput="handleWorkingCalendarChange()">
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-work-days">Working Days per Week</label>
-                <input type="number" id="wiz-work-days" class="form-input" value="5" min="4" max="7">
+                <label class="form-label" for="wiz-work-days">Working Days per Week (Issue 6)</label>
+                <input type="number" id="wiz-work-days" class="form-input" value="5" min="3" max="7"
+                  oninput="handleWorkingCalendarChange()">
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="wiz-infra-costs">Infrastructure & Tooling Setup (₹)</label>
+                <label class="form-label" for="wiz-infra-costs">Allocated Infrastructure Budget (<span
+                    id="infra-field-currency-symbol">₹</span>)</label>
                 <input type="number" id="wiz-infra-costs" class="form-input" value="40000">
               </div>
+            </div>
+          </div>
+
+          <!-- Itemized Infrastructure & Tooling Catalog (Issue 7) -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div>
+                <h3 class="form-section-title">Itemized Infrastructure & Tooling Catalog</h3>
+                <p class="form-section-desc">Distinguishes recurring monthly operating expenses from one-time
+                  setup/licensing.</p>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" onclick="openAddInfraModal()">+ Add Custom
+                Tool</button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Item / Service</th>
+                    <th>Category</th>
+                    <th>Purpose / Justification</th>
+                    <th>Billing Period</th>
+                    <th>Estimated Cost (<span id="infra-currency-symbol">₹</span>)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="infra-items-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="infra-summary-banner"
+              style="margin-top:1.25rem; padding:0.85rem 1.25rem; background:rgba(59,130,246,0.08); border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; font-size:0.88rem;">
+              <div>
+                <span style="font-weight:700;">Monthly Recurring: </span><span id="infra-monthly-badge">₹0 / mo</span> |
+                <span style="font-weight:700;">One-Time Setup: </span><span id="infra-onetime-badge">₹0</span> |
+                <span style="font-weight:700;">Total Allocated Infrastructure: </span><span id="infra-total-badge"
+                  style="color:var(--primary); font-size:1.02rem; font-weight:700;">₹40,000</span>
+              </div>
+              <span class="badge badge-medium">Synchronized with Budget</span>
             </div>
           </div>
 
@@ -844,7 +1038,8 @@
             <div class="form-section-header">
               <div>
                 <h2 class="form-section-title">Step 6 — Review Specifications & Generate Estimate</h2>
-                <p class="form-section-desc">Review your parameters before running the 23-step authoritative estimation engine</p>
+                <p class="form-section-desc">Review your parameters before running the 23-step authoritative estimation
+                  engine</p>
               </div>
               <button class="btn btn-primary btn-lg" id="btn-run-estimation" onclick="executeFullEstimation()">
                 ⚡ Calculate Defensible Estimate
@@ -877,13 +1072,63 @@
               <div class="brand-icon" style="margin:0 auto 1.5rem; animation:spin 1s linear infinite;">⚡</div>
               <h3>Running Authoritative 23-Step Estimation Engine...</h3>
               <p style="color:var(--text-muted); margin-top:0.5rem;">
-                Computing Empirical Bayes shrinkage, supervised Random Forest predictions, DAG critical path, and Brooks' law capacity.
+                Computing Empirical Bayes shrinkage, supervised Random Forest predictions, DAG critical path, and
+                Brooks' law capacity.
               </p>
             </div>
 
             <!-- ESTIMATION RESULTS PANEL -->
             <div id="estimation-results-panel" style="display:none;">
-              
+
+              <!-- Step 6 Estimation Currency Selector Bar -->
+              <div class="currency-selector-bar"
+                style="background:var(--surface); border:1px solid var(--border); padding:1rem 1.25rem; border-radius:10px; margin-bottom:1.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:0.6rem;">
+                  <div>
+                    <div style="font-weight:600; font-size:1rem; color:var(--text-main); display:flex; align-items:center; gap:0.5rem;">
+                      <span>💱 Estimation Display Currency</span>
+                      <span class="badge badge-primary" id="step6-active-currency-badge">INR (₹)</span>
+                      <span class="badge badge-medium" id="step6-rate-type-badge">Institutional Benchmark</span>
+                    </div>
+                    <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.25rem;">
+                      Preserves canonical economic value. Converts all monetary components consistently without changing engineering person-hours, duration, or team size.
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                    <label for="step6-currency-select"
+                      style="font-weight:600; font-size:0.875rem; margin-bottom:0; color:var(--text-muted);">Display Currency:</label>
+                    <select id="step6-currency-select" class="form-select"
+                      style="width:190px; font-weight:700; background:var(--surface-card); border-color:var(--primary);"
+                      onchange="handleStep6CurrencyChange(this.value)">
+                      <option value="INR" selected>INR (₹) — Indian Rupee</option>
+                      <option value="USD">USD ($) — US Dollar</option>
+                      <option value="EUR">EUR (€) — Euro</option>
+                      <option value="GBP">GBP (£) — British Pound</option>
+                      <option value="AUD">AUD (A$) — Australian Dollar</option>
+                      <option value="CAD">CAD (C$) — Canadian Dollar</option>
+                      <option value="SGD">SGD (S$) — Singapore Dollar</option>
+                      <option value="AED">AED (AED) — UAE Dirham</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Applicable Exchange Rate and Timestamp Provenance Strip -->
+                <div id="step6-rate-provenance-info" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; border-top:1px dashed var(--border); padding-top:0.6rem; font-size:0.82rem; color:var(--text-muted);">
+                  <div>
+                    <span>Conversion Rate: </span><strong id="step6-rate-display" style="color:var(--text-main);">1.0000</strong>
+                    <span> • Reciprocal: </span><span id="step6-reciprocal-display">1 INR = 1.000000 INR</span>
+                    <span> • Source: </span><span id="step6-source-display">Base Currency (Institutional Ground Truth)</span>
+                    <span> • As of: </span><span id="step6-timestamp-display">2026-10-10 12:00 UTC</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <span style="font-size:0.8rem;">Custom Rate:</span>
+                    <input type="number" id="step6-custom-rate-input" class="form-input" style="width:90px; height:28px; padding:2px 6px; font-size:0.8rem;" placeholder="e.g. 85.0" step="0.01" min="0.01">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="applyStep6CustomRate()" style="padding:2px 8px; font-size:0.78rem;">Apply</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-benchmark-rate" onclick="resetStep6CustomRate()" style="display:none; padding:2px 8px; font-size:0.78rem;">Reset</button>
+                  </div>
+                </div>
+              </div>
+
               <!-- Top Financial Summary Cards -->
               <div class="kpi-grid">
                 <div class="kpi-card">
@@ -916,7 +1161,8 @@
                 <div class="form-section-header">
                   <div>
                     <h3 class="form-section-title">Authoritative Labour & Role Cost Breakdown</h3>
-                    <p class="form-section-desc">Financial Invariant: Labour Cost = ∑(Allocated Role Hours × Hourly Rate)</p>
+                    <p class="form-section-desc">Financial Invariant: Labour Cost = ∑(Allocated Role Hours × Hourly
+                      Rate)</p>
                   </div>
                 </div>
 
@@ -924,10 +1170,10 @@
                   <table class="data-table">
                     <thead>
                       <tr>
-                        <th>Role</th>
+                        <th>Active Role Designation</th>
                         <th>Allocated Hours</th>
-                        <th>Hourly Rate (₹)</th>
-                        <th>Total Role Cost (₹)</th>
+                        <th>Hourly Rate (<span class="currency-symbol-label">₹</span>)</th>
+                        <th>Total Role Cost (<span class="currency-symbol-label">₹</span>)</th>
                         <th>% of Total Effort</th>
                       </tr>
                     </thead>
@@ -938,13 +1184,56 @@
                 </div>
               </div>
 
-              <!-- ML Model Benchmark & Reconciliation -->
-              <div class="form-section">
+              <!-- Comprehensive Financial & Cost Components Reconciliation Breakdown -->
+              <div class="form-section" id="financial-reconciliation-breakdown-section">
                 <div class="form-section-header">
                   <div>
-                    <h3 class="form-section-title">Machine Learning Benchmark & Reconciliation</h3>
-                    <p class="form-section-desc">Comparing bottom-up feature priors with supervised Random Forest regression</p>
+                    <h3 class="form-section-title">Authoritative Budget & Cost Components Reconciliation</h3>
+                    <p class="form-section-desc">Strict mathematical reconciliation: Labour Cost + Additional Direct Costs (Infrastructure + Tooling + Direct) + Single-Pass Contingency = Final Build Budget</p>
                   </div>
+                  <span class="badge badge-success" id="financial-reconciliation-badge">✓ 100% Reconciled</span>
+                </div>
+
+                <div class="table-container">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Cost Component</th>
+                        <th>Allocation Basis / Description</th>
+                        <th>Canonical Base Amount (INR ₹)</th>
+                        <th>Converted Presentation (<span class="currency-symbol-label">₹</span>)</th>
+                        <th>% of Total Budget</th>
+                      </tr>
+                    </thead>
+                    <tbody id="res-financial-breakdown-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <div id="financial-reconciliation-notice" style="margin-top:1rem; padding:0.75rem 1.25rem; border-radius:8px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); color:#10b981; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                  <div>
+                    <strong>Financial Invariant Verification:</strong> <span id="reconciliation-invariant-text">Component sum reconciles exactly with total build budget (Discrepancy: 0.00).</span>
+                  </div>
+                  <span style="font-size:0.8rem; color:var(--text-muted);" id="reconciliation-currency-meta">Canonical Base: INR • Display: INR</span>
+                </div>
+              </div>
+
+              <!-- SECTION A: Machine Learning Historical Benchmark -->
+              <div class="form-section" id="ml-benchmark-section">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Machine Learning Historical Benchmark</h3>
+                    <p class="form-section-desc">Comparing bottom-up feature priors with empirical historical cohorts
+                      (2,500 projects) and top-down Random Forest regression</p>
+                  </div>
+                  <span class="badge badge-medium" id="benchmark-provenance-badge">CostPilot Training Dataset (2,500
+                    Projects)</span>
+                </div>
+
+                <!-- Historical Cohort Benchmark Stats -->
+                <div id="historical-cohort-benchmark-panel" style="margin-bottom:1.25rem;">
+                  <!-- Rendered dynamically -->
                 </div>
 
                 <div class="form-grid-3">
@@ -956,13 +1245,136 @@
                   <div class="kpi-card">
                     <div class="kpi-label">Top-Down ML Prediction</div>
                     <div style="font-size:1.3rem; font-weight:700;" id="res-ml-effort">0 Hours</div>
-                    <div class="kpi-subtext">Random Forest benchmark</div>
+                    <div class="kpi-subtext" id="res-ml-cost-subtext">Random Forest benchmark</div>
                   </div>
                   <div class="kpi-card">
-                    <div class="kpi-label">Reconciliation Delta</div>
+                    <div class="kpi-label">ML Effort Discrepancy</div>
                     <div style="font-size:1.3rem; font-weight:700;" id="res-ml-delta">0%</div>
                     <div class="kpi-subtext" id="res-ml-warning">Effort reconciled successfully</div>
                   </div>
+                </div>
+              </div>
+
+              <!-- SECTION B: Project Outcome Reconciliation (Estimated vs Actual) -->
+              <div class="form-section" id="reconciliation-section">
+                <div class="form-section-header">
+                  <div>
+                    <h3 class="form-section-title">Project Outcome Reconciliation</h3>
+                    <p class="form-section-desc">Comparing estimated baseline with verified actual project delivery
+                      outcomes</p>
+                  </div>
+                  <div id="reconciliation-header-actions">
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-open-reconcile-modal"
+                      onclick="openRecordReconciliationModal()">
+                      📝 Record Actual Outcomes
+                    </button>
+                  </div>
+                </div>
+
+                <div id="reconciliation-display-container">
+                  <!-- Rendered dynamically: variance table or informative empty state -->
+                </div>
+              </div>
+
+              <!-- Supervised Model Evaluation Metrics (MMRE, MdMRE, PRED(25)) -->
+              <div class="model-eval-panel" id="model-eval-panel">
+                <div class="model-eval-header">
+                  <div>
+                    <div class="model-eval-title">
+                      <span>📊 Supervised Model Evaluation Benchmarks</span>
+                      <span class="badge badge-medium">Hackfest 4C Standard</span>
+                    </div>
+                    <div class="model-eval-provenance">
+                      <span>✓ Calculated from 500 held-out historical test projects (20% test split from 2,500
+                        projects)</span>
+                      <span>• Algorithm: Random Forest Regressor (n_estimators=100)</span>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="badge badge-primary" id="model-eval-badge-ver">Random Forest v2.0</span>
+                  </div>
+                </div>
+
+                <!-- Primary KPI Cards for Cost Target -->
+                <div class="eval-metrics-grid" style="margin-bottom:1.5rem;">
+                  <div class="eval-metric-card">
+                    <div class="eval-metric-name">MMRE</div>
+                    <div class="eval-metric-value" id="eval-metric-mmre">36.7%</div>
+                    <div class="eval-metric-target">Mean Magnitude of Relative Error</div>
+                  </div>
+                  <div class="eval-metric-card">
+                    <div class="eval-metric-name">MdMRE</div>
+                    <div class="eval-metric-value" id="eval-metric-mdmre">26.9%</div>
+                    <div class="eval-metric-target">Median Magnitude of Relative Error</div>
+                  </div>
+                  <div class="eval-metric-card">
+                    <div class="eval-metric-name">PRED(25)</div>
+                    <div class="eval-metric-value" id="eval-metric-pred25">46.6%</div>
+                    <div class="eval-metric-target">Predictions with MRE ≤ 25%</div>
+                  </div>
+                </div>
+
+                <!-- Multi-Model Benchmark Comparison Table -->
+                <div class="table-container" style="margin-bottom:1.25rem;">
+                  <table class="data-table" style="font-size:0.875rem;">
+                    <thead>
+                      <tr>
+                        <th>Model Target</th>
+                        <th>Algorithm</th>
+                        <th>Held-Out Test Records</th>
+                        <th>MAE</th>
+                        <th>RMSE</th>
+                        <th>R² Score</th>
+                        <th>MMRE</th>
+                        <th>MdMRE</th>
+                        <th>PRED(25)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="eval-models-comparison-tbody">
+                      <tr>
+                        <td><strong>Project Cost (<span class="currency-symbol-label">₹</span>)</strong></td>
+                        <td>Random Forest</td>
+                        <td>500 (20% split)</td>
+                        <td id="eval-tbl-cost-mae">₹375,580</td>
+                        <td id="eval-tbl-cost-rmse">₹553,336</td>
+                        <td id="eval-tbl-cost-r2">0.6229</td>
+                        <td id="eval-tbl-cost-mmre">36.7%</td>
+                        <td id="eval-tbl-cost-mdmre">26.9%</td>
+                        <td id="eval-tbl-cost-pred25"><strong>46.6%</strong></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Engineering Effort (Hours)</strong></td>
+                        <td>Random Forest</td>
+                        <td>500 (20% split)</td>
+                        <td id="eval-tbl-effort-mae">234.5 hrs</td>
+                        <td id="eval-tbl-effort-rmse">316.5 hrs</td>
+                        <td id="eval-tbl-effort-r2">0.7182</td>
+                        <td id="eval-tbl-effort-mmre">30.4%</td>
+                        <td id="eval-tbl-effort-mdmre">23.1%</td>
+                        <td id="eval-tbl-effort-pred25"><strong>53.4%</strong></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Delivery Duration (Days)</strong></td>
+                        <td>Random Forest</td>
+                        <td>500 (20% split)</td>
+                        <td id="eval-tbl-duration-mae">20.3 days</td>
+                        <td id="eval-tbl-duration-rmse">28.0 days</td>
+                        <td id="eval-tbl-duration-r2">0.5328</td>
+                        <td id="eval-tbl-duration-mmre">44.5%</td>
+                        <td id="eval-tbl-duration-mdmre">33.4%</td>
+                        <td id="eval-tbl-duration-pred25"><strong>40.6%</strong></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="eval-explanation-box">
+                  <strong>Statistical Ground Truth:</strong> Model evaluation metrics — calculated from verified
+                  held-out test records:
+                  <code>MRE = |Actual - Predicted| / |Actual|</code>. MMRE is mean MRE, MdMRE is median MRE, and
+                  PRED(25) is the percentage of test cases within 25% error.
+                  The project budget range above represents PERT / Empirical Bayes parameter uncertainty, not model
+                  generalization error.
                 </div>
               </div>
 
@@ -999,8 +1411,10 @@
 
           <!-- Project Filter Toolbar -->
           <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-            <input type="text" class="form-input" id="projects-filter-input" placeholder="Filter by name..." style="max-width:280px;" oninput="filterProjectsList(this.value)">
-            <select class="form-select" id="projects-filter-complexity" style="max-width:180px;" onchange="filterProjectsList()">
+            <input type="text" class="form-input" id="projects-filter-input" placeholder="Filter by name..."
+              style="max-width:280px;" oninput="filterProjectsList(this.value)">
+            <select class="form-select" id="projects-filter-complexity" style="max-width:180px;"
+              onchange="filterProjectsList()">
               <option value="ALL">All Complexities</option>
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -1040,7 +1454,8 @@
           <div class="form-section-header">
             <div>
               <h1 class="form-section-title">Analytics & Estimation KPIs</h1>
-              <p class="form-section-desc">Empirical metrics derived from your real saved estimates and model benchmarks</p>
+              <p class="form-section-desc">Empirical metrics derived from your real saved estimates and model benchmarks
+              </p>
             </div>
             <button class="btn btn-secondary btn-sm" onclick="loadAnalyticsData()">🔄 Refresh Analytics</button>
           </div>
@@ -1119,7 +1534,8 @@
           <div class="form-section-header">
             <div>
               <h1 class="form-section-title">Datasets & ML Model Lab</h1>
-              <p class="form-section-desc">Transparent model provenance, supervised metrics, and retraining telemetry</p>
+              <p class="form-section-desc">Transparent model provenance, supervised metrics, and retraining telemetry
+              </p>
             </div>
             <button class="btn btn-primary btn-sm" onclick="openRetrainModal()">⚡ Retrain ML Models</button>
           </div>
@@ -1127,36 +1543,41 @@
           <!-- Dataset Provenance Card -->
           <div class="kpi-card" style="margin-bottom:1.5rem;">
             <div class="kpi-label">Active Training Dataset</div>
-            <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">CostPilot_AI_Training_Dataset.xlsx</div>
+            <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">CostPilot_AI_Training_Dataset.xlsx
+            </div>
             <p style="color:var(--text-muted); font-size:0.9rem;">
               <strong>Provenance:</strong> 2,500 projects • 44,301 feature records • 20 edge cases • 7 workbook sheets.
-              Preserved provenance: This simulated training set provides supervised benchmarks and empirical priors without claiming to represent unverified external commercial contracts.
+              Preserved provenance: This simulated training set provides supervised benchmarks and empirical priors
+              without claiming to represent unverified external commercial contracts.
             </p>
           </div>
 
           <!-- Held-out Test Metrics -->
           <div class="form-section" style="margin-bottom:1.5rem;">
-            <h3 class="form-section-title" style="margin-bottom:1rem;">Supervised Held-Out Test Evaluation Metrics</h3>
+            <h3 class="form-section-title" style="margin-bottom:1rem;">Supervised Held-Out Test Evaluation Metrics (500
+              Test Records)</h3>
             <div class="kpi-grid">
               <div class="kpi-card">
                 <div class="kpi-label">Cost Model R² Score</div>
-                <div class="kpi-value">0.6229</div>
-                <div class="kpi-subtext">MAE: ₹138,591 • Random Forest</div>
+                <div class="kpi-value" id="ml-lab-cost-r2">0.6229</div>
+                <div class="kpi-subtext" id="ml-lab-cost-subtext">MAE: ₹375,580 • MMRE: 36.7% • PRED(25): 46.6%</div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Effort Model R² Score</div>
-                <div class="kpi-value">0.7185</div>
-                <div class="kpi-subtext">MAE: 101.4 Hours • Random Forest</div>
+                <div class="kpi-value" id="ml-lab-effort-r2">0.7182</div>
+                <div class="kpi-subtext" id="ml-lab-effort-subtext">MAE: 234.5 Hours • MMRE: 30.4% • PRED(25): 53.4%
+                </div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Duration Model R² Score</div>
-                <div class="kpi-value">0.5328</div>
-                <div class="kpi-subtext">MAE: 14.2 Days • Random Forest</div>
+                <div class="kpi-value" id="ml-lab-duration-r2">0.5328</div>
+                <div class="kpi-subtext" id="ml-lab-duration-subtext">MAE: 20.3 Days • MMRE: 44.5% • PRED(25): 40.6%
+                </div>
               </div>
               <div class="kpi-card">
                 <div class="kpi-label">Target Leakage Audit</div>
                 <div class="kpi-value" style="color:var(--accent-emerald);">CLEAN</div>
-                <div class="kpi-subtext">Zero leakage detected</div>
+                <div class="kpi-subtext">Zero target leakage detected across 2,500 projects</div>
               </div>
             </div>
           </div>
@@ -1185,7 +1606,8 @@
                   <input type="text" id="prof-name" class="form-input" required>
                 </div>
                 <div class="form-group" style="margin-bottom:1rem;">
-                  <label class="form-label" for="prof-email">Email Address <span class="form-hint">(Read-only)</span></label>
+                  <label class="form-label" for="prof-email">Email Address <span
+                      class="form-hint">(Read-only)</span></label>
                   <input type="email" id="prof-email" class="form-input" disabled style="opacity:0.6;">
                 </div>
                 <div class="form-group" style="margin-bottom:1.5rem;">
@@ -1227,7 +1649,8 @@
           <div class="form-section-header">
             <div>
               <h1 class="form-section-title">Application Settings</h1>
-              <p class="form-section-desc">Configure default estimation parameters, rate profiles, and theme preferences</p>
+              <p class="form-section-desc">Configure default estimation parameters, rate profiles, and theme preferences
+              </p>
             </div>
             <button class="btn btn-primary" onclick="saveAppSettings()">Save Preferences</button>
           </div>
@@ -1299,28 +1722,32 @@
 
           <div style="display:flex; flex-direction:column; gap:1.5rem; line-height:1.7;">
             <p>
-              <strong>CostPilot AI</strong> is an enterprise software cost estimation platform designed to replace unverified arbitrary price guesses with defensible, mathematically grounded engineering estimates.
+              <strong>CostPilot AI</strong> is an enterprise software cost estimation platform designed to replace
+              unverified arbitrary price guesses with defensible, mathematically grounded engineering estimates.
             </p>
 
             <div class="form-grid-3">
               <div class="kpi-card">
                 <div class="kpi-label">1. Empirical Bayes Priors</div>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
-                  Every discrete feature is estimated using Three-Point PERT (Optimistic, Most Likely, Pessimistic) shrunk toward historical category distributions from 44,301 features.
+                  Every discrete feature is estimated using Three-Point PERT (Optimistic, Most Likely, Pessimistic)
+                  shrunk toward historical category distributions from 44,301 features.
                 </p>
               </div>
 
               <div class="kpi-card">
                 <div class="kpi-label">2. Supervised Random Forest</div>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
-                  Trained scikit-learn models predict top-down effort, cost, and duration benchmarks with zero target leakage and held-out cross-validation.
+                  Trained scikit-learn models predict top-down effort, cost, and duration benchmarks with zero target
+                  leakage and held-out cross-validation.
                 </p>
               </div>
 
               <div class="kpi-card">
                 <div class="kpi-label">3. Financial Invariants</div>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem;">
-                  Strict financial consistency: Labour Cost = ∑(Allocated Role Hours × Hourly Rate). Contingency is applied strictly once to pre-contingency totals.
+                  Strict financial consistency: Labour Cost = ∑(Allocated Role Hours × Hourly Rate). Contingency is
+                  applied strictly once to pre-contingency totals.
                 </p>
               </div>
             </div>
@@ -1328,7 +1755,9 @@
             <div class="kpi-card">
               <div class="kpi-label">Brooks' Law Coordination & Critical Path</div>
               <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.5rem;">
-                Software development capacity is not strictly linear. As team size increases, communication coordination channels scale at n(n-1)/2, reducing individual productive throughput. Feature dependencies are modeled as a Directed Acyclic Graph (DAG) to calculate the real critical path.
+                Software development capacity is not strictly linear. As team size increases, communication coordination
+                channels scale at n(n-1)/2, reducing individual productive throughput. Feature dependencies are modeled
+                as a Directed Acyclic Graph (DAG) to calculate the real critical path.
               </p>
             </div>
           </div>
@@ -1341,7 +1770,7 @@
   <!-- ================================================================= -->
   <!-- MODALS                                                            -->
   <!-- ================================================================= -->
-  
+
   <!-- Delete Project Confirmation Modal -->
   <div id="modal-delete-project" class="modal-overlay">
     <div class="modal-dialog">
@@ -1352,7 +1781,8 @@
       <div class="modal-body">
         <p>Are you sure you want to delete <strong id="delete-modal-project-name">Project</strong>?</p>
         <p style="color:var(--accent-rose); font-size:0.85rem; margin-top:0.5rem;">
-          This will permanently delete the project record, its estimates, and what-if history from the database. This action cannot be undone.
+          This will permanently delete the project record, its estimates, and what-if history from the database. This
+          action cannot be undone.
         </p>
       </div>
       <div class="modal-footer">
@@ -1389,7 +1819,8 @@
         <form id="form-feature-modal" onsubmit="handleSaveFeatureModal(event)">
           <div class="form-group" style="margin-bottom:1rem;">
             <label class="form-label" for="feat-modal-name">Feature Name</label>
-            <input type="text" id="feat-modal-name" class="form-input" required placeholder="e.g. Stripe Subscription Billing">
+            <input type="text" id="feat-modal-name" class="form-input" required
+              placeholder="e.g. Stripe Subscription Billing">
           </div>
           <div class="form-group" style="margin-bottom:1rem;">
             <label class="form-label" for="feat-modal-category">Category</label>
@@ -1435,14 +1866,169 @@
         <button class="modal-close-btn" onclick="closeRetrainModal()">×</button>
       </div>
       <div class="modal-body">
-        <p>This will retrain the Random Forest Regression models on <code>CostPilot_AI_Training_Dataset.xlsx</code> with zero target leakage.</p>
+        <p>This will retrain the Random Forest Regression models on <code>CostPilot_AI_Training_Dataset.xlsx</code> with
+          zero target leakage.</p>
         <div id="retrain-status-text" style="margin-top:1rem; font-size:0.9rem; color:var(--text-muted);">
           Current status: Ready to train.
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeRetrainModal()">Cancel</button>
-        <button class="btn btn-primary" id="btn-start-retrain" onclick="executeRetrain()">Start Training Pipeline</button>
+        <button class="btn btn-primary" id="btn-start-retrain" onclick="executeRetrain()">Start Training
+          Pipeline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Custom Role Modal (Issue 4) -->
+  <div id="modal-role-form" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Custom Team Role</h3>
+        <button type="button" class="modal-close-btn" onclick="closeRoleModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-role-modal" onsubmit="handleSaveRoleModal(event)">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="role-modal-name">Role Designation</label>
+            <input type="text" id="role-modal-name" class="form-input" required placeholder="e.g. AI / ML Engineer">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="role-modal-headcount">Headcount</label>
+            <input type="number" id="role-modal-headcount" class="form-input" required min="0" max="20" value="1">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="role-modal-rate">Hourly Rate (<span id="role-modal-currency-symbol">₹</span>
+              / hr)</label>
+            <input type="number" id="role-modal-rate" class="form-input" required min="10" value="1500">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="role-modal-allocation">Estimated Effort Allocation (%)</label>
+            <input type="number" id="role-modal-allocation" class="form-input" min="1" max="100" value="15">
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label" for="role-modal-reason">Main Responsibilities / Rationale</label>
+            <textarea id="role-modal-reason" class="form-textarea"
+              placeholder="e.g. Model inference integration, prompt engineering, and embeddings pipeline"
+              style="min-height:70px;"></textarea>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeRoleModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Role</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Custom Infrastructure Modal (Issue 7) -->
+  <div id="modal-infra-form" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Custom Infrastructure / Tool</h3>
+        <button type="button" class="modal-close-btn" onclick="closeInfraModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-infra-modal" onsubmit="handleSaveInfraModal(event)">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="infra-modal-name">Item / Service Name</label>
+            <input type="text" id="infra-modal-name" class="form-input" required placeholder="e.g. Redis Cloud Cache">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="infra-modal-category">Category</label>
+            <select id="infra-modal-category" class="form-select">
+              <option value="Cloud / Compute">Cloud / Compute</option>
+              <option value="Database">Database</option>
+              <option value="Storage / CDN">Storage / CDN</option>
+              <option value="CI/CD & DevOps">CI/CD & DevOps</option>
+              <option value="Security & Monitoring">Security & Monitoring</option>
+              <option value="AI / Inference API">AI / Inference API</option>
+              <option value="Third-Party SaaS">Third-Party SaaS</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="infra-modal-period">Billing Period</label>
+            <select id="infra-modal-period" class="form-select">
+              <option value="Monthly">Monthly Recurring</option>
+              <option value="One-Time">One-Time Setup / License</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="infra-modal-cost">Estimated Cost (<span
+                id="infra-modal-currency-symbol">₹</span>)</label>
+            <input type="number" id="infra-modal-cost" class="form-input" required min="0" value="5000">
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label" for="infra-modal-purpose">Purpose / Justification</label>
+            <input type="text" id="infra-modal-purpose" class="form-input"
+              placeholder="e.g. Session storage and API response caching">
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeInfraModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add Tool / Infra</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Record Project Outcome Reconciliation Modal -->
+  <div id="modal-reconciliation-form" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Verified Actual Project Delivery Outcomes</h3>
+        <button type="button" class="modal-close-btn" onclick="closeReconciliationModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-reconciliation-modal" onsubmit="handleSaveReconciliation(event)">
+          <div style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.25rem;">
+            Record empirical delivery metrics upon project completion.
+            CostPilot AI calculates exact Cost, Effort, and Duration Variances with explicit sign conventions (Positive
+            = Under budget; Negative = Cost overrun).
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="rec-actual-cost">Actual Project Cost (<span
+                class="currency-symbol-label">₹</span>)</label>
+            <input type="number" id="rec-actual-cost" class="form-input" required min="0" step="1"
+              placeholder="e.g. 540000">
+          </div>
+
+          <div class="form-grid-2" style="margin-bottom:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="rec-actual-effort">Actual Engineering Effort (Hours)</label>
+              <input type="number" id="rec-actual-effort" class="form-input" required min="0" step="0.5"
+                placeholder="e.g. 360">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rec-actual-duration">Actual Duration (Calendar Days)</label>
+              <input type="number" id="rec-actual-duration" class="form-input" required min="0" step="1"
+                placeholder="e.g. 45">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label" for="rec-project-status">Project Completion Status</label>
+            <select id="rec-project-status" class="form-select">
+              <option value="Completed" selected>Completed (Final Delivery)</option>
+              <option value="In Progress">In Progress (Interim Milestone)</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label" for="rec-notes">Reconciliation Notes / Post-Mortem Audit</label>
+            <textarea id="rec-notes" class="form-textarea"
+              placeholder="e.g. Automated test suite reduced QA defect cycles by 20%."
+              style="min-height:70px;"></textarea>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeReconciliationModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-reconciliation">Save & Calculate
+              Variances</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -1453,4 +2039,5 @@
   <!-- Application Logic -->
   <script src="/static/js/app.js"></script>
 </body>
+
 </html>

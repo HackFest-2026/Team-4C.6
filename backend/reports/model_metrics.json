@@ -1,6 +1,6 @@
 {
   "provenance": "SIMULATED / SYNTHETIC DATASET (CostPilot_AI_Training_Dataset.xlsx)",
-  "training_timestamp": "2026-10-09T21:26:17.948403+00:00",
+  "training_timestamp": "2026-10-10T14:56:37.229551+00:00",
   "input_features": [
     "project_type",
     "project_complexity",
@@ -32,10 +32,12 @@
         "test_r2": 0.6229,
         "test_mmre": 0.3668,
         "test_mdmre": 0.2685,
+        "test_pred25": 46.6,
         "baseline_mae": 681849.2,
         "baseline_rmse": 910531.72,
         "baseline_r2": -0.0211,
-        "baseline_mmre": 1.0497
+        "baseline_mmre": 1.0497,
+        "baseline_pred25": 23.8
       },
       "status": "validated_and_saved"
     },
@@ -48,15 +50,17 @@
       "train_samples": 2000,
       "test_samples": 500,
       "metrics": {
-        "test_mae": 234.88,
-        "test_rmse": 316.31,
-        "test_r2": 0.7185,
-        "test_mmre": 0.305,
-        "test_mdmre": 0.2331,
+        "test_mae": 234.53,
+        "test_rmse": 316.49,
+        "test_r2": 0.7182,
+        "test_mmre": 0.3037,
+        "test_mdmre": 0.2312,
+        "test_pred25": 53.4,
         "baseline_mae": 483.98,
         "baseline_rmse": 596.6,
         "baseline_r2": -0.0015,
-        "baseline_mmre": 1.0949
+        "baseline_mmre": 1.0949,
+        "baseline_pred25": 29.4
       },
       "status": "validated_and_saved"
     },
@@ -74,10 +78,12 @@
         "test_r2": 0.5328,
         "test_mmre": 0.4454,
         "test_mdmre": 0.334,
+        "test_pred25": 40.6,
         "baseline_mae": 31.07,
         "baseline_rmse": 41.69,
         "baseline_r2": -0.0334,
-        "baseline_mmre": 0.9964
+        "baseline_mmre": 0.9964,
+        "baseline_pred25": 28.4
       },
       "status": "validated_and_saved"
     }

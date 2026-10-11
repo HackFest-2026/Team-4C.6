@@ -100,6 +100,23 @@ def calculate_mmre(y_true: np.ndarray, y_pred: np.ndarray) -> Tuple[float, float
     return float(np.mean(mre)), float(np.median(mre))
 
 
+def calculate_mdmre(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Computes MdMRE (Median Magnitude of Relative Error)."""
+    _, mdmre = calculate_mmre(y_true, y_pred)
+    return mdmre
+
+
+def calculate_pred25(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """
+    Computes PRED(25), the percentage of predictions whose MRE <= 0.25 (0.0% to 100.0%).
+    """
+    valid_mask = y_true > 0
+    if not np.any(valid_mask):
+        return 0.0
+    mre = np.abs(y_true[valid_mask] - y_pred[valid_mask]) / y_true[valid_mask]
+    return round(float(np.mean(mre <= 0.25) * 100.0), 2)
+
+
 def build_pipeline() -> Pipeline:
     """Creates reproducible preprocessing and RandomForestRegressor pipeline."""
     categorical_transformer = Pipeline(
@@ -262,11 +279,13 @@ def train_all_models() -> Dict[str, Any]:
         test_rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
         test_r2 = float(r2_score(y_test, y_pred))
         test_mmre, test_mdmre = calculate_mmre(y_test.values, y_pred)
+        test_pred25 = calculate_pred25(y_test.values, y_pred)
 
         base_mae = float(mean_absolute_error(y_test, y_pred_dummy))
         base_rmse = float(np.sqrt(mean_squared_error(y_test, y_pred_dummy)))
         base_r2 = float(r2_score(y_test, y_pred_dummy))
         base_mmre, base_mdmre = calculate_mmre(y_test.values, y_pred_dummy)
+        base_pred25 = calculate_pred25(y_test.values, y_pred_dummy)
 
         # Save model artifact
         artifact_path = artifacts_dir / artifact_filename
@@ -286,10 +305,12 @@ def train_all_models() -> Dict[str, Any]:
                 "test_r2": round(test_r2, 4),
                 "test_mmre": round(test_mmre, 4),
                 "test_mdmre": round(test_mdmre, 4),
+                "test_pred25": round(test_pred25, 2),
                 "baseline_mae": round(base_mae, 2),
                 "baseline_rmse": round(base_rmse, 2),
                 "baseline_r2": round(base_r2, 4),
                 "baseline_mmre": round(base_mmre, 4),
+                "baseline_pred25": round(base_pred25, 2),
             },
             "status": "validated_and_saved",
         }
