@@ -8,8 +8,7 @@
   <meta name="description"
     content="Professional, defensible, dataset-driven software product cost and effort estimation powered by supervised machine learning and empirical priors.">
   <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <link rel="icon" type="image/jpeg" href="/static/assets/logo_costpilot.jpeg">
 </head>
 
 <body>
@@ -24,7 +23,9 @@
       <!-- Left Hero Banner -->
       <div class="auth-hero">
         <div class="auth-brand">
-          <div class="brand-icon">⚡</div>
+          <div class="brand-logo-wrap" style="width:48px; height:48px;">
+            <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+          </div>
           <div>
             <div style="display:flex; align-items:center; gap:0.5rem;">
               <span class="brand-title">CostPilot AI</span>
@@ -71,6 +72,15 @@
         <!-- SIGN IN FORM -->
         <div id="signin-box">
           <div class="auth-header">
+            <div class="auth-form-brand">
+              <div class="brand-logo-wrap" style="width:48px; height:48px;">
+                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+              </div>
+              <div>
+                <span class="brand-title" style="font-size:1.25rem;">CostPilot AI</span>
+                <div style="font-size:0.75rem; color:var(--text-dim);">Enterprise Cost Estimation</div>
+              </div>
+            </div>
             <h1 class="auth-heading">Sign In to CostPilot AI</h1>
             <p class="auth-subheading">Access your project estimates, dashboard KPIs, and ML models</p>
           </div>
@@ -117,6 +127,15 @@
         <!-- SIGN UP FORM -->
         <div id="signup-box" style="display:none;">
           <div class="auth-header">
+            <div class="auth-form-brand">
+              <div class="brand-logo-wrap" style="width:48px; height:48px;">
+                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+              </div>
+              <div>
+                <span class="brand-title" style="font-size:1.25rem;">CostPilot AI</span>
+                <div style="font-size:0.75rem; color:var(--text-dim);">Enterprise Cost Estimation</div>
+              </div>
+            </div>
             <h1 class="auth-heading">Create CostPilot Account</h1>
             <p class="auth-subheading">Start generating defensible project estimates</p>
           </div>
@@ -186,7 +205,9 @@
     <aside class="sidebar" id="app-sidebar">
       <div class="sidebar-header">
         <div class="auth-brand">
-          <div class="brand-icon" style="width:36px; height:36px; font-size:1.2rem;">⚡</div>
+          <div class="brand-logo-wrap" style="width:36px; height:36px;">
+            <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+          </div>
           <span class="brand-title" style="font-size:1.15rem;">CostPilot AI</span>
         </div>
         <button class="sidebar-collapse-btn" onclick="toggleSidebarCollapse()" title="Collapse Sidebar">◀</button>
@@ -242,7 +263,12 @@
       <header class="topbar">
         <div class="topbar-left">
           <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
-          <div class="breadcrumb-title" id="topbar-page-title">Dashboard</div>
+          <div class="topbar-brand">
+            <div class="brand-logo-wrap" style="width:28px; height:28px;">
+              <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+            </div>
+            <div class="breadcrumb-title" id="topbar-page-title">Dashboard</div>
+          </div>
         </div>
 
         <div class="topbar-right">
@@ -280,12 +306,17 @@
       <!-- ============================================================= -->
       <section id="page-dashboard" class="page-content active">
         <div class="welcome-hero">
-          <div>
-            <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
-            <p class="welcome-desc">
-              CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest
-              regression and historical priors from 2,500 projects.
-            </p>
+          <div class="welcome-hero-left">
+            <div class="brand-logo-wrap welcome-logo" style="width:64px; height:64px;">
+              <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+            </div>
+            <div>
+              <h1 class="welcome-title" id="dashboard-welcome-heading">Welcome back, Alex!</h1>
+              <p class="welcome-desc">
+                CostPilot AI estimates software project costs, effort, and timelines using supervised Random Forest
+                regression and historical priors from 2,500 projects.
+              </p>
+            </div>
           </div>
           <div>
             <button class="btn btn-primary btn-lg" onclick="navigateTo('new-estimate')">
@@ -1714,9 +1745,14 @@
       <section id="page-about" class="page-content">
         <div class="form-section">
           <div class="form-section-header">
-            <div>
-              <h1 class="form-section-title">About CostPilot AI</h1>
-              <p class="form-section-desc">Authoritative estimation pipeline and methodology</p>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div class="brand-logo-wrap" style="width:48px; height:48px;">
+                <img src="/static/assets/logo_costpilot.jpeg" alt="CostPilot AI Logo" class="brand-logo-img">
+              </div>
+              <div>
+                <h1 class="form-section-title">About CostPilot AI</h1>
+                <p class="form-section-desc">Authoritative estimation pipeline and methodology</p>
+              </div>
             </div>
           </div>
 
